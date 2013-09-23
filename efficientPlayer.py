@@ -41,4 +41,4 @@ def printInfo(efficiencyList):
     print '%20s%20s%40s' %('Name','Year','Efficiency')
     for player in efficiencyList[:50]:
         print '%20s%20s%40d' %(player[1],player[2],player[0])
-printInfo(getEfficiencyList(getDataList('player_regular_season.csv')))
+printInfo(getEfficiencyList(getDataList('data/player_regular_season.csv')))

@@ -61,5 +61,4 @@ def printInfo(monthlyAveragesList):
 #    print '\n\n'
 #    print monthlyAveragesList[-6:]
 
-printInfo(getMonthlyAverages(getDataList('table.csv')))
-
+printInfo(getMonthlyAverages(getDataList('data/table.csv')))

@@ -18,7 +18,7 @@ import random
 import string
 
 # create wordlist from text file
-with open('gettysburg.txt','r') as f:
+with open('data/gettysburg.txt','r') as f:
     wordList = []
     for line in f:
         if line == '\n':
