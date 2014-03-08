@@ -43,6 +43,3 @@ while True:
     except:
         print '出错啦！'
         break
-
-
-
