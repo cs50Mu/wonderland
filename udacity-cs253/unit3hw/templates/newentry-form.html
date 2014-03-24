@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>My Basic Blog</title>
+    <link type="text/css" rel="stylesheet" href="/static/main.css" />
+  </head>
+
+  <body>
+	<a href="/" class="main-title">My Basic Blog</a>
+
+	<div id="content">
+		<h2>new post</h2>
+
+		<form method="post">
+			<label>
+				<div>subject</div>
+				<input type="text" name="subject" value="{{subject}}">
+			</label>
+
+			<div class="error">{{error_subject}}</div>
+
+			<label>
+				<div>content</div>
+				<textarea name="content">{{content}}</textarea>
+			</label>
+
+			<div class="error">{{error_content}}</div>
+
+			<input type="submit">
+		</form>
+
+	</div>
+
+ </body>
+
+</html>

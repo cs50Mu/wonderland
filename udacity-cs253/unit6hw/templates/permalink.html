@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>My Blog</title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+  <body>
+  <h2>{{post.subject}}</h2>
+    <hr>
+    {{post.content | safe}}
+    <hr>
+    Queried {{interval}} seconds ago
+ </body>
+
+</html>

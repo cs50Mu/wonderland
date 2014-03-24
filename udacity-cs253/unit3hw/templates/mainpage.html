@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>My Blog</title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+  <body>
+    <h1>linuxfish's blog</h1>
+    <hr>
+    {% for post in posts %}
+    <b>{{post.subject}}</b>
+    <br>
+    {{post.content | safe}}
+    <br>
+    <br>
+    <br>
+    {% endfor %}
+ </body>
+
+</html>
