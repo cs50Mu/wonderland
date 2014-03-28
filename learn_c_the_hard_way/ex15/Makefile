@@ -4,4 +4,7 @@ clean:
 	rm -f ex15
 	rm -f ex16
 	rm -f ex17
+	rm -f ex17_rev
+	rm -f ex17_rev2
+
 
