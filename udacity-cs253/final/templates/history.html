@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for p in pages %}
+
+{{ p.content }} 
+<a href="/{{ p.title }}?v={{ p.key().id() }}">查看</a>
+<a href="/_edit/{{ p.title }}?v={{ p.key().id() }}">编辑</a>
+<hr>
+<br>
+{% endfor %}
+
+{% endblock %}

@@ -148,18 +148,23 @@ class PageDb(db.Model):     # database
 
 class NewPageHandler(BaseHandler):
     def get(self,title):
-        if not title:
-            title = 'mainpage'
-        page = PageDb.all().filter('title =',title).get()
-        if page:
+        v = self.request.get('v')
+        if v:
+            page  = PageDb.get_by_id(int(v))
             content = page.content.replace('<br>','\n')
         else:
-            content = ''
+            if not title:
+                title = 'mainpage'
+            page = PageDb.all().filter('title =',title).order('-created').get()
+            if page:
+                content = page.content.replace('<br>','\n')
+            else:
+                content = ''
         username = self.request.cookies.get('username')
         username = valid_cookie(username)
         if username:
             login = True
-            self.render("newpage.html",content=content,login=login)
+            self.render("newpage.html",content = content,login = login)
         else:
             self.redirect('/login')
 
@@ -175,13 +180,13 @@ class NewPageHandler(BaseHandler):
         if have_error:
             self.render('newpage.html',**params)
         else:
-            if PageDb.all().filter('title =',title).get():
-                page = PageDb.all().filter('title =',title).get()
-                page.content = content
-                page.put()
-            else:
-                page = PageDb(title=title,content=content)
-                page.put()
+#            if PageDb.all().filter('title =',title).get():
+#                page = PageDb.all().filter('title =',title).get()
+#                page.content = content
+#                page.put()
+#            else:
+            page = PageDb(title=title,content=content)
+            page.put()
             if title == 'mainpage':
                 title = ''
             time.sleep(1)  #  timeout for database to write, or will have weird problem
@@ -196,21 +201,38 @@ class RandomPage(BaseHandler):
         else:
             login = False
 
+        v = self.request.get('v')
+        if v:
+            page = PageDb.get_by_id(int(v))
+            if page:
+                self.render('page.html', content = page.content, page_title = title, login = login)
+        else:
+
+            if not title:
+                title = 'mainpage'
+            page = PageDb.all().filter('title =',title).order('-created').get()
+            if page:
+                if title == 'mainpage':
+                    title =''
+                self.render('page.html',content=page.content,page_title=title,login=login)
+            else:
+                if title == 'mainpage':
+                    self.redirect('/_edit/')
+                else:
+                    self.redirect('/_edit/%s' %str(title))
+
+
+class HistoryPage(BaseHandler):
+    def get(self, title):
         if not title:
             title = 'mainpage'
-        page = PageDb.all().filter('title =',title).get()
-        if page:
-            if title == 'mainpage':
-                title =''
-            self.render('page.html',content=page.content,page_title=title,login=login)
-        else:
-            if title == 'mainpage':
-                self.redirect('/_edit/')
-            else:
-                self.redirect('/_edit/%s' %str(title))
+        pages = PageDb.all().filter('title =', title).order('-created').fetch(limit = 1000)
+        self.render('history.html', pages = pages)
+
 
 
 app = webapp2.WSGIApplication([('/_edit/(.*)', NewPageHandler),\
+                            ('/_history/(.*)', HistoryPage),
                             ('/signup', Signup),
                             ('/login',Login),
                             ('/logout',Logout),

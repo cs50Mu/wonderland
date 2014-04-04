@@ -59,15 +59,15 @@ void Database_load(void)
 
 	conn->db->rows = malloc(conn->db->max_rows * sizeof(struct Address));
 	if(!conn->db->rows) die("Memory error!");
-	for(addr = conn->db->rows; addr < conn->db->rows + conn->db->max_rows; addr++) {
+	for(addr = conn->db->rows; addr < conn->db->rows + conn->db->max_rows; ++addr) {
 		if(fread(&addr->id, sizeof(addr->id), 1, conn->file) != 1 ||\
 				fread(&addr->set, sizeof(addr->set), 1, conn->file) != 1)
 			die("Failed to load database!");
 
 		addr->name = malloc(conn->db->max_data * sizeof(char));
 		addr->email = malloc(conn->db->max_data * sizeof(char));
-		if(fread(addr->name, sizeof(addr->name), 1, conn->file) != 1 ||\
-			       fread(addr->email, sizeof(addr->email), 1, conn->file) != 1)
+		if(fread(addr->name, conn->db->max_data * sizeof(char), 1, conn->file) != 1 ||\
+		 		fread(addr->email, conn->db->max_data * sizeof(char), 1, conn->file) != 1)
 			die("Failed to load database!");
 	}
 }	
@@ -112,14 +112,14 @@ void Database_write(void)
 	struct Address *addr;
 
 	if(fwrite(&max_data, sizeof(max_data), 1, conn->file) != 1 ||\
-			fwrite(&max_rows, sizeof(max_data), 1, conn->file) != 1)
+			fwrite(&max_rows, sizeof(max_rows), 1, conn->file) != 1)
 		die("Failed to write database!");
 
-	for(addr = conn->db->rows; addr < conn->db->rows + max_rows; addr++) {
+	for(addr = conn->db->rows; addr < conn->db->rows + max_rows; ++addr) {
 		if(fwrite(&addr->id, sizeof(addr->id), 1, conn->file) != 1 ||\
 				fwrite(&addr->set, sizeof(addr->set), 1, conn->file) != 1 ||\
 				fwrite(addr->name, max_data * sizeof(char), 1, conn->file) != 1 ||\
-				fwrite(addr->name, max_data * sizeof(char), 1, conn->file) != 1) 
+				fwrite(addr->email, max_data * sizeof(char), 1, conn->file) != 1) 
 			die("Failed to write database!");
 
 	if(fflush(conn->file) == -1)  die("Cannot flush database!");
@@ -181,8 +181,8 @@ void Database_get(int id)
 
 void Database_delete(int id)
 {
-	struct Address addr = {.id = id, .set = 0};
-	conn->db->rows[id] = addr;
+	struct Address *addr = &conn->db->rows[id];
+	addr->set = 0;
 }
 
 void Database_list(void)
@@ -199,6 +199,25 @@ void Database_list(void)
 	}
 }
 
+void Database_find(char *name)
+{
+	int i = 0;
+	struct Database *db = conn->db;
+
+	for(i=0; i < conn->db->max_rows; i++) {
+		struct Address *addr= &db->rows[i];
+
+		if(addr->set) {
+			if(strcmp(addr->name, name) == 0) {
+				Address_print(addr);
+				return;
+		}
+	}
+
+}
+	printf("No records matching '%s'\n", name);
+}
+
 int main(int argc, char *argv[])
 {
 	if(argc < 3) {
@@ -211,7 +230,7 @@ int main(int argc, char *argv[])
 	Database_open(filename, action);
 	int id = 0;
 
-	if(argc > 3 && action != 'c') {
+	if(argc > 3 && action != 'c' && action != 'f') {
 		id = atoi(argv[3]);  
 		if(id >= conn->db->max_rows) die("There's not that many records!");
 	}
@@ -247,6 +266,11 @@ int main(int argc, char *argv[])
 
 		case 'l':
 			Database_list();
+			break;
+
+		case 'f':
+			if(argc != 4) die("Need a name to search!");
+			Database_find(argv[3]);
 			break;
 
 		default:

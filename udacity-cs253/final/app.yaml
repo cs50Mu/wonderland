@@ -10,7 +10,7 @@ handlers:
   static_dir: static
 
 - url: /.*
-  script: my_wiki.app
+  script: my_wiki_v2.app
 
 libraries:
 - name: jinja2

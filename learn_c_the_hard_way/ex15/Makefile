@@ -6,5 +6,8 @@ clean:
 	rm -f ex17
 	rm -f ex17_rev
 	rm -f ex17_rev2
+	rm -f ex18
+	rm -f stack
+
 
 
