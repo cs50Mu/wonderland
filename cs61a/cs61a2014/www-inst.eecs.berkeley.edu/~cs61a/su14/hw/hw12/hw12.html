@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/hw.css" />
+
+    <title>61A Homework 12 | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">61A Homework 12</h1>
+
+    <p><em>Due by 11:59pm on Thursday, 8/7</em></p>
+
+<p><strong>Readings:</strong> You might find the following references
+useful:</p>
+
+<ul>
+  <li><a href="http://composingprograms.com/pages/32-functional-programming.html">Section 3.2</a></li>
+</ul>
+
+
+<p><strong>Submission:</strong> See the online <a
+  href="../../submit_tutorial_solo.html">submission
+  instructions</a>.  We have provided the following starter file:
+  <a href="hw12.scm">hw12.scm</a></p>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hw12.html#differentiation">Differentiation</a></li>
+  <li><a href="hw12.html#q1">Question 1</a></li>
+  <li><a href="hw12.html#q2">Question 2</a></li>
+  <li><a href="hw12.html#q3">Question 3</a></li>
+  <li><a href="hw12.html#q4">Question 4</a></li>
+  <li><a href="hw12.html#q5">Question 5</a></li>
+</ul>
+
+
+    
+
+<h3 id="differentiation">Differentiation</h3>
+
+<p>The following problems develop a system for
+<a href="http://en.wikipedia.org/wiki/Table_of_derivatives#Elementary_rules_of_differentiation">symbolic differentiation</a>
+of algebraic expressions.  The <code>derive</code> Scheme procedure takes an
+algebraic expression and a variable and returns the derivative of the
+expression with respect to the variable. Symbolic differentiation is of
+special historical significance in Lisp. It was one of the motivating
+examples behind the development of the language. Differentiating is a
+recursive process that applies different rules to different kinds of
+expressions:</p>
+
+<pre><code>; Derive returns the derivative of exp with respect to var.
+(define (derive exp var)
+  (cond ((number? exp) 0)
+        ((variable? exp) (if (same&#x2d;variable? exp var) 1 0))
+        ((sum? exp) (derive&#x2d;sum exp var))
+        ((product? exp) (derive&#x2d;product exp var))
+        ((exponentiation? exp) (derive&#x2d;exponentiation exp var))
+        (else &#x27;Error)))</code></pre>
+
+<p>To implement the system, we will use the following abstract data types.
+Sums and products are lists, and they are simplified on construction:</p>
+
+<pre><code>; Variables are represented as symbols
+(define (variable? x) (symbol? x))
+(define (same&#x2d;variable? v1 v2)
+  (and (variable? v1) (variable? v2) (eq? v1 v2)))
+
+; Numbers are compared with =
+(define (=number? exp num)
+  (and (number? exp) (= exp num)))
+
+; Sums are represented as lists that start with +.
+(define (make&#x2d;sum a1 a2)
+  (cond ((=number? a1 0) a2)
+        ((=number? a2 0) a1)
+        ((and (number? a1) (number? a2)) (+ a1 a2))
+        (else (list &#x27;+ a1 a2))))
+(define (sum? x)
+  (and (pair? x) (eq? (car x) &#x27;+)))
+(define (addend s) (cadr s))
+(define (augend s) (caddr s))
+
+; Products are represented as lists that start with *.
+(define (make&#x2d;product m1 m2)
+(cond ((or (=number? m1 0) (=number? m2 0)) 0)
+      ((=number? m1 1) m2)
+      ((=number? m2 1) m1)
+      ((and (number? m1) (number? m2)) (* m1 m2))
+      (else (list &#x27;* m1 m2))))
+(define (product? x)
+  (and (pair? x) (eq? (car x) &#x27;*)))
+(define (multiplier p) (cadr p))
+(define (multiplicand p) (caddr p))
+
+(define (test&#x2d;sum)
+  (assert&#x2d;equal &#x27;(+ a x) (make&#x2d;sum &#x27;a &#x27;x))
+  (assert&#x2d;equal &#x27;(+ a (+ x 1)) (make&#x2d;sum &#x27;a (make&#x2d;sum &#x27;x 1)))
+  (assert&#x2d;equal &#x27;x (make&#x2d;sum &#x27;x 0))
+  (assert&#x2d;equal &#x27;x (make&#x2d;sum 0 &#x27;x))
+  (assert&#x2d;equal 4 (make&#x2d;sum 1 3)))
+
+(define (test&#x2d;product)
+  (assert&#x2d;equal &#x27;(* a x) (make&#x2d;product &#x27;a &#x27;x))
+  (assert&#x2d;equal 0 (make&#x2d;product &#x27;x 0))
+  (assert&#x2d;equal &#x27;x (make&#x2d;product 1 &#x27;x))
+  (assert&#x2d;equal 6 (make&#x2d;product 2 3)))</code></pre>
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>Implement <code>derive&#x2d;sum</code>, a procedure that differentiates a sum by
+summing the derivatives of the <code>addend</code> and <code>augend</code>.  Use the abstract
+data type for a sum:</p>
+
+<pre><code>(define (derive&#x2d;sum exp var)
+
+)
+
+(define (test&#x2d;derive&#x2d;sum)
+  (assert&#x2d;equal 1 (derive &#x27;(+ x 3) &#x27;x)))
+
+(test&#x2d;derive&#x2d;sum)</code></pre>
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>Implement <code>derive&#x2d;product</code>, which applies <a href="http://en.wikipedia.org/wiki/Product_rule">the product
+rule</a> to differentiate
+products:</p>
+
+<pre><code>(define (derive&#x2d;product exp var)
+
+)
+
+(define (test&#x2d;derive&#x2d;product)
+  (assert&#x2d;equal &#x27;y (derive &#x27;(* x y) &#x27;x))
+  (assert&#x2d;equal &#x27;(+ (* x y) (* y (+ x 3)))
+                (derive &#x27;(* (* x y) (+ x 3)) &#x27;x)))
+
+(test&#x2d;derive&#x2d;product)</code></pre>
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Implement an abstract data type for exponentiation: a <code>base</code> raised to
+the power of an <code>exponent</code>. You can simplify the cases when <code>exponent</code>
+is <code>0</code> or <code>1</code>, or when <code>base</code> is a number and <code>exponent</code> is an integer
+by returning numbers from the constructor <code>make&#x2d;exponentiation</code>. (You can use the built-in function <code>expt</code> in your implementation!) In
+other cases, you can represent the exponentiation as a triple <code>(^ base
+exponent)</code>:</p>
+
+<pre><code>; Exponentiations are represented as lists that start with ^.
+(define (make&#x2d;exponentiation base exponent)
+
+)
+
+(define (base exponentiation)
+
+)
+
+(define (exponent exponentiation)
+
+)
+
+(define (exponentiation? exp)
+
+)
+
+(define (test&#x2d;exponentiation)
+  (let ((x^2 (make&#x2d;exponentiation &#x27;x 2)))
+    (assert&#x2d;equal &#x27;x (make&#x2d;exponentiation &#x27;x 1))
+    (assert&#x2d;equal 1  (make&#x2d;exponentiation &#x27;x 0))
+    (assert&#x2d;equal 16 (make&#x2d;exponentiation 2 4))
+    (assert&#x2d;equal &#x27;(^ x 2) x^2)
+    (assert&#x2d;equal &#x27;x (base x^2))
+    (assert&#x2d;equal 2  (exponent x^2))
+    (assert&#x2d;equal #t (exponentiation? x^2))
+    (assert&#x2d;equal #f (exponentiation? 1))
+    (assert&#x2d;equal #f (exponentiation? &#x27;x))
+  ))
+
+(test&#x2d;exponentiation)</code></pre>
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Implement <code>derive&#x2d;exponentiation</code>, which uses the <a href="http://en.wikipedia.org/wiki/Power_rule">power
+rule</a> to derive
+exponentiations:</p>
+
+<pre><code>(define (derive&#x2d;exponentiation exp var)
+
+)
+
+(define (test&#x2d;derive&#x2d;exponentiation)
+  (let ((x^2 (make&#x2d;exponentiation &#x27;x 2))
+        (x^3 (make&#x2d;exponentiation &#x27;x 3)))
+    (assert&#x2d;equal &#x27;(* 2 x) (derive x^2 &#x27;x))
+    (assert&#x2d;equal &#x27;(* 3 (^ x 2)) (derive x^3 &#x27;x))
+    (assert&#x2d;equal &#x27;(+ (* 3 (^ x 2)) (* 2 x)) (derive (make&#x2d;sum x^3 x^2) &#x27;x))
+  ))
+
+(test&#x2d;derive&#x2d;exponentiation)</code></pre>
+
+<h3 class="question" id="q5">Question 5</h3>
+We want to implement the <code>exp</code> procedure.  So, we write the following
+recursive procedure:
+
+<pre><code>(define (exp&#x2d;recursive b n)
+  (if (= n 0)
+      1
+      (* b (exp&#x2d;recursive b (&#x2d; n 1)))))</code></pre>
+
+<p>Try to evaluate</p>
+
+<pre><code>(exp&#x2d;recursive 2 (exp&#x2d;recursive 2 15))</code></pre>
+
+<p>You will notice that it causes a segmentation fault in <code>STk</code>, meaning
+that <code>STk</code> ran out of memory when trying to evaluate that value.  To
+fix this, we need to use tail recursion!  Implement the <code>exp</code>
+procedure using tail recursion:</p>
+
+<pre><code>(define (exp b n)
+  ;; Computes b^n.
+  ;; b is any number, n must be a non&#x2d;negative integer.
+
+)
+
+(define (test&#x2d;exp)
+  (assert&#x2d;equal 8 (exp 2 3))
+  (assert&#x2d;equal 1 (exp 9.137 0))
+  (assert&#x2d;equal 1024 (exp 4 5))
+  (assert&#x2d;equal 6.25 (exp 2.5 2))
+  ;; A test that would break STk if this was not tail recursive.
+  ;; The output is humongous, so we don&#x27;t print out the entire output
+  ;; Instead we just get the last two digits.
+  (assert&#x2d;equal 56 (remainder (exp 2 (exp 2 15)) 100)))
+
+(test&#x2d;exp)</code></pre>
+
+
+<h2 id="optional-problems">Optional Problems</h2>
+
+<h3 class="question" id="q6">Question 6</h3>
+
+<p>We now notice that we can write a faster version of <code>exp</code> that
+computes its answer much faster using the method of <em>repeated
+squaring</em>:</p>
+
+<pre><code>(define (square x) (* x x))
+
+(define (fast&#x2d;exp&#x2d;recursive b n)
+  (cond ((= n 0)
+	 1)
+        ((even? n)
+	 (square (fast&#x2d;exp&#x2d;recursive b (/ n 2))))
+        (else
+	 (* b (fast&#x2d;exp&#x2d;recursive b (&#x2d; n 1))))))</code></pre>
+
+<p>The previous <code>exp</code> procedure took a linear number of recursive calls,
+because it always reduced <code>n</code> by <code>1</code>.  However, <code>fast&#x2d;exp</code> halves the
+value of <code>n</code> every two recursive calls at most, and so it takes a
+logarithmic number of recursive calls.  See <a href="http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-11.html#%_sec_1.2.4">SICP</a> for more
+details.</p>
+
+<p>However, this new procedure is not tail recursive, and as a result can
+use up a lot of memory.  In particular, the following will crash STk
+after a few seconds of computation:</p>
+
+<pre><code>(fast&#x2d;exp&#x2d;recursive 1 (&#x2d; (fast&#x2d;exp&#x2d;recursive 2 20000) 1))</code></pre>
+
+<p>Bonus question:  Why did we subtract 1?  In other words, why doesn't
+the following crash the interpreter?</p>
+
+<pre><code>(fast&#x2d;exp&#x2d;recursive 1 (fast&#x2d;exp&#x2d;recursive 2 20000))</code></pre>
+
+<p>Back to the original question - write <code>fast&#x2d;exp</code> using tail recursion
+so that this no longer crashes.  See <a href="http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-11.html#%_sec_1.2.4">SICP</a>, Exercise 1.16, for a
+hint.</p>
+
+<pre><code>(define (fast&#x2d;exp b n)
+  ;; Computes b^n tail recursively by the method of repeated squaring.
+
+)
+
+(define (test&#x2d;fast&#x2d;exp)
+  (assert&#x2d;equal 8 (fast&#x2d;exp 2 3))
+  (assert&#x2d;equal 1 (fast&#x2d;exp 9.137 0))
+  (assert&#x2d;equal 1024 (fast&#x2d;exp 4 5))
+  (assert&#x2d;equal 6.25 (fast&#x2d;exp 2.5 2))
+  ;; Takes about a second or so if implemented with a
+  ;; logarithmic number of steps
+  (assert&#x2d;equal 36 (remainder (fast&#x2d;exp 2 (fast&#x2d;exp 2 20)) 100))
+  ;; Takes about 10 seconds.  Will crash if not tail recursive.
+  (assert&#x2d;equal 1 (fast&#x2d;exp 1 (&#x2d; (fast&#x2d;exp 2 20000) 1)))
+)
+
+(test&#x2d;fast&#x2d;exp)</code></pre>
+
+  </body>
+
+  
+</html>

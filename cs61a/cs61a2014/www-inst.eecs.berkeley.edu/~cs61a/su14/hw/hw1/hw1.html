@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/hw.css" />
+
+    <title>61A Homework 1 | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">61A Homework 1</h1>
+
+    <p><em>Due by 11:59pm on Saturday, 6/28</em></p>
+
+<p><strong>Readings:</strong> You might find the following references
+useful:</p>
+
+<ul>
+  <li><a href="http://composingprograms.com/pages/12-elements-of-programming.html">Section 1.2</a></li>
+  <li><a href="http://composingprograms.com/pages/13-defining-new-functions.html">Section 1.3</a></li>
+  <li><a href="http://composingprograms.com/pages/14-designing-functions.html">Section 1.4</a></li>
+  <li><a href="http://composingprograms.com/pages/15-control.html">Section 1.5</a></li>
+</ul>
+
+
+<p><strong>Submission:</strong> See the online <a
+  href="../../submit_tutorial_solo.html">submission
+  instructions</a>.  We have provided a <a
+  href="hw1.py">hw1.py</a> starter file for the questions
+below.</p>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hw1.html#welcome-survey">Welcome Survey</a></li>
+  <li><a href="hw1.html#q1">Question 1</a></li>
+  <li><a href="hw1.html#q2">Question 2</a></li>
+  <li><a href="hw1.html#q3">Question 3</a></li>
+  <li><a href="hw1.html#q4">Question 4</a></li>
+</ul>
+
+
+    
+
+<h3 id="welcome-survey">Welcome Survey</h3>
+
+<p>Please complete our <a href="https://docs.google.com/forms/d/1qpIV751vcWfHNQJTkurEovi-d0DL6l20x_p7PGYJK2U/viewform?usp=send_form">welcome survey</a>. The survey
+is for the instructors to get to know their students better, and your
+responses will be kept confidential (only the TAs and Lecturers will be able to read it.)</p>
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>We've seen that we can give new names to existing functions.  Fill in
+the blanks in the following function definition for adding <code>a</code> to the
+absolute value of <code>b</code>, without calling <code>abs</code>.</p>
+
+<pre><code>from operator import add, sub
+def a_plus_abs_b(a, b):
+    &quot;&quot;&quot;Return a+abs(b), but without calling abs.
+
+    &gt;&gt;&gt; a_plus_abs_b(2, 3)
+    5
+    &gt;&gt;&gt; a_plus_abs_b(2, &#x2d;3)
+    5
+    &quot;&quot;&quot;
+    if b &lt; 0:
+        op = _____
+    else:
+        op = _____
+    return op(a, b)</code></pre>
+
+
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>Write a function that takes three <em>positive</em> numbers and returns the
+sum of the squares of the two largest numbers.  Use only a single
+expression for the body of the function:</p>
+
+<pre><code>def two_of_three(a, b, c):
+    &quot;&quot;&quot;Return x*x + y*y, where x and y are the two largest of a, b, c.
+
+    &gt;&gt;&gt; two_of_three(1, 2, 3)
+    13
+    &gt;&gt;&gt; two_of_three(5, 3, 1)
+    34
+    &gt;&gt;&gt; two_of_three(10, 2, 8)
+    164
+    &gt;&gt;&gt; two_of_three(5, 5, 5)
+    50
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Let's try to write a function that does the same thing as an <code>if</code>
+statement.</p>
+
+<pre><code>def if_function(condition, true_result, false_result):
+    &quot;&quot;&quot;Return true_result if condition is a true value, and
+    false_result otherwise.
+
+    &gt;&gt;&gt; if_function(True, 2, 3)
+    2
+    &gt;&gt;&gt; if_function(False, 2, 3)
+    3
+    &gt;&gt;&gt; if_function(3==2, 3+2, 3&#x2d;2)
+    1
+    &gt;&gt;&gt; if_function(3&gt;2, 3+2, 3&#x2d;2)
+    5
+    &quot;&quot;&quot;
+    if condition:
+        return true_result
+    else:
+        return false_result</code></pre>
+
+<p>Despite the doctests above, this function actually does <em>not</em> do the
+same thing as an <code>if</code> statement in all cases.  To prove this fact,
+write functions <code>c</code>, <code>t</code>, and <code>f</code> such that <code>with_if_statement</code>
+returns the number <code>1</code>, but <code>with_if_function</code> does not (it can do
+<em>anything</em> else):</p>
+
+<pre><code>def with_if_statement():
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; with_if_statement()
+    1
+    &quot;&quot;&quot;
+    if c():
+        return t()
+    else:
+        return f()
+
+def with_if_function():
+    return if_function(c(), t(), f())
+
+def c():
+    "*** YOUR CODE HERE ***"
+
+def t():
+    "*** YOUR CODE HERE ***"
+
+def f():
+    "*** YOUR CODE HERE ***"</code></pre>
+
+
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Douglas Hofstadter’s Pulitzer-prize-winning book, <em>Gödel, Escher,
+Bach</em>, poses the following mathematical puzzle.</p>
+
+<ol>
+  <li>Pick a positive integer <code>n</code> as the start.</li>
+  <li>If <code>n</code> is even, divide it by 2.</li>
+  <li>If <code>n</code> is odd, multiply it by 3 and add 1.</li>
+  <li>Continue this process until <code>n</code> is 1.</li>
+</ol>
+
+<p>The number <code>n</code> will travel up and down but eventually end at 1 (at
+least for all numbers that have ever been tried &mdash; nobody has ever
+proved that the sequence will terminate). Analogously, hailstone
+travels up and down in the atmosphere before eventually landing on
+earth.</p>
+
+<p>The sequence of values of <code>n</code> is often called a Hailstone sequence,
+because hailstones also travel up and down in the atmosphere before
+falling to earth.  Write a function that takes a single argument with
+formal parameter name <code>n</code>, prints out the hailstone sequence starting
+at <code>n</code>, and returns the number of steps in the sequence:</p>
+
+<pre><code>def hailstone(n):
+    &quot;&quot;&quot;Print the hailstone sequence starting at n and return its
+    length.
+
+    &gt;&gt;&gt; a = hailstone(10)  # Seven elements are 10, 5, 16, 8, 4, 2, 1
+    10
+    5
+    16
+    8
+    4
+    2
+    1
+    &gt;&gt;&gt; a
+    7
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<p>Hailstone sequences can get quite long!  Try 27.  What's the longest
+you can find?</p>
+
+  </body>
+
+  
+</html>

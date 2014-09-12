@@ -1,0 +1,567 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/hw.css" />
+
+    <title>61A Homework 10 | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">61A Homework 10</h1>
+
+    <p><em>Due by 11:59pm on Saturday, 8/2</em></p>
+
+<p><strong>Readings:</strong> You might find the following references
+useful:</p>
+
+<ul>
+  <li><a href="http://composingprograms.appspot.com/pages/29-recursive-objects.html">Section 2.9</a></li>
+  <li>All other readings for the exam</li>
+</ul>
+
+
+<p><strong>Submission:</strong> See the online <a
+  href="../../submit_tutorial_solo.html">submission
+  instructions</a>.  We have provided a <a
+  href="hw10.py">hw10.py</a> starter file for the questions
+below.</p>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hw10.html#huffman-encoding">Huffman Encoding</a></li>
+  <ul>
+  <li><a href="hw10.html#introduction">Introduction</a></li>
+  <li><a href="hw10.html#generating-huffman-encoding-trees">Generating Huffman Encoding Trees</a></li>
+  <li><a href="hw10.html#q1">Question 1</a></li>
+  <li><a href="hw10.html#encoding">Encoding</a></li>
+  <li><a href="hw10.html#q2">Question 2</a></li>
+  <li><a href="hw10.html#decoding">Decoding</a></li>
+  <li><a href="hw10.html#q3">Question 3</a></li>
+  <li><a href="hw10.html#q4">Question 4: Challenge Problem (optional)</a></li>
+</ul>
+
+  <li><a href="hw10.html#optional-problems">Optional Problems</a></li>
+  <ul>
+  <li><a href="hw10.html#q5">Question 5</a></li>
+  <li><a href="hw10.html#q6">Question 6</a></li>
+  <li><a href="hw10.html#q7">Question 7</a></li>
+</ul>
+
+</ul>
+
+
+    
+<p>This homework is designed to test your ability to approach a new
+problem and understand how to solve it with the tools you've
+learned. It is as much about understanding what the problem is asking,
+as the tree recursion involved.</p>
+
+
+<h2 id="huffman-encoding">Huffman Encoding</h2>
+
+
+<h3 id="introduction">Introduction</h3>
+
+<p>We consider the problem of representing text as a sequence of ones and
+zeros (bits). For example, the ASCII standard code used to represent
+text in computers encodes each character as a sequence of seven bits,
+and 128 characters are encoded in total.  In general, if we want to
+distinguish n different symbols, we will need to use log base 2 of n
+bits per symbol.</p>
+
+<p>As a simpler example, consider encoding only A, B, C, D, E, F, G, and
+H.  We can choose a code with three bits per character, for example:</p>
+
+<pre><code style='color:red'>A 000</code>   <code style='color:#eeee00'>C 010</code>   <code style='color:cyan'>E 100</code>   <code style='color:purple'>G 110</code>
+<code style='color:orange'>B 001</code>   <code style='color:green'>D 011</code>   <code style='color:blue'>F 101</code>   <code style='color:black'>H 111</code></pre>
+
+<p>With this code, the message:</p>
+
+<pre><code style='color:orange'>B</code><code style='color:red'>A</code><code style='color:#eeee00'>C</code><code style='color:red'>A</code><code style='color:green'>D</code><code style='color:red'>A</code><code style='color:cyan'>E</code><code style='color:red'>A</code><code style='color:blue'>F</code><code style='color:red'>A</code><code style='color:orange'>B</code><code style='color:orange'>B</code><code style='color:red'>A</code><code style='color:red'>A</code><code style='color:red'>A</code><code style='color:purple'>G</code><code style='color:red'>A</code><code style='color:black'>H</code></pre>
+
+<p>is encoded as the string of 54 bits:</p>
+
+<pre><code style='color:orange'>001</code> <code style='color:red'>000</code> <code style='color:#eeee00'>010</code> <code style='color:red'>000</code> <code style='color:green'>011</code> <code style='color:red'>000</code> <code style='color:cyan'>100</code> <code style='color:red'>000</code> <code style='color:blue'>101</code> <code style='color:red'>000</code> <code style='color:orange'>001</code> <code style='color:orange'>001</code> <code style='color:red'>000</code> <code style='color:red'>000</code> <code style='color:red'>000</code> <code style='color:purple'>110</code> <code style='color:red'>000</code> <code style='color:black'>111</code></pre>
+
+<p>Codes such as ASCII and the A-through-H code above are known as
+fixed-length codes, because they represent each symbol in the message
+with the same number of bits. It is sometimes advantageous to use
+variable-length codes, in which different symbols may be represented by
+different numbers of bits. If our messages are such that some symbols
+appear very frequently and some very rarely, we can encode data more
+efficiently (i.e., using fewer bits per message) if we assign shorter
+codes to the frequent symbols. Consider the following alternative code
+for the letters A through H:</p>
+
+<pre><code style='color:red'>A 0</code>     <code style='color:#eeee00'>C 1010</code>   <code style='color:cyan'>E 1100</code>   <code style='color:purple'>G 1110</code>
+<code style='color:orange'>B 100</code>   <code style='color:green'>D 1011</code>   <code style='color:blue'>F 1101</code>   <code style='color:black'>H 1111</code></pre>
+
+<p>With this code, the same message as above is encoded as the string:</p>
+
+<pre><code style='color:orange'>100</code> <code style='color:red'>0</code> <code style='color:#eeee00'>1010</code> <code style='color:red'>0</code> <code style='color:green'>1011</code> <code style='color:red'>0</code> <code style='color:cyan'>1100</code> <code style='color:red'>0</code> <code style='color:blue'>1101</code> <code style='color:red'>0</code> <code style='color:orange'>100</code> <code style='color:orange'>100</code> <code style='color:red'>0</code> <code style='color:red'>0</code> <code style='color:red'>0</code> <code style='color:purple'>1110</code> <code style='color:red'>0</code> <code style='color:black'>1111</code></pre>
+
+<p>This string contains 42 bits, so it saves more than 20% in space in
+comparison with the fixed-length code shown above.</p>
+
+<p>One of the difficulties of using a variable-length code is knowing when
+you have reached the end of a symbol in reading a sequence of zeros and
+ones. One solution is to design the code in such a way that no complete
+code for any symbol is the beginning (or prefix) of the code for
+another symbol. Such a code is called a prefix code. In the example
+above, A is encoded by 0 and B is encoded by 100, so no other symbol
+can have a code that begins with 0 or with 100.</p>
+
+<p>In general, we can attain significant savings if we use variable-length
+prefix codes that take advantage of the relative frequencies of the
+symbols in the messages to be encoded. One particular scheme for doing
+this is called the Huffman encoding method, after its discoverer, David
+Huffman. A Huffman code can be represented as a binary tree whose
+leaves are the symbols that are encoded.</p>
+
+<p>Each symbol at a leaf is assigned a weight (which is its relative
+frequency), and each non-leaf node contains a weight that is the sum of
+all the weights of the leaves lying below it. The weights are not used
+in the encoding or the decoding process. We will see below how they are
+used to help construct the tree.</p>
+
+<p>The figure below shows the Huffman encoding tree for the A-through-H
+prefix code given above.</p>
+
+<p><img src="huf.png" alt="Huffman encoding"></p>
+
+
+<h3 id="generating-huffman-encoding-trees">Generating Huffman Encoding Trees</h3>
+
+<p>Given an alphabet of symbols and their relative frequencies, how do we
+construct the tree that will encode messages with the fewest bits?
+Huffman gave an algorithm for doing this and showed that the resulting
+code is indeed the best variable-length code for messages where the
+relative frequency of the symbols matches the frequencies with which
+the code was constructed.</p>
+
+<p>The algorithm for generating a Huffman tree is very simple. The idea is
+to arrange the tree so that the symbols with the lowest frequency
+appear farthest away from the root. Begin with the set of leaf nodes,
+containing symbols and their frequencies, as determined by the initial
+data from which the code is to be constructed. Now find two leaves with
+the lowest weights and merge them to produce a node that has these two
+nodes as its left and right branches. The weight of the new node is the
+sum of the two weights. Remove the two leaves from the original set and
+replace them by this new node.</p>
+
+<p>Now continue this process. At each step, merge two nodes with the
+smallest weights, removing them from the set and replacing them with a
+node that has these two as its left and right branches. The process
+stops when there is only one node left, which is the root of the entire
+tree.</p>
+
+<p>Wikipedia has an excellent <a href="http://en.wikipedia.org/wiki/Huffman_coding#Compression">animation</a> of this process.</p>
+
+<p>Here is how the previous example Huffman tree is generated, where
+trees are described by the set of letter they contain, along with their
+weight:</p>
+
+<p>Initial leaves:</p>
+
+<pre><code>{(A 9) (B 3) (C 1) (D 1) (E 1) (F 1) (G 1) (H 1)}
+
+{(A 9) (B 3) ({C D} 2) (E 1) (F 1) (G 1) (H 1)}
+
+{(A 9) (B 3) ({C D} 2) ({E F} 2) (G 1) (H 1)}
+
+{(A 9) (B 3) ({C D} 2) ({E F} 2) ({G H} 2)}
+
+{(A 9) (B 3) ({C D} 2) ({E F G H} 4)}
+
+{(A 9) ({B C D} 5) ({E F G H} 4)}
+
+{(A 9) ({B C D E F G H} 9)}
+
+{({A B C D E F G H} 17)}</code></pre>
+
+<p>The algorithm does not always specify a unique tree, because there may
+not be unique smallest-weight nodes at each step. Also, the choice of
+the order in which the two nodes are merged (i.e., which will be the
+right branch and which will be the left branch) is arbitrary.</p>
+
+<p>Let us look at the starter code.  There are two classes, <code>HuffmanTree</code>
+and <code>HuffmanLeaf</code>, both of which inherit from the <code>Tree</code> class.</p>
+
+<p>The <code>HuffmanLeaf</code> class represents all of the leaves, and so it has a
+single letter and the frequency of that letter.  The <code>HuffmanLeaf</code>
+class has an instance attribute <code>letter</code> that is not present in the
+<code>HuffmanTree</code> class.  The <code>children</code> instance attribute will always be
+the empty list for a <code>HuffmanLeaf</code>.</p>
+
+<p>The <code>HuffmanTree</code> class represents all of the intermediate nodes.
+Once constructed, a <code>HuffmanTree</code> will always have exactly two
+children, each of which is either a <code>HuffmanTree</code> or a <code>HuffmanLeaf</code>.
+Since it is guaranteed to have exactly two children, it defines
+<code>left_child</code> and <code>right_child</code> property methods.</p>
+
+<p>For both classes, the <code>datum</code> will always be a list of letters that we
+know how to encode.  For a <code>HuffmanLeaf</code>, the list contains just one
+letter.  For a <code>HuffmanTree</code>, it contains the letters of all of the
+leaves found in the tree.  The <code>frequency</code> will be the frequency with
+which that node is used.  For the <code>HuffmanTree</code>, the <code>frequency</code> is
+just the sum of the frequencies of its children.</p>
+
+<h3 class="question" id="q1">Question 1</h3>
+Let's implement the process of creating a new <code>HuffmanTree</code>.  Here is
+the implementation of the function <strong>(not method!)</strong>
+<code>make_huffman_tree</code>, which creates a <code>HuffmanTree</code>:
+
+<pre><code>    children = []
+    for i in range(len(letters)):
+        children.append(HuffmanLeaf(letters[i], frequencies[i]))
+    return HuffmanTree(*children)</code></pre>
+
+<p>All it does is create a lot of <code>HuffmanLeaf</code> objects and pass them in
+to <code>HuffmanTree</code>.  It is then up to <code>HuffmanTree</code> to create the right
+Huffman tree from these objects.  Looking at the <code>__init__</code> method of
+<code>HuffmanTree</code>:</p>
+
+<pre><code>    def __init__(self, *children):
+        letters = []
+        for child in children:
+            letters += child.datum
+        Tree.__init__(self, letters, *children)
+
+        # Actually creating the encoding
+        while len(self.children) &gt; 2:
+            self.merge_two_smallest()</code></pre>
+
+<p>The first four lines simply set the <code>datum</code> to be a list of letters
+and the <code>children</code> to be the children using the <code>__init__</code> method of
+the parent <code>Tree</code> class.  The actual algorithm of making the correct
+Huffman tree is in the next two lines, which just say to keep merging
+the two smallest children until we are left with just two children.
+This is exactly the algorithm we had before.</p>
+
+<p>Your job is to implement <code>merge_two_smallest</code>.  Once you implement it
+correctly, the doctests for <code>make_huffman_tree</code> should pass.
+<code>merge_two_smallest</code> should work as follows:</p>
+
+<ul>
+  <li>Find the two children with the two smallest frequencies.</li>
+  <li>Remove them from the list of children.</li>
+  <li>Create a new <code>HuffmanTree</code> object from those two children.</li>
+  <li>Add this new object as a child of <code>self</code>.</li>
+</ul>
+
+<p>You may find the <code>key</code> argument of the <code>min</code> function to be useful.
+The documentation can be found
+<a href="https://docs.python.org/3.3/library/functions.html#min">here</a>. We
+have given you an example of how to use it in order to find the child
+with the smallest frequency:</p>
+
+<pre><code>    def merge_two_smallest(self):
+        smallest = min(self.children, key=lambda x: x.frequency)
+        "*** YOUR CODE HERE ***"
+        self.children = [] # Fix Me</code></pre>
+
+<p><strong>Note:  Since <code>merge_two_smallest</code> is called inside the <code>__init__</code>
+  method, you are not guaranteed that the <code>HuffmanTree</code> satisfies all
+  of the requirements of a <code>HuffmanTree</code>.  In particular, it will
+  usually have more than 2 children, and so you cannot use
+  <code>left_child</code> and <code>right_child</code>.  You should be mutating the instance
+  attribute <code>children</code> instead.</strong></p>
+
+
+<h3 id="encoding">Encoding</h3>
+
+<p>Given a Huffman tree, when we need to encode a character, we simply
+need to figure out whether we need to go left or right at each node.
+If we go left, then there is a <code>0</code> in the encoding, and if we go
+right, there is a <code>1</code> in the encoding.</p>
+
+<p><img src="huf.png" alt="Huffman encoding"></p>
+
+<p>For example, in the same tree as before, to encode <code>B</code>, we would
+realize that we need to go right (<code>1</code>), then left (<code>0</code>), then left
+(<code>0</code>), and so the encoding is <code>100</code>.</p>
+
+<h3 class="question" id="q2">Question 2</h3>
+Here is the <code>encode</code> function:
+
+<pre><code>    def encode(self, string):
+        &quot;&quot;&quot; Returns a string representing the Huffman encoding of the
+        character.
+
+        &gt;&gt;&gt; t = make_example_huffman_tree()
+        &gt;&gt;&gt; t.encode(&#x27;BACADAEAFABBAAAGAH&#x27;)
+        &#x27;100010100101101100011010100100000111001111&#x27;
+        &quot;&quot;&quot;
+        result = &#x27;&#x27;
+        for character in string:
+            result += self.encode_character(character)
+        return result</code></pre>
+
+<p><code>encode</code> iterates through the string and encodes each character and
+accumulates the result in the <code>result</code>.</p>
+
+<p>Implement <code>encode_character</code>, which encodes a single character
+according to the process above.  Since this must be called after the
+<code>__init__</code> method is done, we are guaranteed that there are exactly 2
+children, and so you can use <code>left_child</code> and <code>right_child</code>.  <em>Hint:</em>
+You can figure out whether to go left or right by looking at the
+<code>datum</code>, which contains a list of letters available in the tree.</p>
+
+<pre><code>    # HuffmanTree class
+    def encode_character(self, character):
+        &quot;&quot;&quot; Returns a string representing the Huffman encoding of the
+        character.
+
+        &gt;&gt;&gt; t = make_example_huffman_tree()
+        &gt;&gt;&gt; t.encode_character(&#x27;E&#x27;)
+        &#x27;1100&#x27;
+        &gt;&gt;&gt; [t.encode_character(letter) for letter in t.datum]
+        [&#x27;0&#x27;, &#x27;100&#x27;, &#x27;1010&#x27;, &#x27;1011&#x27;, &#x27;1100&#x27;, &#x27;1101&#x27;, &#x27;1110&#x27;, &#x27;1111&#x27;]
+        &quot;&quot;&quot;
+        assert character in self.datum
+        "*** YOUR CODE HERE ***"
+
+    # HuffmanLeaf class
+    def encode_character(self, character):
+        assert character == self.letter
+        "*** YOUR CODE HERE ***"</code></pre>
+
+
+<h3 id="decoding">Decoding</h3>
+
+<p>To decode a bit sequence using a Huffman tree, we begin at the root and
+use the successive zeros and ones of the bit sequence to determine
+whether to move down the left or the right branch. Each time we come to
+a leaf, we have generated a new symbol in the message, at which point
+we start over from the root of the tree to find the next symbol.</p>
+
+<p><img src="huf.png" alt="Huffman encoding"></p>
+
+<p>For example, suppose we are given the tree above and the sequence</p>
+
+<pre><code>10001010</code></pre>
+
+<p>Starting at the root, we move down the right branch, (since the first
+bit of the string is 1), then down the left branch (since the second
+bit is 0), then down the left branch (since the third bit is also 0).
+This brings us to the leaf for B, so the first symbol of the decoded
+message is B.</p>
+
+<p>Now we start again at the root, and we make a left move because the
+next bit in the string is 0. This brings us to the leaf for A. Then we
+start again at the root with the rest of the string 1010, so we move
+right, left, right, left and reach C. Thus, the entire message is BAC.</p>
+
+<h3 class="question" id="q3">Question 3</h3>
+Just like for <code>encode</code>, we will <code>decode</code> by decoding a single
+character at a time.  However, we don't know how long the encoding of
+a single character is, and so we would not know where to search for
+the next character to decode.  As a result, we need <code>decode_character</code>
+to return <em>two</em> things - the first decoded character, <em>and</em> the rest
+of the (undecoded) bits.  Then we can implement <code>decode</code>:
+
+<pre><code>    def decode(self, code):
+        &quot;&quot;&quot; Decodes code to recover the original message.
+        code is a Huffman encoding created from this HuffmanTree.
+
+        &gt;&gt;&gt; t = make_example_huffman_tree()
+        &gt;&gt;&gt; t.decode(&#x27;100010100101101100011010100100000111001111&#x27;)
+        &#x27;BACADAEAFABBAAAGAH&#x27;
+        &quot;&quot;&quot;
+        result = &#x27;&#x27;
+        while code:
+            character, code = self.decode_character(code)
+            result += character
+        return result</code></pre>
+
+<p>Implement <code>decode_character</code>.  It must return <strong>two</strong> things - the
+first decoded character, as well as the rest of the (undecoded) bits.
+Don't forget that any recursive call you make to <code>decode_character</code>
+must also return these two things.</p>
+
+<pre><code>    # HuffmanTree class
+    def decode_character(self, code):
+        &quot;&quot;&quot; Decodes a single character from code.
+        Returns the character, and the rest of the code (that has not
+        been decoded yet).
+        code is a Huffman encoding created from this HuffmanTree.
+
+        &gt;&gt;&gt; t = make_example_huffman_tree()
+        &gt;&gt;&gt; t.decode_character(&#x27;0&#x27;)
+        (&#x27;A&#x27;, &#x27;&#x27;)
+        &gt;&gt;&gt; t.decode_character(&#x27;10001010&#x27;)
+        (&#x27;B&#x27;, &#x27;01010&#x27;)
+        &quot;&quot;&quot;
+        "*** YOUR CODE HERE ***"
+
+    # HuffmanLeaf class
+    def decode_character(self, code):
+        &quot;&quot;&quot; Decodes a character.  Since a leaf has only one letter, it
+        must be that letter.
+
+        &gt;&gt;&gt; leaf = HuffmanLeaf(&#x27;A&#x27;, 50)
+        &gt;&gt;&gt; leaf.decode_character(&#x27;010&#x27;)
+        (&#x27;A&#x27;, &#x27;010&#x27;)
+        &quot;&quot;&quot;
+        "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q4">Question 4: Challenge Problem (optional)</h3>
+
+<p>Build a Huffman encoding tree for the works of Shakespeare.  How many
+bits does your Huffman encoding for the works of Shakespeare use?
+Normally, each character uses 8 bits.  How many bits do the works of
+Shakespeare use without Huffman encoding?  How much space do we save
+by using the Huffman encoding?</p>
+
+
+<h2 id="optional-problems">Optional Problems</h2>
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p>When testing software, it can be useful to count the number of times
+that a function is called.  Define a higher-order function
+<code>count_calls</code> that returns two functions:</p>
+
+<ol>
+  <li>A counted version of the original function that counts the number of
+  times it has been called, but otherwise behaves identically to the
+  input, and</li>
+  <li>A function of zero arguments that returns the number of times that
+  the counted function has been called.</li>
+</ol>
+
+<p>Your implementation should <em>not</em> include any lists or dictionaries:</p>
+
+<pre><code>def count_calls(f):
+    &quot;&quot;&quot;A function that returns a version of f that counts calls to f and can
+    report that count to how_many_calls.
+
+    &gt;&gt;&gt; from operator import add
+    &gt;&gt;&gt; counted_add, add_count = count_calls(add)
+    &gt;&gt;&gt; add_count()
+    0
+    &gt;&gt;&gt; counted_add(1, 2)
+    3
+    &gt;&gt;&gt; add_count()
+    1
+    &gt;&gt;&gt; add(3, 4)  # Doesn&#x27;t count
+    7
+    &gt;&gt;&gt; add_count()
+    1
+    &gt;&gt;&gt; counted_add(5, 6)
+    11
+    &gt;&gt;&gt; add_count()
+    2
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q6">Question 6</h3>
+Do the problems <a href="http://www.ocf.berkeley.edu/~shidi/cs61a/wiki/For_Loops_and_Iterators#Check_Your_Knowledge">here</a>.
+
+<h3 class="question" id="q7">Question 7</h3>
+Warning:  Both of these problems are harder than exam problems.  <em>Do
+not</em> try to do them by writing code and switching things around until
+the doctests pass.  You would be better off spending time doing other
+problems.  If you attempt these problems, make sure to draw diagrams,
+and understand how all of the instance attributes and class attributes
+interact, and what you would need to do to make the doctests pass.
+
+<p><strong>(Hard)</strong> Fill out the <code>foo</code> class so that the doctests pass.  <em>You
+  are not allowed to use <code>if</code>.</em></p>
+
+<pre><code>class foo:
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; foo.y
+    []
+    &gt;&gt;&gt; foo.x
+    3
+    &gt;&gt;&gt; cat = foo(&#x27;Meow&#x27;)
+    &gt;&gt;&gt; cat.speak()
+    Meow
+    &gt;&gt;&gt; cat.x
+    4
+    &gt;&gt;&gt; foo = foo(foo) # OMG WHY
+    &gt;&gt;&gt; foo.x
+    5
+    &gt;&gt;&gt; bar = foo.bar(&#x27;hello!&#x27;)
+    &gt;&gt;&gt; bar.speak()
+    hello!
+    &gt;&gt;&gt; cat.x
+    4
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<p><strong>(Even Harder)</strong> Fill out the <code>baz</code> class so that the doctests pass.
+  <em>Note:</em> You will first need to copy over your solution from the
+  previous part into the <code>new_foo</code> class, replacing all instances of
+  <code>foo</code> with <code>new_foo</code> and <code>bar</code> with <code>new_bar</code>.  This is so that the
+  doctests for <code>foo</code> and <code>baz</code> do not interfere with each other.</p>
+
+<pre><code>class new_foo:
+
+
+class baz(new_foo):
+    &quot;&quot;&quot; Note:  First we redo the doctests from the previous question.
+    &gt;&gt;&gt; new_foo.y
+    []
+    &gt;&gt;&gt; new_foo.x
+    3
+    &gt;&gt;&gt; cat = new_foo(&#x27;Meow&#x27;)
+    &gt;&gt;&gt; cat.speak()
+    Meow
+    &gt;&gt;&gt; cat.x
+    4
+    &gt;&gt;&gt; new_foo = new_foo(new_foo) # OMG WHY
+    &gt;&gt;&gt; new_foo.x
+    5
+    &gt;&gt;&gt; new_bar = new_foo.new_bar(&#x27;hello!&#x27;)
+    &gt;&gt;&gt; new_bar.speak()
+    hello!
+    &gt;&gt;&gt; cat.x
+    4
+    &gt;&gt;&gt; baz.y
+    []
+    &gt;&gt;&gt; cat.y.append(2)
+    &gt;&gt;&gt; new_foo.new_bar.y
+    [2]
+    &gt;&gt;&gt; baz.y
+    [2]
+    &gt;&gt;&gt; new_foo.new_bar.x
+    6
+    &gt;&gt;&gt; baz = baz(baz, baz) # ARGHHHH
+    &gt;&gt;&gt; new_foo.new_bar.x
+    7
+    &gt;&gt;&gt; baz.add_to_parent_y(4)
+    &gt;&gt;&gt; baz.y
+    [2, 4]
+    &gt;&gt;&gt; baz.new_bar.y
+    [2, 4]
+    &gt;&gt;&gt; new_foo.new_bar.y
+    [2, 4]
+    &gt;&gt;&gt; baz.add_to_baz_y(6)
+    &gt;&gt;&gt; baz.y
+    [2, 4, 6]
+    &gt;&gt;&gt; baz.new_bar.y
+    [2, 4, 6]
+    &gt;&gt;&gt; new_foo.new_bar.y
+    [2, 4]
+    &gt;&gt;&gt; baz.add_to_parent_y(8)
+    &gt;&gt;&gt; baz.y
+    [2, 4, 6]
+    &gt;&gt;&gt; baz.new_bar.y
+    [2, 4, 6]
+    &gt;&gt;&gt; new_foo.new_bar.y
+    [2, 4, 8]
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+  </body>
+
+  
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/lab.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.css" />
+
+    <title>Lab 7: Mutability | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Lab 7: Mutability</h1>
+
+    
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="lab07.html#mutability">Mutability</a></li>
+  <ul>
+  <li><a href="lab07.html#q1">Question 1</a></li>
+  <li><a href="lab07.html#list-methods">List Methods</a></li>
+  <li><a href="lab07.html#q2">Question 2</a></li>
+  <li><a href="lab07.html#q3">Question 3</a></li>
+  <li><a href="lab07.html#q4">Question 4: (Optional, for extra practice)</a></li>
+</ul>
+
+  <li><a href="lab07.html#dictionaries">Dictionaries</a></li>
+  <ul>
+  <li><a href="lab07.html#q5">Question 5</a></li>
+  <li><a href="lab07.html#adding-in-nonlocal">Adding in Nonlocal</a></li>
+  <li><a href="lab07.html#q6">Question 6</a></li>
+  <li><a href="lab07.html#q7">Question 7: (Optional, for extra practice)</a></li>
+</ul>
+
+</ul>
+
+
+    
+<h2 id="submission">Deadline</h2>
+
+<p>By the end of this lab, you should have submitted the
+<code>lab07</code>
+assignment using the command <code>submit lab07</code>.</p>
+
+<p><strong>This lab is due by 11:59pm on 7/18/2014.</strong></p>
+
+<p>Here is a <a href="lab07.py">lab07.py</a> starter file for this lab.</p>
+
+<h2 id="mutability">Mutability</h2>
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>What does Python print? Think about these before typing it into an
+interpreter!</p>
+
+
+    <pre><code>&gt;&gt;&gt; lst = [1, 2, 3, 4, 5, 6]
+&gt;&gt;&gt; lst[4] = 1
+&gt;&gt;&gt; lst
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x31;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x33;&#x2c;&#x20;&#x34;&#x2c;&#x20;&#x31;&#x2c;&#x20;&#x36;&#x5d;</span>
+&gt;&gt;&gt; lst[2:4] = [9, 8]
+&gt;&gt;&gt; lst
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x31;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x39;&#x2c;&#x20;&#x38;&#x2c;&#x20;&#x31;&#x2c;&#x20;&#x36;&#x5d;</span>
+&gt;&gt;&gt; lst[3] = [&#x27;hi&#x27;, &#x27;bye&#x27;]
+&gt;&gt;&gt; lst
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x31;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x39;&#x2c;&#x20;&#x5b;&#x27;&#x68;&#x69;&#x27;&#x2c;&#x20;&#x27;&#x62;&#x79;&#x65;&#x27;&#x5d;&#x2c;&#x20;&#x31;&#x2c;&#x20;&#x36;&#x5d;</span>
+&gt;&gt;&gt; lst[3:] = [&#x27;andrew&#x27;, &#x27;rohin&#x27;]
+&gt;&gt;&gt; lst
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x31;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x39;&#x2c;&#x20;&#x27;&#x61;&#x6e;&#x64;&#x72;&#x65;&#x77;&#x27;&#x2c;&#x20;&#x27;&#x72;&#x6f;&#x68;&#x69;&#x6e;&#x27;&#x5d;</span>
+&gt;&gt;&gt; lst[1:3] = [2, 3, 4, 5, 6, 7, 8]
+&gt;&gt;&gt; lst
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x31;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x33;&#x2c;&#x20;&#x34;&#x2c;&#x20;&#x35;&#x2c;&#x20;&#x36;&#x2c;&#x20;&#x37;&#x2c;&#x20;&#x38;&#x2c;&#x20;&#x27;&#x61;&#x6e;&#x64;&#x72;&#x65;&#x77;&#x27;&#x2c;&#x20;&#x27;&#x72;&#x6f;&#x68;&#x69;&#x6e;&#x27;&#x5d;</span>
+&gt;&gt;&gt; lst == lst[:]
+<span class="blank5">______</span><span class="hidden solution 5">&#x54;&#x72;&#x75;&#x65;</span>
+&gt;&gt;&gt; lst is lst[:]
+<span class="blank5">______</span><span class="hidden solution 5">&#x46;&#x61;&#x6c;&#x73;&#x65;</span>
+&gt;&gt;&gt; a = lst[:]
+&gt;&gt;&gt; a[0] = &#x27;oogly&#x27;
+&gt;&gt;&gt; lst
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x31;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x33;&#x2c;&#x20;&#x34;&#x2c;&#x20;&#x35;&#x2c;&#x20;&#x36;&#x2c;&#x20;&#x37;&#x2c;&#x20;&#x38;&#x2c;&#x20;&#x27;&#x61;&#x6e;&#x64;&#x72;&#x65;&#x77;&#x27;&#x2c;&#x20;&#x27;&#x72;&#x6f;&#x68;&#x69;&#x6e;&#x27;&#x5d;</span>
+&gt;&gt;&gt; lst = [1, 2, 3, 4]
+&gt;&gt;&gt; b = [&#x27;foo&#x27;, &#x27;bar&#x27;]
+&gt;&gt;&gt; lst[0] = b
+&gt;&gt;&gt; lst
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x5b;&#x27;&#x66;&#x6f;&#x6f;&#x27;&#x2c;&#x20;&#x27;&#x62;&#x61;&#x72;&#x27;&#x5d;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x33;&#x2c;&#x20;&#x34;&#x5d;</span>
+&gt;&gt;&gt; b[1] = &#x27;ply&#x27;
+&gt;&gt;&gt; lst
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x5b;&#x27;&#x66;&#x6f;&#x6f;&#x27;&#x2c;&#x20;&#x27;&#x70;&#x6c;&#x79;&#x27;&#x5d;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x33;&#x2c;&#x20;&#x34;&#x5d;</span>
+&gt;&gt;&gt; b = [&#x27;farply&#x27;, &#x27;garply&#x27;]
+&gt;&gt;&gt; lst
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x5b;&#x27;&#x66;&#x6f;&#x6f;&#x27;&#x2c;&#x20;&#x27;&#x70;&#x6c;&#x79;&#x27;&#x5d;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x33;&#x2c;&#x20;&#x34;&#x5d;</span>
+&gt;&gt;&gt; lst[0] = lst
+&gt;&gt;&gt; lst
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x5b;&#x2e;&#x2e;&#x2e;&#x5d;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x33;&#x2c;&#x20;&#x34;&#x5d;</span>
+&gt;&gt;&gt; lst[0][0][0][0][0]
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x5b;&#x2e;&#x2e;&#x2e;&#x5d;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x33;&#x2c;&#x20;&#x34;&#x5d;</span></code></pre>
+
+    <button id='5' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+<h3 id="list-methods">List Methods</h3>
+
+<p>Python has a <code>list</code> class that contains many useful methods.  Using the
+builtin <code>dir()</code> function will show you all of them, like so:</p>
+
+<pre><code>dir(list)</code></pre>
+
+<p>Some of the most common methods include <code>append()</code>, <code>extend()</code>, and
+<code>pop()</code>.</p>
+
+<pre><code>&gt;&gt;&gt; l = [3, 5, 6]
+&gt;&gt;&gt; l.append(10) # adds an element to the end
+&gt;&gt;&gt; l
+[3, 5, 6, 10]
+&gt;&gt;&gt; l.extend([&#x2d;1, &#x2d;6]) # concatenates another list to the end
+&gt;&gt;&gt; l
+[3, 5, 6, 10, &#x2d;1, &#x2d;6]
+&gt;&gt;&gt; l.pop() # removes and returns the last element
+&#x2d;6
+&gt;&gt;&gt; l
+[3, 5, 6, 10, &#x2d;1]
+&gt;&gt;&gt; l.pop(2) # removes and returns the element at the index given
+6
+&gt;&gt;&gt; l
+[3, 5, 10, &#x2d;1]
+&gt;&gt;&gt; l.insert(2, 42)
+&gt;&gt;&gt;l
+[3, 5, 42, 10, &#x2d;1]</code></pre>
+
+<p>Try to solve the following list problems with mutation. This means that
+each function should mutate the original list. In other words:</p>
+
+<pre><code>&gt;&gt;&gt; original_list = [5, &#x2d;1, 29, 0]
+&gt;&gt;&gt; function(original_list) # doesn&#x27;t return anything
+&gt;&gt;&gt; original_list
+# mutated list here</code></pre>
+
+<p>Prioritize solving these problems with iteration, but for extra
+practice, also solve them using recursion. Remember: these functions
+should NOT return anything. This is to emphasize that these functions
+should utilize mutability.</p>
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>Write a function that reverses the given list.</p>
+
+<pre><code>def reverse(lst):
+    &quot;&quot;&quot;Reverses lst using mutation.
+    &gt;&gt;&gt; original_list = [5, &#x2d;1, 29, 0]
+    &gt;&gt;&gt; reverse(original_list)
+    &gt;&gt;&gt; original_list
+    [0, 29, &#x2d;1, 5]
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='0' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 0">
+
+<pre><code>&#x23;&#x20;&#x49;&#x74;&#x65;&#x72;&#x61;&#x74;&#x69;&#x76;&#x65;&#xa;&#x64;&#x65;&#x66;&#x20;&#x72;&#x65;&#x76;&#x65;&#x72;&#x73;&#x65;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#x52;&#x65;&#x76;&#x65;&#x72;&#x73;&#x65;&#x73;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x75;&#x73;&#x69;&#x6e;&#x67;&#x20;&#x6d;&#x75;&#x74;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#x2e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x5b;&#x35;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x32;&#x39;&#x2c;&#x20;&#x30;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x72;&#x65;&#x76;&#x65;&#x72;&#x73;&#x65;&#x28;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x5b;&#x30;&#x2c;&#x20;&#x32;&#x39;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x35;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x2a;&#x2a;&#x2a;&#x20;&#x59;&#x4f;&#x55;&#x52;&#x20;&#x43;&#x4f;&#x44;&#x45;&#x20;&#x48;&#x45;&#x52;&#x45;&#x20;&#x2a;&#x2a;&#x2a;&#x22;&#xa;&#x20;&#x20;&#x20;&#x20;&#x6d;&#x69;&#x64;&#x70;&#x6f;&#x69;&#x6e;&#x74;&#x20;&#x3d;&#x20;&#x6c;&#x65;&#x6e;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x2f;&#x2f;&#x20;&#x32;&#xa;&#x20;&#x20;&#x20;&#x20;&#x6c;&#x61;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x6c;&#x65;&#x6e;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x2d;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x66;&#x6f;&#x72;&#x20;&#x69;&#x20;&#x69;&#x6e;&#x20;&#x72;&#x61;&#x6e;&#x67;&#x65;&#x28;&#x6d;&#x69;&#x64;&#x70;&#x6f;&#x69;&#x6e;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x69;&#x5d;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x6c;&#x61;&#x73;&#x74;&#x20;&#x2d;&#x20;&#x69;&#x5d;&#x20;&#x3d;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x6c;&#x61;&#x73;&#x74;&#x20;&#x2d;&#x20;&#x69;&#x5d;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x69;&#x5d;&#xa;&#xa;&#x23;&#x20;&#x52;&#x65;&#x63;&#x75;&#x72;&#x73;&#x69;&#x76;&#x65;&#x31;&#xa;&#x64;&#x65;&#x66;&#x20;&#x72;&#x65;&#x76;&#x65;&#x72;&#x73;&#x65;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#x52;&#x65;&#x76;&#x65;&#x72;&#x73;&#x65;&#x73;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x75;&#x73;&#x69;&#x6e;&#x67;&#x20;&#x6d;&#x75;&#x74;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#x2e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x5b;&#x35;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x32;&#x39;&#x2c;&#x20;&#x30;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x72;&#x65;&#x76;&#x65;&#x72;&#x73;&#x65;&#x28;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x5b;&#x30;&#x2c;&#x20;&#x32;&#x39;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x35;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x32;&#x20;&#x3d;&#x20;&#x5b;&#x36;&#x2c;&#x20;&#x38;&#x2c;&#x20;&#x30;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x2d;&#x33;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x72;&#x65;&#x76;&#x65;&#x72;&#x73;&#x65;&#x28;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x32;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x32;&#xa;&#x20;&#x20;&#x20;&#x20;&#x5b;&#x2d;&#x33;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x30;&#x2c;&#x20;&#x38;&#x2c;&#x20;&#x36;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6c;&#x65;&#x6e;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x3e;&#x20;&#x31;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x74;&#x65;&#x6d;&#x70;&#x20;&#x3d;&#x20;&#x6c;&#x73;&#x74;&#x2e;&#x70;&#x6f;&#x70;&#x28;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x76;&#x65;&#x72;&#x73;&#x65;&#x28;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6c;&#x73;&#x74;&#x2e;&#x69;&#x6e;&#x73;&#x65;&#x72;&#x74;&#x28;&#x30;&#x2c;&#x20;&#x74;&#x65;&#x6d;&#x70;&#x29;&#xa;&#xa;&#x23;&#x20;&#x52;&#x65;&#x63;&#x75;&#x72;&#x73;&#x69;&#x76;&#x65;&#x32;&#xa;&#x64;&#x65;&#x66;&#x20;&#x72;&#x65;&#x76;&#x65;&#x72;&#x73;&#x65;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#x52;&#x65;&#x76;&#x65;&#x72;&#x73;&#x65;&#x73;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x75;&#x73;&#x69;&#x6e;&#x67;&#x20;&#x6d;&#x75;&#x74;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#x2e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x5b;&#x35;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x32;&#x39;&#x2c;&#x20;&#x30;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x72;&#x65;&#x76;&#x65;&#x72;&#x73;&#x65;&#x28;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x5b;&#x30;&#x2c;&#x20;&#x32;&#x39;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x35;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#xa;&#x20;&#x20;&#x20;&#x20;&#x6d;&#x69;&#x64;&#x70;&#x6f;&#x69;&#x6e;&#x74;&#x20;&#x3d;&#x20;&#x6c;&#x65;&#x6e;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x2f;&#x2f;&#x20;&#x32;&#xa;&#x20;&#x20;&#x20;&#x20;&#x6c;&#x61;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x6c;&#x65;&#x6e;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x2d;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x69;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x69;&#x20;&#x3d;&#x3d;&#x20;&#x6d;&#x69;&#x64;&#x70;&#x6f;&#x69;&#x6e;&#x74;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x69;&#x5d;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x6c;&#x61;&#x73;&#x74;&#x20;&#x2d;&#x20;&#x69;&#x5d;&#x20;&#x3d;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x6c;&#x61;&#x73;&#x74;&#x20;&#x2d;&#x20;&#x69;&#x5d;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x69;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x69;&#x20;&#x2b;&#x20;&#x31;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x30;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Write a function that maps a function on the given list.</p>
+
+<pre><code>def map(fn, lst):
+    &quot;&quot;&quot;Maps fn onto lst using mutation.
+    &gt;&gt;&gt; original_list = [5, &#x2d;1, 2, 0]
+    &gt;&gt;&gt; map(lambda x: x * x, original_list)
+    &gt;&gt;&gt; original_list
+    [25, 1, 4, 0]
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='1' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 1">
+
+<pre><code>&#x23;&#x20;&#x49;&#x74;&#x65;&#x72;&#x61;&#x74;&#x69;&#x76;&#x65;&#xa;&#x64;&#x65;&#x66;&#x20;&#x6d;&#x61;&#x70;&#x28;&#x66;&#x6e;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#x4d;&#x61;&#x70;&#x73;&#x20;&#x66;&#x6e;&#x20;&#x6f;&#x6e;&#x74;&#x6f;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x75;&#x73;&#x69;&#x6e;&#x67;&#x20;&#x6d;&#x75;&#x74;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#x2e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x5b;&#x35;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x30;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6d;&#x61;&#x70;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x78;&#x20;&#x2a;&#x20;&#x78;&#x2c;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x5b;&#x32;&#x35;&#x2c;&#x20;&#x31;&#x2c;&#x20;&#x34;&#x2c;&#x20;&#x30;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x2a;&#x2a;&#x2a;&#x20;&#x59;&#x4f;&#x55;&#x52;&#x20;&#x43;&#x4f;&#x44;&#x45;&#x20;&#x48;&#x45;&#x52;&#x45;&#x20;&#x2a;&#x2a;&#x2a;&#x22;&#xa;&#x20;&#x20;&#x20;&#x20;&#x66;&#x6f;&#x72;&#x20;&#x69;&#x20;&#x69;&#x6e;&#x20;&#x72;&#x61;&#x6e;&#x67;&#x65;&#x28;&#x6c;&#x65;&#x6e;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x69;&#x5d;&#x20;&#x3d;&#x20;&#x66;&#x6e;&#x28;&#x6c;&#x73;&#x74;&#x5b;&#x69;&#x5d;&#x29;&#xa;&#xa;&#x23;&#x20;&#x52;&#x65;&#x63;&#x75;&#x72;&#x73;&#x69;&#x76;&#x65;&#xa;&#x64;&#x65;&#x66;&#x20;&#x6d;&#x61;&#x70;&#x28;&#x66;&#x6e;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#x4d;&#x61;&#x70;&#x73;&#x20;&#x66;&#x6e;&#x20;&#x6f;&#x6e;&#x74;&#x6f;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x75;&#x73;&#x69;&#x6e;&#x67;&#x20;&#x6d;&#x75;&#x74;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#x2e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x5b;&#x35;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x30;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6d;&#x61;&#x70;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x78;&#x20;&#x2a;&#x20;&#x78;&#x2c;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x5b;&#x32;&#x35;&#x2c;&#x20;&#x31;&#x2c;&#x20;&#x34;&#x2c;&#x20;&#x30;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6c;&#x73;&#x74;&#x3a;&#x20;&#x23;&#x20;&#x54;&#x72;&#x75;&#x65;&#x20;&#x77;&#x68;&#x65;&#x6e;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x21;&#x3d;&#x20;&#x5b;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x74;&#x65;&#x6d;&#x70;&#x20;&#x3d;&#x20;&#x6c;&#x73;&#x74;&#x2e;&#x70;&#x6f;&#x70;&#x28;&#x30;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6d;&#x61;&#x70;&#x28;&#x66;&#x6e;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6c;&#x73;&#x74;&#x2e;&#x69;&#x6e;&#x73;&#x65;&#x72;&#x74;&#x28;&#x30;&#x2c;&#x20;&#x66;&#x6e;&#x28;&#x74;&#x65;&#x6d;&#x70;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q4">Question 4: (Optional, for extra practice)</h3>
+
+<p>Write a function that filters a list, only keeping elements that
+satisfy the predicate.</p>
+
+<pre><code>def filter(pred, lst):
+    &quot;&quot;&quot;Filters lst with pred using mutation.
+    &gt;&gt;&gt; original_list = [5, &#x2d;1, 2, 0]
+    &gt;&gt;&gt; filter(lambda x: x % 2 == 0, original_list)
+    &gt;&gt;&gt; original_list
+    [2, 0]
+    &gt;&gt;&gt; original_list2 = [&#x27;cool&#x27;, &#x27;nice&#x27;, &#x27;rad&#x27;]
+    &gt;&gt;&gt; filter(lambda x: len(x) == 4, original_list2)
+    &gt;&gt;&gt; original_list2
+    [&#x27;cool&#x27;, &#x27;nice&#x27;]
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='2' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 2">
+
+<pre><code>&#x23;&#x20;&#x49;&#x74;&#x65;&#x72;&#x61;&#x74;&#x69;&#x76;&#x65;&#xa;&#x64;&#x65;&#x66;&#x20;&#x66;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x28;&#x70;&#x72;&#x65;&#x64;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#x46;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x73;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x77;&#x69;&#x74;&#x68;&#x20;&#x70;&#x72;&#x65;&#x64;&#x20;&#x75;&#x73;&#x69;&#x6e;&#x67;&#x20;&#x6d;&#x75;&#x74;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#x2e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x5b;&#x35;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x30;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x66;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x78;&#x20;&#x25;&#x20;&#x32;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x2c;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x5b;&#x32;&#x2c;&#x20;&#x30;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x32;&#x20;&#x3d;&#x20;&#x5b;&#x27;&#x63;&#x6f;&#x6f;&#x6c;&#x27;&#x2c;&#x20;&#x27;&#x6e;&#x69;&#x63;&#x65;&#x27;&#x2c;&#x20;&#x27;&#x72;&#x61;&#x64;&#x27;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x66;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x6c;&#x65;&#x6e;&#x28;&#x78;&#x29;&#x20;&#x3d;&#x3d;&#x20;&#x34;&#x2c;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x32;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x32;&#xa;&#x20;&#x20;&#x20;&#x20;&#x5b;&#x27;&#x63;&#x6f;&#x6f;&#x6c;&#x27;&#x2c;&#x20;&#x27;&#x6e;&#x69;&#x63;&#x65;&#x27;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x2a;&#x2a;&#x2a;&#x20;&#x59;&#x4f;&#x55;&#x52;&#x20;&#x43;&#x4f;&#x44;&#x45;&#x20;&#x48;&#x45;&#x52;&#x45;&#x20;&#x2a;&#x2a;&#x2a;&#x22;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x20;&#x3d;&#x20;&#x6c;&#x65;&#x6e;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x2d;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x77;&#x68;&#x69;&#x6c;&#x65;&#x20;&#x69;&#x20;&#x3e;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6e;&#x6f;&#x74;&#x20;&#x70;&#x72;&#x65;&#x64;&#x28;&#x6c;&#x73;&#x74;&#x5b;&#x69;&#x5d;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6c;&#x73;&#x74;&#x2e;&#x70;&#x6f;&#x70;&#x28;&#x69;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x20;&#x2d;&#x3d;&#x20;&#x31;&#xa;&#xa;&#x23;&#x20;&#x52;&#x65;&#x63;&#x75;&#x72;&#x73;&#x69;&#x76;&#x65;&#xa;&#x64;&#x65;&#x66;&#x20;&#x66;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x28;&#x70;&#x72;&#x65;&#x64;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#x46;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x73;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x77;&#x69;&#x74;&#x68;&#x20;&#x70;&#x72;&#x65;&#x64;&#x20;&#x75;&#x73;&#x69;&#x6e;&#x67;&#x20;&#x6d;&#x75;&#x74;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#x2e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x5b;&#x35;&#x2c;&#x20;&#x2d;&#x31;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x30;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x66;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x78;&#x20;&#x25;&#x20;&#x32;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x2c;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x3e;&#x3e;&#x3e;&#x20;&#x6f;&#x72;&#x69;&#x67;&#x69;&#x6e;&#x61;&#x6c;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x5b;&#x32;&#x2c;&#x20;&#x30;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x22;&#x22;&#xa;&#x20;&#x20;&#x20;&#x20;&#x22;&#x2a;&#x2a;&#x2a;&#x20;&#x59;&#x4f;&#x55;&#x52;&#x20;&#x43;&#x4f;&#x44;&#x45;&#x20;&#x48;&#x45;&#x52;&#x45;&#x20;&#x2a;&#x2a;&#x2a;&#x22;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6c;&#x73;&#x74;&#x3a;&#x20;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x74;&#x65;&#x6d;&#x70;&#x20;&#x3d;&#x20;&#x6c;&#x73;&#x74;&#x2e;&#x70;&#x6f;&#x70;&#x28;&#x30;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x66;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x28;&#x70;&#x72;&#x65;&#x64;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x70;&#x72;&#x65;&#x64;&#x28;&#x74;&#x65;&#x6d;&#x70;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6c;&#x73;&#x74;&#x2e;&#x69;&#x6e;&#x73;&#x65;&#x72;&#x74;&#x28;&#x30;&#x2c;&#x20;&#x74;&#x65;&#x6d;&#x70;&#x29;</code></pre>
+
+</div>
+    
+
+
+<h2 id="dictionaries">Dictionaries</h2>
+
+
+<p>First, let's talk about dictionaries. Dictionaries are a simple, 
+unordered set of key-value pairs. To create a dictionary, use the
+following syntax:</p>
+
+<pre><code>&gt;&gt;&gt; webster = {&#x27;Shawn&#x27;: &#x27;pineapple&#x27;, &#x27;Kim&#x27;: &#x27;blueberry&#x27;}</code></pre>
+
+<p>The curly braces denote the key-value pairs in your dictionary. Each
+key-value pair is separated by a coma, and for each pair the key
+appears to the left of the colon and the value appears to the right of
+the colon. You can retrieve values from your dictionary by 'indexing'
+using the key:</p>
+
+<pre><code>&gt;&gt;&gt; webster[&#x27;Shawn&#x27;]
+&#x27;pineapple&#x27;
+&gt;&gt;&gt; webster[&#x27;Kim&#x27;]
+&#x27;blueberry&#x27;</code></pre>
+
+<p>You can modify an entry for an existing key in the dictionary using
+the following syntax. Adding a new key follows identical syntax!</p>
+
+<pre><code>&gt;&gt;&gt; webster[&#x27;Shawn&#x27;] = &#x27;strawberry&#x27;
+&gt;&gt;&gt; webster[&#x27;Shawn&#x27;]
+&#x27;strawberry&#x27;
+&gt;&gt;&gt; webster[&#x27;Carlton&#x27;] = &#x27;donut&#x27; # new entry!
+&gt;&gt;&gt; webster[&#x27;Carlton&#x27;]
+&#x27;donut</code></pre>
+
+<p>You can also check for membership of keys!</p>
+
+<pre><code>&gt;&gt;&gt; &#x27;Shawn&#x27; in webster
+True</code></pre>
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p>Implement the function counter which takes in a string of words,
+and returns a dictionary where each key is a word in the message,
+and each value is the number of times that word is present in the original string.</p>
+
+<pre><code>def counter(message):
+    &quot;&quot;&quot; Returns a dictionary of each word in message mapped 
+    to the number of times it appears in the input string.
+    &gt;&gt;&gt; x = counter(&quot;to be or not to be&quot;)
+    &gt;&gt;&gt; x[&quot;to&quot;]
+    2
+    &gt;&gt;&gt; x[&quot;be&quot;]
+    2
+    &gt;&gt;&gt; x[&quot;not&quot;]
+    1
+    &gt;&gt;&gt; y = counter(&quot;run forrest run&quot;)
+    &gt;&gt;&gt; y[&quot;run&quot;]
+    2
+    &gt;&gt;&gt; y[&quot;forrest&quot;]
+    1
+    &quot;&quot;&quot;
+    word_list = message.split()
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='3' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 3">
+
+<pre><code>&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x73;&#x75;&#x6c;&#x74;&#x5f;&#x64;&#x69;&#x63;&#x74;&#x20;&#x3d;&#x20;&#x7b;&#x7d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x66;&#x6f;&#x72;&#x20;&#x77;&#x6f;&#x72;&#x64;&#x20;&#x69;&#x6e;&#x20;&#x77;&#x6f;&#x72;&#x64;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x77;&#x6f;&#x72;&#x64;&#x20;&#x69;&#x6e;&#x20;&#x72;&#x65;&#x73;&#x75;&#x6c;&#x74;&#x5f;&#x64;&#x69;&#x63;&#x74;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x73;&#x75;&#x6c;&#x74;&#x5f;&#x64;&#x69;&#x63;&#x74;&#x5b;&#x77;&#x6f;&#x72;&#x64;&#x5d;&#x20;&#x2b;&#x3d;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x73;&#x75;&#x6c;&#x74;&#x5f;&#x64;&#x69;&#x63;&#x74;&#x5b;&#x77;&#x6f;&#x72;&#x64;&#x5d;&#x20;&#x3d;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x72;&#x65;&#x73;&#x75;&#x6c;&#x74;&#x5f;&#x64;&#x69;&#x63;&#x74;&#x20;</code></pre>
+
+</div>
+    
+
+
+<h3 id="adding-in-nonlocal">Adding in Nonlocal</h3>
+
+<h3 class="question" id="q6">Question 6</h3>
+
+<p>Now we will be making our own glookup, which keeps track of one's current grade
+out of the assignments completed so far (you can use this to keep track of your points
+throughout the rest of the semester!)</p>
+
+<p>glookup takes in the following dictionary of assignment names mapped to their total
+point values:</p>
+
+<pre><code>cs61a = {
+        &quot;Homework&quot;: 2,
+        &quot;Lab&quot;: 1,
+        &quot;Exam&quot;: 50,
+        &quot;Final&quot;: 80,
+        &quot;PJ1&quot;: 20,
+        &quot;PJ2&quot;: 15,
+        &quot;PJ3&quot;: 25,
+        &quot;PJ4&quot;: 30,
+        &quot;Extra credit&quot;: 0
+         }</code></pre>
+
+<p>glookup then returns a function which takes in an assignment keyword and the 
+points earned on that particular assignment. It returns the current grade percentage
+out of what assignments have been entered so far.</p>
+
+<p>Make sure you read the doctests and understand them fully before you start writing code.</p>
+
+<pre><code>def make_glookup(class_assignments):
+    &quot;&quot;&quot; Returns a function which calculates and returns 
+    the current grade out of what assignments have 
+    been entered so far.
+
+    &gt;&gt;&gt; student1 = make_glookup(cs61a) #cs61a is the above dictionary
+    &gt;&gt;&gt; student1(&quot;Homework&quot;, 1.5)
+    0.75
+    &gt;&gt;&gt; student1(&quot;Lab&quot;, 1)
+    0.8333333333333334
+    &gt;&gt;&gt; student(&quot;PJ1&quot;, 18)
+    0.8913043478260869
+    &quot;&quot;&quot;</code></pre>
+
+
+    <button id='4' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 4">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x6d;&#x61;&#x6b;&#x65;&#x5f;&#x67;&#x6c;&#x6f;&#x6f;&#x6b;&#x75;&#x70;&#x28;&#x63;&#x6c;&#x61;&#x73;&#x73;&#x5f;&#x61;&#x73;&#x73;&#x69;&#x67;&#x6e;&#x6d;&#x65;&#x6e;&#x74;&#x73;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x5f;&#x70;&#x6f;&#x69;&#x6e;&#x74;&#x73;&#x20;&#x3d;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x5f;&#x74;&#x6f;&#x74;&#x61;&#x6c;&#x20;&#x3d;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x67;&#x6c;&#x6f;&#x6f;&#x6b;&#x75;&#x70;&#x28;&#x6b;&#x65;&#x79;&#x5f;&#x77;&#x6f;&#x72;&#x64;&#x2c;&#x20;&#x70;&#x6f;&#x69;&#x6e;&#x74;&#x73;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6e;&#x6f;&#x6e;&#x6c;&#x6f;&#x63;&#x61;&#x6c;&#x20;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x5f;&#x70;&#x6f;&#x69;&#x6e;&#x74;&#x73;&#x2c;&#x20;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x5f;&#x74;&#x6f;&#x74;&#x61;&#x6c;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x5f;&#x74;&#x6f;&#x74;&#x61;&#x6c;&#x20;&#x2b;&#x3d;&#x20;&#x63;&#x6c;&#x61;&#x73;&#x73;&#x5f;&#x61;&#x73;&#x73;&#x69;&#x67;&#x6e;&#x6d;&#x65;&#x6e;&#x74;&#x73;&#x5b;&#x6b;&#x65;&#x79;&#x5f;&#x77;&#x6f;&#x72;&#x64;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x5f;&#x70;&#x6f;&#x69;&#x6e;&#x74;&#x73;&#x20;&#x2b;&#x3d;&#x20;&#x70;&#x6f;&#x69;&#x6e;&#x74;&#x73;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x5f;&#x70;&#x6f;&#x69;&#x6e;&#x74;&#x73;&#x20;&#x2f;&#x20;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x5f;&#x74;&#x6f;&#x74;&#x61;&#x6c;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x67;&#x6c;&#x6f;&#x6f;&#x6b;&#x75;&#x70;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q7">Question 7: (Optional, for extra practice)</h3>
+
+<p>Now that we've learned about lists and the nonlocal keyword, lets 
+try seeing what they look like in environment diagrams!</p>
+
+<p>Try drawing environment diagrams for the following examples and
+predicting what Python will output:</p>
+
+
+    <pre><code>&gt;&gt;&gt; wolf = [1, 2, 3]
+&gt;&gt;&gt; def dog(lst):
+...     def animal(ele):
+...         ele = [ele] + lst
+...         return [ele] + [beast[0]]
+...     beast = [2, 3, animal]
+...     return beast
+&gt;&gt;&gt; x = dog(wolf)[2](4)
+&gt;&gt;&gt; x
+<span class="blank6">______</span><span class="hidden solution 6">&#x5b;&#x5b;&#x34;&#x2c;&#x20;&#x31;&#x2c;&#x20;&#x32;&#x2c;&#x20;&#x33;&#x5d;&#x2c;&#x20;&#x32;&#x5d;</span></code></pre>
+
+    <button id='6' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+    <pre><code>&gt;&gt;&gt; x = 18
+&gt;&gt;&gt; def it(i):
+...     i = x
+...     def shifty(getting):
+...         nonlocal i
+...         i = getting + x
+...         def shiftier(y):
+...             nonlocal getting
+...             getting = y*i
+...             return i
+...         return shiftier
+...     return shifty
+&gt;&gt;&gt; shift = it(&#x27;is&#x27;)(x)(4)
+&gt;&gt;&gt; shift
+<span class="blank7">______</span><span class="hidden solution 7">&#x33;&#x36;</span></code></pre>
+
+    <button id='7' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+    <pre><code>&gt;&gt;&gt; def piper(chapman):
+...     chapman.append(&#x27;state&#x27;)
+...     def alex(vause):
+...         nonlocal chapman
+...         chapman += [vause[1]]
+...         return chapman
+...     return alex
+&gt;&gt;&gt; orange = piper([&#x27;litchfield&#x27;, &#x27;new york&#x27;])([&#x27;federal&#x27;, &#x27;prison&#x27;])
+&gt;&gt;&gt; orange
+<span class="blank8">______</span><span class="hidden solution 8">&#x5b;&#x27;&#x6c;&#x69;&#x74;&#x63;&#x68;&#x66;&#x69;&#x65;&#x6c;&#x64;&#x27;&#x2c;&#x20;&#x27;&#x70;&#x72;&#x69;&#x73;&#x6f;&#x6e;&#x27;&#x2c;&#x20;&#x27;&#x73;&#x74;&#x61;&#x74;&#x65;&#x27;&#x2c;&#x20;&#x27;&#x70;&#x72;&#x69;&#x73;&#x6f;&#x6e;&#x27;&#x5d;</span></code></pre>
+
+    <button id='8' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+  </body>
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<!-- Interactive interpreter -->
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/mode/scheme/scheme.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/jquery.min.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/lib-xj.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.js"> </script>
+<script>
+  $(function() {
+    set_interpreter_path("../../interpreter/");
+    set_language("");
+    
+  });
+</script>
+</html>

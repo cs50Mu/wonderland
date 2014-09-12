@@ -1,0 +1,15 @@
+- 首先定义了一个类，是继承自dict类，增加了几个特殊方法。
+关于Python中的特殊方法：
+A class can implement certain operations that are invoked by special syntax by
+defining methods with special names.For instance, if a class defines a
+method__getitem__(), and x is an instance of this class, then x[i] is roughly
+equivalent to x.__getitem__(i)
+
+__getattr__() setattr__()  __delattr__()方法用于对类似于x.y的操作
+字典的pop方法：pop(key[,
+default])，如果key在字典中，那么从字典中删除它并返回它的值，否则返回default的值
+字典的update方法：update([other])update the dictionary with the key/value pairs from other,
+overwriting existing keys.
+
+- lambda匿名函数可以不带参数
+- with语句的使用：跟在with语句后面的类或需要有__enter__()和__exit__()方法

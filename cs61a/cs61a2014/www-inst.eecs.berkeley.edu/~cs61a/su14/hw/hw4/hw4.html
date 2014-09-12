@@ -1,0 +1,382 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/hw.css" />
+
+    <title>61A Homework 4 | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">61A Homework 4</h1>
+
+    <p><em>Due by 11:59pm on Wednesday, 7/9</em></p>
+
+<p><strong>Readings:</strong> You might find the following references
+useful:</p>
+
+<ul>
+  <li><a href="http://composingprograms.com/pages/21-introduction.html">Section 2.1</a></li>
+  <li><a href="http://composingprograms.com/pages/22-data-abstraction.html">Section 2.2</a></li>
+  <li><a href="http://composingprograms.com/pages/23-sequences.html">Section 2.3</a></li>
+</ul>
+
+
+<p><strong>Submission:</strong> See the online <a
+  href="../../submit_tutorial_solo.html">submission
+  instructions</a>.  We have provided the following starter file:
+  <a href="hw4.py">hw4.py</a></p>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hw4.html#required-files">Required Files</a></li>
+  <li><a href="hw4.html#introduction">Introduction</a></li>
+  <ul>
+  <li><a href="hw4.html#q1">Question 1</a></li>
+  <li><a href="hw4.html#q2">Question 2</a></li>
+  <li><a href="hw4.html#q3">Question 3</a></li>
+  <li><a href="hw4.html#q4">Question 4</a></li>
+  <li><a href="hw4.html#q5">Question 5</a></li>
+  <li><a href="hw4.html#q6">Question 6</a></li>
+  <li><a href="hw4.html#q7">Question 7</a></li>
+  <li><a href="hw4.html#q8">Question 8: Challenge Problem (optional)</a></li>
+</ul>
+
+</ul>
+
+
+    
+
+<h2 id="required-files">Required Files</h2>
+
+<p>In addition to the <a href="hw4.py">hw4.py</a> starter file, you will also need
+the <a href="validguesses.txt">validguesses.txt</a> file and the <a href="ucb.py">ucb.py</a>
+file, although you will only need to edit and submit <a href="hw4.py">hw4.py</a>.</p>
+
+
+<h2 id="introduction">Introduction</h2>
+
+<p>In this assignment, we will implement a word game!  In this game,
+there is a word master and a player.  The word master chooses a goal
+word between 4 and 7 letters long with no repetitions.  The player
+wants to guess the goal word that the word master is thinking of.</p>
+
+<p>Each time the player guesses a word, the word master will respond with
+the number of letters in common between the guess and the goal word.
+The player uses this information in order to deduce the goal word.
+Note that the player is allowed to guess words with repetitions - in
+this case, each repetition is counted just once.  For example, if the
+goal word is 'play' and the guess is 'ball', then the word master will
+respond with '2' (and not '3').  The order of the letters within the
+word is irrelevant for the purpose of counting letters in common.</p>
+
+<p>Here is an example game:</p>
+
+<pre><code>&gt;&gt;&gt; play_game()
+Playing with a 4 letter word.
+Enter a word to get its score, h for a hint, or q to quit.
+ball
+The word ball has 2 letters in common
+Enter a word to get its score, h for a hint, or q to quit.
+call
+The word call has 2 letters in common
+Enter a word to get its score, h for a hint, or q to quit.
+back
+The word back has 1 letters in common
+Enter a word to get its score, h for a hint, or q to quit.
+duck
+The word duck has 0 letters in common
+# At this point, we know c is not in the word, and because of
+# call, we know that a and l are in the word.
+Enter a word to get its score, h for a hint, or q to quit.
+clay
+The word clay has 3 letters in common
+# Now we know that y is in the word.
+Enter a word to get its score, h for a hint, or q to quit.
+play
+Congratulations! You win!</code></pre>
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>We will need to work with both strings and lists of characters in this
+assignment.  So, we will use data abstraction!  Implement the word
+abstract data type.  It's main purpose is to unify the two possible
+representations, so that we can work with both strings and lists of
+characters, whichever happens to be more convenient.  As a result, it
+has two constructors and two selectors.</p>
+
+<p>Make sure you do not commit any Data Abstraction Violations (DAVs) in
+the subsequent questions!</p>
+
+<pre><code>def make_word_from_string(s):
+    &quot;&quot;&quot;Creates an instance of the word ADT from the string s.
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+def make_word_from_list(lst):
+    &quot;&quot;&quot;Creates an instance of the word ADT from the list of characters lst.
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+def get_string(word):
+    &quot;&quot;&quot;Returns the string representation of word.
+
+    &gt;&gt;&gt; get_string(make_word_from_string(&#x27;hello&#x27;))
+    &#x27;hello&#x27;
+    &gt;&gt;&gt; get_string(make_word_from_list([&#x27;w&#x27;, &#x27;o&#x27;, &#x27;r&#x27;, &#x27;l&#x27;, &#x27;d&#x27;]))
+    &#x27;world&#x27;
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+def get_list(word):
+    &quot;&quot;&quot;Returns the list of characters representation of word.
+
+    &gt;&gt;&gt; get_list(make_word_from_string(&#x27;hello&#x27;))
+    [&#x27;h&#x27;, &#x27;e&#x27;, &#x27;l&#x27;, &#x27;l&#x27;, &#x27;o&#x27;]
+    &gt;&gt;&gt; get_list(make_word_from_list([&#x27;w&#x27;, &#x27;o&#x27;, &#x27;r&#x27;, &#x27;l&#x27;, &#x27;d&#x27;]))
+    [&#x27;w&#x27;, &#x27;o&#x27;, &#x27;r&#x27;, &#x27;l&#x27;, &#x27;d&#x27;]
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>A key operation in this game is finding the number of letters in
+common between the goal word and a guess word.  Implement
+<code>num_common_letters</code>, which performs this operation.  The goal word
+will not have repetitions, but the guess word may have
+repetitions. <strong>Remember that the only thing you can do with words is
+to call <code>get_string</code> and <code>get_list</code> on them.</strong>  You cannot loop over
+them, or check equality, or call <code>len</code> on them, etc.  (You can do
+these on the strings/lists that you get out of the words though.)</p>
+
+<pre><code>def num_common_letters(goal_word, guess):
+    &quot;&quot;&quot;Returns the number of letters in goal_word that are also in guess.
+    As per the rules of the game, goal_word cannot have any repeated
+    letters, but guess is allowed to have repeated letters.
+    goal_word and guess are assumed to be of the same length.
+    goal_word and guess are both instances of the word ADT.
+
+    &gt;&gt;&gt; mwfs, mwfl = make_word_from_string, make_word_from_list
+    &gt;&gt;&gt; num_common_letters(mwfs(&#x27;steal&#x27;), mwfs(&#x27;least&#x27;))
+    5
+    &gt;&gt;&gt; num_common_letters(mwfs(&#x27;steal&#x27;), mwfl([&#x27;s&#x27;, &#x27;t&#x27;, &#x27;e&#x27;, &#x27;e&#x27;, &#x27;l&#x27;]))
+    4
+    &gt;&gt;&gt; num_common_letters(mwfl([&#x27;s&#x27;, &#x27;t&#x27;, &#x27;e&#x27;, &#x27;a&#x27;, &#x27;l&#x27;]), mwfs(&#x27;thief&#x27;))
+    2
+    &gt;&gt;&gt; num_common_letters(mwfl([&#x27;c&#x27;, &#x27;a&#x27;, &#x27;r&#x27;]), mwfl([&#x27;p&#x27;, &#x27;e&#x27;, &#x27;t&#x27;]))
+    0
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Now, implement the function <code>make_word_master</code>.  This takes as input a
+goal word and returns a function that behaves like the word master -
+it accepts a guess word as input, and returns the number of common
+letters between the goal word and the guess word.  It should also
+check that the guess word is a valid word of the right length.  You
+may find the <code>is_valid_guess</code> function useful, which checks that the
+word is present in the dictionary.  When the guess matches the goal
+word, it should return <code>win_message</code>.</p>
+
+<pre><code>def make_word_master(goal_word):
+    &quot;&quot;&quot;Takes in the word to be guessed and returns a function which
+    takes in a guess and does what the word master does, that is:
+      If the guess is of incorrect length, it returns bad_num_letters.
+      If the guess is correct, it returns win_message
+      Otherwise, it returns the number of letters in common.
+
+    &gt;&gt;&gt; mwfs = make_word_from_string
+    &gt;&gt;&gt; foo = make_word_master(mwfs(&#x27;least&#x27;))
+    &gt;&gt;&gt; foo(mwfs(&#x27;water&#x27;))
+    3
+    &gt;&gt;&gt; foo(mwfs(&#x27;player&#x27;)) == bad_num_letters
+    True
+    &gt;&gt;&gt; foo(mwfs(&#x27;steel&#x27;))
+    4
+    &gt;&gt;&gt; foo(mwfs(&#x27;steal&#x27;))
+    5
+    &gt;&gt;&gt; foo(mwfs(&#x27;aaaaa&#x27;)) == not_a_word
+    True
+    &gt;&gt;&gt; foo(mwfs(&#x27;least&#x27;)) == win_message
+    True
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<p>Now that you have implemented <code>make_word_master</code>, you can play the
+game!  However, the hint system will not work yet (that's the next
+part). You can run the game by typing</p>
+
+<pre><code>python3 hw4.py</code></pre>
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Now, we will add a system that makes logical deductions about the goal
+word based on the scores that the word master has assigned to each of
+the guessed words.</p>
+
+<p>The main idea is that we will keep a list of all of the possible
+combinations of letters that could work based on the information we
+have.  At the beginning, we have no information, and so any subset of
+the right size would be a possible subset.</p>
+
+<p>To solve this, implement <code>subsets</code>, which takes in a Python list <code>lst</code>
+and a non-negative integer <code>n</code>, and returns a list of all of the
+subsets of <code>lst</code> that have size <code>n</code>.</p>
+
+<p>Then, if the goal word has <code>l</code> letters, the initial list of possible
+combinations of letters is just <code>subsets(letters, l)</code></p>
+
+<pre><code>def subsets(lst, n):
+    &quot;&quot;&quot;Returns all subsets of lst of size exactly n in any order.
+    lst is a Python list, and n is a non&#x2d;negative integer.
+
+    &gt;&gt;&gt; three_subsets = subsets(list(range(5)), 3)
+    &gt;&gt;&gt; three_subsets.sort()  # Uses syntax we don&#x27;t know yet to sort the list.
+    &gt;&gt;&gt; for subset in three_subsets:
+    ...     print(subset)
+    [0, 1, 2]
+    [0, 1, 3]
+    [0, 1, 4]
+    [0, 2, 3]
+    [0, 2, 4]
+    [0, 3, 4]
+    [1, 2, 3]
+    [1, 2, 4]
+    [1, 3, 4]
+    [2, 3, 4]
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p>Now that we can get the initial list of letter combinations, we need
+to figure out how to update the list when we get more information from
+the word master.
+The way we will do this is by throwing out any letter combinations
+that are not compatible with the answer given by the word master.</p>
+
+<p>First, implement the <code>compatible</code> function, which returns <code>True</code> if
+the letter combination is compatible with the score given by the word
+master for a particular word.  <em>Hint:</em> Do not overthink this problem.
+There is a function that you have already implemented that will help.</p>
+
+<pre><code>def compatible(guess, score, letter_list):
+    &quot;&quot;&quot;Returns True if it is possible for the word to get the score,
+    assuming that the true word only contains letters from
+    letter_list.
+    Precondition:  len(word) == len(letter_list)
+
+    &gt;&gt;&gt; mwfs = make_word_from_string
+    &gt;&gt;&gt; compatible(mwfs(&#x27;steal&#x27;), 5, [&#x27;l&#x27;, &#x27;e&#x27;, &#x27;a&#x27;, &#x27;s&#x27;, &#x27;t&#x27;])
+    True
+    &gt;&gt;&gt; compatible(mwfs(&#x27;blanket&#x27;), 6, [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;e&#x27;, &#x27;l&#x27;, &#x27;n&#x27;, &#x27;r&#x27;, &#x27;t&#x27;])
+    True
+    &gt;&gt;&gt; compatible(mwfs(&#x27;cool&#x27;), 4, [&#x27;c&#x27;, &#x27;o&#x27;, &#x27;l&#x27;, &#x27;d&#x27;])
+    False
+    &gt;&gt;&gt; compatible(mwfs(&#x27;found&#x27;), 1, [&#x27;d&#x27;, &#x27;e&#x27;, &#x27;f&#x27;, &#x27;g&#x27;, &#x27;h&#x27;])
+    False
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<p>Now, using your <code>compatible</code> function, implement <code>filter_subsets</code>,
+which returns a new list containing only those letter combinations
+that are compatible with the score given by the word master for a
+particular word.</p>
+
+<pre><code>def filter_subsets(word, score, possible_subsets):
+    &quot;&quot;&quot;Returns the subsets for which word would get the given score.
+
+    &gt;&gt;&gt; word = make_word_from_string(&#x27;steel&#x27;)
+    &gt;&gt;&gt; sub1 = [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;e&#x27;, &#x27;l&#x27;, &#x27;s&#x27;]
+    &gt;&gt;&gt; sub2 = [&#x27;b&#x27;, &#x27;e&#x27;, &#x27;l&#x27;, &#x27;t&#x27;, &#x27;z&#x27;]
+    &gt;&gt;&gt; sub3 = [&#x27;s&#x27;, &#x27;t&#x27;, &#x27;e&#x27;, &#x27;a&#x27;, &#x27;l&#x27;]
+    &gt;&gt;&gt; sub4 = [&#x27;b&#x27;, &#x27;l&#x27;, &#x27;e&#x27;, &#x27;s&#x27;, &#x27;t&#x27;]
+    &gt;&gt;&gt; sub5 = [&#x27;p&#x27;, &#x27;e&#x27;, &#x27;a&#x27;, &#x27;r&#x27;, &#x27;s&#x27;]
+    &gt;&gt;&gt; filter_subsets(word, 3, [sub1, sub2, sub3, sub4, sub5])
+    [[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;e&#x27;, &#x27;l&#x27;, &#x27;s&#x27;], [&#x27;b&#x27;, &#x27;e&#x27;, &#x27;l&#x27;, &#x27;t&#x27;, &#x27;z&#x27;]]
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q6">Question 6</h3>
+
+<p>Finally, we need to present the information in a human-readable
+format.  (It is not very helpful to print out a giant list of possible
+letter combinations.)  One way to do this is to list out the letters
+that <em>must</em> be in the goal word, and to list out the letters that
+<em>cannot</em> be in the goal word.</p>
+
+<p>Write <code>make_deductions</code>, which does exactly this.  We know that a
+letter must be in the goal word if it is in every possible letter
+combination.  We know that a letter cannot be in the goal word if it
+is in none of the possible letter combinations.</p>
+
+<pre><code>def make_deductions(possible_subsets, letters):
+    &quot;&quot;&quot;Infers which letters must be in the word to be guessed, and
+    which letters must not be in the word.
+    A letter must be in the word if it is in every possible subset.
+    A letter is not in the word if it is not in any possible subset.
+
+    &gt;&gt;&gt; letters = [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;, &#x27;d&#x27;, &#x27;e&#x27;, &#x27;f&#x27;]
+    &gt;&gt;&gt; subsets = [[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;], [&#x27;b&#x27;, &#x27;a&#x27;, &#x27;e&#x27;], [&#x27;e&#x27;, &#x27;a&#x27;, &#x27;c&#x27;]]
+    &gt;&gt;&gt; present, not_present = make_deductions(subsets, letters)
+    &gt;&gt;&gt; present
+    [&#x27;a&#x27;]
+    &gt;&gt;&gt; not_present
+    [&#x27;d&#x27;, &#x27;f&#x27;]
+    &quot;&quot;&quot;
+    present = []
+    not_present = []
+    "*** YOUR CODE HERE ***"
+    return present, not_present</code></pre>
+
+<p>Once you have completed <code>make_deductions</code>, the hint system will be
+fully functional.  Try it out - it is quite powerful!  In fact, the
+game becomes a little too easy with these hints.</p>
+
+<h3 class="question" id="q7">Question 7</h3>
+
+<p>Now that you are done with all the questions, it's time to check if
+you committed any data abstraction violations.  Go back to your code
+for the word ADT and change it so that a word is represented by a
+function.  (Or if you already used a function representation, try some
+other representation.)  Then make sure that all of your code for the
+other questions still work.</p>
+
+<p>Note:  You do not need to submit anything for this part.  This
+question is present to make sure you have not made any data
+abstraction violations in the previous questions.</p>
+
+<h3 class="question" id="q8">Question 8: Challenge Problem (optional)</h3>
+
+<p>Extend the game and make it more interesting and/or useful.  If you do
+something especially cool and show it to us, we may add it so that
+future semesters can also benefit from it.  Here are some ideas, some
+of which would require knowledge of Python beyond that which we have
+taught you (but don't let that stop you!)  They are sorted in order of
+increasing estimated difficulty:</p>
+
+<ul>
+  <li>Come up with a good name for this game.</li>
+  <li>The <code>play</code> function is rather large and ugly.  Figure out a good way
+  to abstract it away in order to make the code more readable.</li>
+  <li>Make a better hint system that doesn't give all possible deductions,
+  just one small hint.  Perhaps limit the number of hints.</li>
+  <li>Add a scoring system to the game.  Have it take into account both
+  the number of guesses and the time taken to find the goal word.</li>
+  <li>Make a GUI (graphical user interface) for the game, similar to the
+  GUI for hog (which was in <code>hog_gui.py</code>)</li>
+  <li>Create an AI for this game, that is, make a program that will guess
+  words until it finds the goal word.  Try to minimize the number of
+  guesses until it finds the goal word.</li>
+</ul>
+
+  </body>
+
+  
+</html>

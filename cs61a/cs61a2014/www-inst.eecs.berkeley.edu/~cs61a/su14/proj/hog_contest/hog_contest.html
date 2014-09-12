@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<title>Hog Strategy Contest</title>
+<style type="text/css">
+
+/*
+:Author: John DeNero
+:Contact: papajohn@gmail.com
+:Copyright: This stylesheet has been placed in the public domain.
+
+Stylesheet for use with docutils for 61A lecture notes.
+
+*/
+
+div.note {
+  color: #A22;
+  font-style: italic;
+}
+
+p.admonition-title {
+  visibility: hidden;
+}
+
+body {
+  font-family: Helvetica, sans-serif;
+  font-size: 12pt;
+  line-height: 1.6;
+  color: #222;
+  font-weight: 300;
+  max-width: 900px;
+}
+
+pre, kbd, samp, code, var, pre span {
+  font: medium/1 'Andale Mono', monospace;
+  line-height: 1.3;
+}
+
+h1, h2, h3, aside {
+  font-family: "Book Antiqua", Palatino, Georgia, serif;
+  font-size: x-large;
+  margin-top: 30px;
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+h1.title {
+  margin: 0;
+}
+
+h2.subtitle {
+  margin: 0;
+}
+
+abbr {
+  font-variant: small-caps;
+  text-transform: lowercase;
+  letter-spacing: 0.1em;
+}
+
+p {
+  margin: 1.25em 0;
+}
+
+p.first {
+  margin: 0 0;
+}
+
+html {
+  background: #fff;
+  color: #222;
+}
+
+body {
+  margin: 1em 40px;
+}
+
+tt {
+  color: #002;
+}
+
+/* links */
+
+a:link, .w a {
+  color: steelblue;
+}
+
+a:visited {
+  color: #b44582;
+}
+
+/* Code */
+
+pre.literal-block, pre.doctest-block {
+  border-left: 2px solid #EEE;
+  border-right: 2px solid #EEE;
+  background-color: #F3F3F6;
+  color: #000;
+  padding: 12px;
+  margin: 0px;
+}
+
+p.attribution {
+  text-align: right ;
+  margin-left: 20% }
+
+/* Ordered lists */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+</style>
+</head>
+<body>
+<div class="document" id="hog-strategy-contest">
+<h1 class="title">Hog Strategy Contest</h1>
+
+<p><strong>This contest is completely optional!</strong></p>
+<p><em>Due by 11:59pm on Tuesday, 7/15</em>.</p>
+<p><strong>Instructions.</strong> Submit a <tt class="docutils literal">hog.py</tt> file containing a function called
+<tt class="docutils literal">final_strategy</tt>, using the command:</p>
+<pre class="literal-block">
+submit proj1contest
+</pre>
+<p><strong>Overview.</strong> Each submitted strategy will play against all other submissions.
+We will exactly compute the expected win rate for each player, so that the
+outcome of this tournament will be determined by strategy alone and not the roll
+of the dice.  A submission scores a match point each time it has an expected win
+rate above 50%. The submissions with the most match points win.</p>
+<p><strong>Contest Rules:</strong></p>
+<ul>
+<li><p class="first">In addition to the special rules described in the <a class="reference external" href="../hog/hog.html">Hog Project</a>, there is one additional special rule:</p>
+<p><strong>Ham Hijinks</strong>. A player may choose to roll <tt class="docutils literal"><span class="pre">-1</span></tt> dice, which scores 1 point
+for the turn and exchanges the dice.  If the total number of times any player
+has exchanged the dice during the game is odd, then four-sided dice are rolled
+when six-sided dice would normally be rolled, and vice-versa. That is, players
+will roll four-sided dice unless <strong>Hog Wild</strong> is in effect, in which case
+they will roll six-sided dice.</p>
+<p><em>A sample game</em>: Player 0 rolls <tt class="docutils literal"><span class="pre">-1</span></tt>, exchanging the dice: the score is 1
+to 0. Next, Player 1 rolls 2 dice; these are four-sided dice due to the
+previous exchange, and earn (let's say) six points: the score is 1 to 6.
+Player 0 rolls 4 six-sided dice (because of <strong>Hog Wild</strong>), earning (let's say)
+13 points: the score is 14 to 6. Player 1 rolls <tt class="docutils literal"><span class="pre">-1</span></tt>, exchanging the dice
+again and invoking <strong>Swine Swap</strong>: the score is 7 to 14. Player 0 would next
+roll four-sided dice because of <strong>Hog Wild</strong>.</p>
+<p><em>Note</em>: Players do not know how many dice the opponent chose to roll and thus
+cannot be certain how many times the dice have been exchanged. The values
+bound to the global names <tt class="docutils literal">four_sided</tt> and <tt class="docutils literal">six_sided</tt> will not indicate
+what dice are being used.</p>
+</li>
+<li><p class="first">The contest may be entered individually or in pairs. Two people submit a
+single entry. Each person in the course can only be associated with at most
+one entry.</p>
+</li>
+<li><p class="first">All strategies must be deterministic, pure functions of the current player
+scores! Non-deterministic strategies or strategies based on the history of the
+game will be disqualified.</p>
+</li>
+<li><p class="first">Calling your <tt class="docutils literal">final_strategy</tt> function on every possible pair of scores
+should take less than 5 minutes. Less than 5 seconds is strongly preferred.</p>
+</li>
+<li><p class="first">Winning entries will receive 2 points of extra credit.</p>
+</li>
+<li><p class="first">Winners will also be recognized publicly in future iterations of 61A.</p>
+</li>
+</ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/hw.css" />
+
+    <title>61A Homework 14 | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">61A Homework 14</h1>
+
+    <p><em>Due by 11:59pm on Wednesday, 8/13</em></p>
+
+<p><strong>Readings:</strong> You might find the following references
+useful:</p>
+
+
+<p><strong>Submission:</strong> See the online <a
+  href="../../submit_tutorial_solo.html">submission
+  instructions</a>.  We have provided the following starter file:
+  <a href="hw14.logic">hw14.logic</a></p>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hw14.html#logic-interpreter">Logic Interpreter</a></li>
+  <li><a href="hw14.html#sudoku">Sudoku</a></li>
+  <ul>
+  <li><a href="hw14.html#q1">Question 1</a></li>
+  <li><a href="hw14.html#q2">Question 2</a></li>
+  <li><a href="hw14.html#q3">Question 3</a></li>
+  <li><a href="hw14.html#q4">Question 4</a></li>
+  <li><a href="hw14.html#q5">Question 5</a></li>
+</ul>
+
+</ul>
+
+
+    
+
+<h2 id="logic-interpreter">Logic Interpreter</h2>
+
+
+<p>You should be using the same Logic interpreter that you used in lab.
+Instructions can be found in <a href="../../lab/lab14/lab14.html#logic">Lab
+14</a>.
+In particular, the tests can be run by:</p>
+
+<pre><code>python3 logic.py &#x2d;t hw14.logic</code></pre>
+
+
+<h2 id="sudoku">Sudoku</h2>
+
+
+<p>Assume we have the two facts <code>insert</code> and <code>anagram</code> as follows:</p>
+
+<pre><code>(fact (insert ?a ?r (?a . ?r)))
+(fact (insert ?a (?b . ?r) (?b . ?s))
+      (insert ?a ?r ?s))
+
+(fact (anagram () ()))
+(fact (anagram (?a . ?r) ?b)
+      (insert ?a ?s ?b)
+      (anagram ?r ?s))</code></pre>
+
+<p>Note that <code>anagram</code> is just the <code>permutation</code> fact from lecture
+written in a slightly different way.  With our <code>anagram</code> fact, we can
+write a few more facts to help us solve a 4 by 4 Sudoku puzzle!  In
+our version of Sudoku, our objective is to fill a 4x4 grid such that
+each column, each row, and each 2 by 2 corner box of our simple grid
+contain all of the digits from 1 to 4.</p>
+
+<pre><code>============
+||A|A||B|B||
+||A|A||B|B||
+=====++=====
+||C|C||D|D||
+||C|C||D|D||
+============</code></pre>
+
+<p>So in the puzzle above, the box containing A's should contain all the
+numbers from 1 to 4.  The same applies to each of the boxes containing
+B's, C's and D's.  In addition, each of the rows and columns must also
+contain all the numbers from 1 to 4.</p>
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>Let's start by encoding the rule that each of the 2 by 2 boxes should
+contain all the numbers from 1 to 4.  Fill in the <code>boxes</code> rule which
+enforces this constraint.  Note that the <code>boxes</code> rule will <em>not</em> be
+recursive.</p>
+
+<pre><code>(fact (boxes ((?a ?b ?c ?d)
+              (?e ?f ?g ?h)
+              (?i ?j ?k ?l)
+              (?m ?n ?o ?p)))
+      (anagram (?a ?b ?e ?f) (1 2 3 4))
+      ; YOUR CODE HERE
+)
+
+(query (boxes ((?a  2  3 ?b)
+               ( 3  4  1  2)
+               ( 1 ?c  2 ?d)
+               ( 4  2  3  1))))
+; expect Success! ; a: 1	b: 4	c: 3	d: 4
+
+(query (boxes ((?a  2  3 ?b)
+               ( 3  4  3  2)
+               ( 1 ?c  2 ?d)
+               ( 4  2  3  1))))
+; expect Failed.</code></pre>
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>Next, let's define a fact that specifies the rules for each row in our
+grid.  The input to <code>rows</code> will be the entire 4x4 grid.  The <code>rows</code>
+fact should ensure that each row of the 4x4 grid is an <code>anagram</code> of
+<code>(1 2 3 4)</code>.  Fill in rest of the facts in the prompt below.  Note
+that the <code>rows</code> fact should be recursive, unlike the <code>boxes</code> fact
+above.</p>
+
+<pre><code>(fact (rows ()))
+(fact (rows (?x . ?xs))
+      ; YOUR CODE HERE
+)
+
+(query (rows (( 1  2  4 ?a)
+              (?b  3  2  1)
+              (?c  4  3  2)
+              ( 2  4  3 ?d))))
+; expect Success! ; a: 3	b: 4	c: 1	d: 1
+
+(query (rows (( 1  2  4 ?a)
+              (?b  3  2  1)
+              (?c  4  3  2)
+              ( 3  4  3 ?d))))
+; expect Failed.</code></pre>
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Next, let's define the fact specifying the rules for each column in our
+grid.  Again, remember the the entire grid will be the input to
+<code>cols</code>.  It should ensure that each column of the 4x4 grid is an
+<code>anagram</code> of <code>(1 2 3 4)</code>.</p>
+
+<pre><code>(fact (cols (() () () ())))
+; YOUR CODE HERE
+
+(query (cols (( 1 ?b  4 ?d)
+              ( 3  3  2  1)
+              (?a  1 ?c  2)
+              ( 2  4  3  4))))
+; expect Success! ; b: 2	d: 3	a: 4	c: 1
+
+(query (cols (( 1 ?b  4 ?d)
+              ( 3  3  2  1)
+              (?a  1 ?c  2)
+              ( 2  4  3  1))))
+; expect Failed.</code></pre>
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Now, let's put all of this together to solve our any 4x4 Sudoku grid.
+Since Logic is a declarative language, we only need to declare the
+constraints on the Sudoku grid (which we have encoded in <code>boxes</code>,
+<code>rows</code>, and <code>cols</code>), and the Logic interpreter will automatically
+search for the solution satisfying those constraints.  Fill in the
+fact below to complete the Sudoku solver.</p>
+
+<pre><code>(fact (solve ?grid)
+      ; YOUR CODE HERE
+)
+
+(query (solve (( 1 ?b  4 ?d)
+               (?e  3 ?g  1)
+               (?i  4 ?k  2)
+               ( 2 ?n  3 ?p))))
+; expect Success! ; b: 2	d: 3	e: 4	g: 2	i: 3	k: 1	n: 1	p: 4
+
+(query (solve (( 1 ?b  4 ?d)
+               (?e  3 ?g  1)
+               (?i  1 ?k  2)
+               ( 2 ?n  3 ?p))))
+; expect Failed.</code></pre>
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p><strong>Note:  This question is optional, and there is nothing to turn in.</strong></p>
+
+<p>Solve the following sudoku puzzle with the new solver that you built!
+Notice that it is very slow.</p>
+
+<pre><code>;; MAKE SURE THAT THIS QUERY IS COMMENTED OUT BEFORE SUBMITTING
+;; Otherwise you may time out the autograder.
+;; (query (solve (( 3 ?b ?c  1)
+;;                ( 1 ?f ?g ?h)
+;;                (?i ?j ?k ?l)
+;;                (?m ?n  2 ?p))))
+
+; YOUR CODE HERE</code></pre>
+
+<p>To improve upon the speed of our program, we notice that the main
+thing we do is to check whether a set of four numbers is an anagram of
+<code>(1 2 3 4)</code>.  So, we should optimize this call to be faster.  One
+possibility is to just describe all of the anagrams of <code>(1 2 3 4)</code> to
+Logic so that it doesn't have to figure it out itself.  Uncomment the
+lines that do this and run the query above again.  It should be about
+5 or 6 times as fast.</p>
+
+<pre><code>;; Solve the Sudoku puzzle below.
+;; To solve the puzzle, uncomment the query below and run the file.
+;; You may also want to comment out the other queries.
+
+;; To run it with a different anagram fact, uncomment the relevant
+;; facts below AND comment out all other anagram facts (including the
+;; one at the beginning of this file).
+;; Then quit any existing Logic interpreters, and reload the file.
+
+;; Using the knowledge that we always want a permutation of (1 2 3 4)
+;; (fact (member ?x (?x . ?r)))
+;; (fact (member ?x (?y . ?r))
+;;       (member ?x ?r))
+;; (fact (anagram (?a ?b ?c ?d) (1 2 3 4))
+;;       (member 1 (?a ?b ?c ?d))
+;;       (member 2 (?a ?b ?c ?d))
+;;       (member 3 (?a ?b ?c ?d))
+;;       (member 4 (?a ?b ?c ?d)))
+
+;; Brute force &#x2d; list all the possible anagrams
+;; (fact (anagram (1 2 3 4) (1 2 3 4)))
+;; (fact (anagram (1 2 4 3) (1 2 3 4)))
+;; (fact (anagram (1 3 2 4) (1 2 3 4)))
+;; (fact (anagram (1 3 4 2) (1 2 3 4)))
+;; (fact (anagram (1 4 2 3) (1 2 3 4)))
+;; (fact (anagram (1 4 3 2) (1 2 3 4)))
+;; (fact (anagram (2 1 3 4) (1 2 3 4)))
+;; (fact (anagram (2 1 4 3) (1 2 3 4)))
+;; (fact (anagram (2 3 1 4) (1 2 3 4)))
+;; (fact (anagram (2 3 4 1) (1 2 3 4)))
+;; (fact (anagram (2 4 1 3) (1 2 3 4)))
+;; (fact (anagram (2 4 3 1) (1 2 3 4)))
+;; (fact (anagram (3 2 1 4) (1 2 3 4)))
+;; (fact (anagram (3 2 4 1) (1 2 3 4)))
+;; (fact (anagram (3 1 2 4) (1 2 3 4)))
+;; (fact (anagram (3 1 4 2) (1 2 3 4)))
+;; (fact (anagram (3 4 2 1) (1 2 3 4)))
+;; (fact (anagram (3 4 1 2) (1 2 3 4)))
+;; (fact (anagram (4 2 3 1) (1 2 3 4)))
+;; (fact (anagram (4 2 1 3) (1 2 3 4)))
+;; (fact (anagram (4 3 2 1) (1 2 3 4)))
+;; (fact (anagram (4 3 1 2) (1 2 3 4)))
+;; (fact (anagram (4 1 2 3) (1 2 3 4)))
+;; (fact (anagram (4 1 3 2) (1 2 3 4)))</code></pre>
+
+  </body>
+
+  
+</html>

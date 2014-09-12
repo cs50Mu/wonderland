@@ -1,0 +1,242 @@
+Lecture 27 - Concurrency
+========================
+
+Annoucements
+------------
+- Project 4 Party
+    Friday, 5-8pm in the Woz (4th floor of Soda)
+- Guerilla Section on Scheme + Logic  
+    Friday 11:30am - 2pm (See Piazza for details)
+- CS42 - “Building Real Things”
+    Friday 3-5pm in 405 Soda
+- Optional Exam 3 next week (8/12) 
+    Tuesday 6-8pm in 2050 VLSB
+- http://www.phdcomics.com/comics/archive.php?comicid=1047
+
+
+On Exam 2
+---------
+I imagine for Exam 2, the vast majority of you fall into three camps:
+
+1. I worked really hard after first exam and am happy with my score on Exam 2 :)
+2. I slipped after doing really well from first exam and am kind of disappointed
+in how I did :(
+
+For 1 and 2: Regardless of the outcome, just remember, “This too, shall pass.”
+If you did super well, then great. Keep it up.
+This too shall pass.
+If you didn't do as well as you hoped, it's okay. You still have time.
+This too shall pass.
+
+Recall that if you spend all your time worrying, that's time you aren't using
+to study. Don’t give up. Don’t let your guard down. *Press on.*
+
+3. I've been doing poorly for the entire summer. I thought I could turn it
+around on this exam, but I got the score back and it was still bad. I feel like
+I'm trying but I also know that I could be trying harder. I feel bad because I
+procrastinated and there were so many missed opportunities where I could have
+worked harder. Everyone around me seems to get it and I can't really keep up. I
+feel miserable and this class just gives me further evidence of how I'm a
+failure.
+
+If you're feeling like this, or if you know someone who does, please send me an
+email.
+
+
+Agenda
+------
+Concurrency
+ - Motivation
+ - Complexity in Concurrency
+ - Locks
+
+
+Motivation
+----------
+Remember bank accounts?
+
+    def Account:
+        def __init__(self, name, initial):
+            self.account_holder = name
+            self.balance = initial
+        def withdraw(self, amount):
+            if amount <= self.balance:
+                self.balance = self.balance - amount
+                return self.balance
+            return 'Failed'
+        def deposit():
+            self.balance = self.balance + amount
+            return self.balance
+
+    >>> acc = Account('Andrew', 100)
+    >>> acc.deposit(10)
+    110
+
+The world doesn't really work like this though. There are many ATMs that you
+could do this from, instead of in a single Python interpreter. Somehow, all the
+ATMs know your balance and you can manipulate the balance accordingly.
+
+Moreover, more than one person may use a single account at a time. For example,
+I may share an account with Rohin and we might try to withdraw from the account
+at the same time.
+
+
+Concurrency
+-----------
+So let's consider the model where there are many ATMs (or many Python
+interpreters), all sharing one set of variables (in this case, this account's
+balance.) Let's say two people tried to deposit 10 at the same time. What could
+happen here? In order to find out, we have to consider all the steps needed to
+deposit, and all the different ways the steps performed by the different ATMs
+interact with each other:
+
+    def deposit():
+        #              STEP 0: LOAD (self.balance)
+        self.balance = self.balance + amount # STEP 1: COMPUTE (new balance)
+        #            ^ STEP 2: STORE (assign self.balance)
+        return self.balance # STEP 3: LOAD ONCE MORE
+
+Here's one possible answer:
+    # ASSUME THAT THE CURRENT BALANCE IS 110
+    >>> acc.deposit(10)    |    >>> acc.deposit(10)
+    120                    |    130
+
+Here are a few more:
+    # ASSUME THAT THE CURRENT BALANCE IS 110
+    >>> acc.deposit(10)    |    >>> acc.deposit(10)
+    130                    |    120
+
+    # ASSUME THAT THE CURRENT BALANCE IS 110
+    >>> acc.deposit(10)    |    >>> acc.deposit(10)
+    120                    |    120
+
+...Wait, WTF? How did we get (120, 120)?!
+There are a few different ways to get this result, here's two:
+
+    # ASSUME THAT THE CURRENT BALANCE IS 110
+    Steps for LHS       | Shared Balance | Steps for RHS
+    --------------------|----------------|--------------
+    >>> acc.deposit(10) |    110         | >>> acc.deposit(10)
+    #0 LOAD balance     |    110         | #0 LOAD balance
+    #1 COMPUTE          |    110         | #1 COMPUTE
+    #2 STORE balance    |    120         |
+    #3 LOAD balance     |    120         | #2 STORE balance
+    120                 |    120         | #3 LOAD balance
+                        |    120         | 120
+
+    # ASSUME THAT THE CURRENT BALANCE IS 110
+    Steps for LHS       | Shared Balance | Steps for RHS
+    --------------------|----------------|--------------
+    >>> acc.deposit(10) |    110         | >>> acc.deposit(10)
+    #0 LOAD balance     |    110         |
+    #1 COMPUTE          |    110         | #0 LOAD balance
+    #2 STORE balance    |    120         | 
+    #3 LOAD balance     |    120         | #1 COMPUTE
+    120                 |    120         | #2 STORE balance
+                        |    120         | #3 LOAD balance
+                        |    120         | 120
+
+   
+Are there any other possible outputs in this situation?
+
+So notice that when we try to run the same code at the same time, some of the
+possible outputs here are incorrect. AND THIS IS LIKE THE SIMPLEST EXAMPLE.  In
+lecture, I went over depositing 10 and withdrawing 100 at the same time and
+what havoc that causes.
+
+How do we figure out how to maintain the correct behavior of concurrent
+programs? Let's first start by defining correctness.
+
+
+Sequencial Consistency
+----------------------
+The results of a concurrent program can be described as Sequencially Consistent
+when it may be the result of a *single* program running all of the operations
+in sequence (one at a time, where ordering doesn't matter.)
+
+For example, both (120, 130) and (130, 120) are sequencially consistent, since
+they may have been the result of calling deposit once, and then again, on a
+single ATM.
+
+So the goal is to have programs that are ALWAYS sequentally consistent.
+
+
+Locks
+-----
+Locks are one way to ensure that variables don't get changed in an order that
+produces an incorrect result. Here's what they look like:
+
+    class Lock:
+        def __init__(self):
+            self.is_locked = False
+        def acquire(self):
+            """ If is_locked is False, then set to True
+            If it is already True, DO NOT RETURN UNTIL is_locked is False
+            You don't know how to write this. Abstraction!
+            """
+            ...
+        def release(self):
+            """ Sets is_locked to False
+            You don't know how to write this. Abstraction!
+            """
+            ...
+Again, you don't know exactly /how/ they work.
+Trust the abstraction on this one.
+
+And here's how we'd use it:
+
+    def Account:
+        def __init__(self, name, initial):
+            self.account_holder = name
+            self.balance = initial
+            self.lock = Lock() # EACH ACCOUNT HAS ITS OWN LOCK
+        def withdraw(self, amount):
+            self.lock.acquire() # ACQUIRE THE RIGHT TO CHANGE BALANCE
+            if amount <= self.balance:
+                result = self.balance - amount
+                self.balance = result
+                self.lock.release() # RELEASE THE LOCK ASAP
+                return result
+            return 'Failed'
+        def deposit():
+            self.lock.acquire() # ACQUIRE THE RIGHT TO CHANGE BALANCE
+            result = self.balance + ammount
+            self.balance = result
+            self.lock.release() # RELEASE THE LOCK ASAP
+            return self.balance
+
+First let's check out how this guarantees our program's correctness. For
+example in the deposit example above (deposit 10, deposit 10), the first ATM to
+start depositing acquires the lock, the second ATM tries to acquires the lock,
+but the call to acquire refuses to return, since someone else has acquired
+first. This frees up the first ATM to modify the balance without worry of any
+other methods modifying the balance at the same time. The first ATM will then
+release the lock afterward and the next ATM will do its thing.
+
+Notice that the result of the computation was stored in a *local* variable so
+that we can release the lock and still output the correct answer. What happens
+if we use self.balance instead? How could this break?
+
+
+Yet another motivation
+----------------------
+The above examples are boring, but also relatable. Modern computers are now
+more powerful than the previous generation not because the processing chips are
+more powerful, but that we have, for example, two, three, four processors
+instead of one. This means that programs that wish to take advantage of this
+speed must be concurrent in nature. Locks are one way of making sure everything
+is still sane in this situation.
+
+
+Takeaways
+-----------------
+Concurrency is complicated, but necessary, for speed, as well as real world
+applications.
+
+Sometimes, the answer to avoiding problems with concurrency is "don't use
+concurrency." E.g. locks essentially make sure that certain segments of code
+can only be executed by one process at a time. (This is called a critical section.)
+
+We'll see in discussion and in Tuesday lecture about MapReduce on ways to
+better use the power that comes with more threads, more processors, and more
+computers.

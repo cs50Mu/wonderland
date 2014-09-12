@@ -1,0 +1,447 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/hw.css" />
+
+    <title>61A Homework 6 | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">61A Homework 6</h1>
+
+    <p><em>Due by 11:59pm on Thursday, 7/17</em></p>
+
+<p><strong>Readings:</strong> You might find the following references
+useful:</p>
+
+<p>This is a review of all of the material you have seen so far, so there
+are no new readings.  If you haven't already, you should do the
+readings for hierarchical data structures:</p>
+
+<ul>
+  <li><a href="http://composingprograms.com/pages/23-sequences.html#trees">Section 2.3.4</a></li>
+</ul>
+
+
+<p><strong>Submission:</strong> See the online <a
+  href="../../submit_tutorial_solo.html">submission
+  instructions</a>.  We have provided a <a
+  href="hw6.py">hw6.py</a> starter file for the questions
+below.</p>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hw6.html#required-files">Required Files</a></li>
+  <li><a href="hw6.html#introduction">Introduction</a></li>
+  <li><a href="hw6.html#calculator-language">Calculator Language</a></li>
+  <ul>
+  <li><a href="hw6.html#q1">Question 1</a></li>
+</ul>
+
+  <li><a href="hw6.html#tokenizing">Tokenizing</a></li>
+  <li><a href="hw6.html#parsing">Parsing</a></li>
+  <ul>
+  <li><a href="hw6.html#q2">Question 2</a></li>
+  <li><a href="hw6.html#q3">Question 3</a></li>
+</ul>
+
+  <li><a href="hw6.html#evaluation">Evaluation</a></li>
+  <ul>
+  <li><a href="hw6.html#q4">Question 4</a></li>
+  <li><a href="hw6.html#q5">Question 5</a></li>
+</ul>
+
+</ul>
+
+
+    
+
+<h2 id="required-files">Required Files</h2>
+
+<p>In addition to the <a href="hw6.py">hw6.py</a> starter file, you will also need the
+<a href="ucb.py">ucb.py</a> file, although you will only need to edit and submit
+<a href="hw6.py">hw6.py</a>.</p>
+
+
+<h2 id="introduction">Introduction</h2>
+
+<p>We're going to build a calculator!  It will use the same syntax as
+Scheme, the language that we will learn in a few weeks, but for now it
+will just be able to do basic arithmetic.</p>
+
+<p>Once you are done, you can interact with the calculator language:</p>
+
+<pre><code>python3 hw6.py
+minicalc&gt; 1
+1
+minicalc&gt; (+ 1 3)
+4</code></pre>
+
+<p>To exit out of the Calculator language, type Ctrl-C or Ctrl-D.</p>
+
+<p><em>The goal of this homework is to review the material so far and
+introduce you to the idea of interpretation, that is, a program which
+can understand other programs.</em>  This is of course not a very useful
+program, because we could just use Python itself as a calculator.
+However, it serves as a nice toy example of an interpreter and
+introduces you to the ideas you will need in order to do project 4 (in
+which we will build a interpreter for Scheme).</p>
+
+<p>The input to Calculator is a program, in the form of a string.  The
+first step is to take this string and break it up into <strong>tokens</strong> -
+this is done by <code>tokenize</code>, which is written for you.</p>
+
+<p>Then we <strong>parse</strong> those tokens to create an <strong>AST</strong> (abstract syntax
+tree), which we represent using a deep linked list. This is the job of
+<code>read_exp</code> and <code>read_until_close</code>.  The purpose of this stage is to
+expose the structure of the parentheses.  For example, given the
+tokens <code>[&#x27;(&#x27;, &#x27;+&#x27;, &#x27;(&#x27;, &#x27;&#x2d;&#x27;, &#x27;2&#x27;, &#x27;)&#x27;, &#x27;3&#x27;, &#x27;)&#x27;]</code>, <code>read_exp</code> will
+make sure to put the <code>( &#x2d; 2 )</code> as a smaller linked list - this is how
+the structure of the parentheses is shown in the AST.</p>
+
+<p>Then, we <strong>evaluate</strong> the AST in order to get the answer, which is
+then printed.  This is done by <code>calc_eval</code>, which uses <code>calc_apply</code>.</p>
+
+
+<h2 id="calculator-language">Calculator Language</h2>
+
+<p>The syntax of the Calculator language is the same as for the Scheme
+programming language.  The key design principle for Scheme is
+simplicity and elegance.  While Python has lots of syntax for many
+different cases, Scheme has just one form of syntax - the function
+call notation.</p>
+
+<p>In Python, the function call notation is:</p>
+
+<pre><code>function(arg1, arg2, ...)</code></pre>
+
+<p>The only difference in Scheme is that the parenthesis comes earlier
+and there are no commas:</p>
+
+<pre><code>(function arg1 arg2 ...)</code></pre>
+
+<p>Most math expressions you've seen are in what's called <em>infix notation</em>,
+where the operators appear between the numbers they act on. These
+expressions look like <code>3 + 4</code> or <code>27 / 3</code>.</p>
+
+<p>However, Scheme and Calculator both use <em>prefix notation</em>, where the
+operators come before the expressions they act upon.  Examples are <code>(+
+3 4)</code> and <code>(/ 27 3)</code>.</p>
+
+<p>Of course, these expressions can be nested inside of each other.  The
+following expression uses infix notation and has a nested expression:</p>
+
+<pre><code>(12 / 3) * 5</code></pre>
+
+<p>In the programs you'll be working with in this homework, the same
+expression would look like:</p>
+
+<pre><code>(* (/ 12 3) 5)</code></pre>
+
+<h3 class="question" id="q1">Question 1</h3>
+Write the function <code>scheme_exp</code> which returns a string containing the
+prefix notation for the expression <code>48/(2*(9+3))</code> if n is 1, and the
+prefix notation for <code>(48/2)*(9+3)</code> otherwise.
+
+<pre><code> def scheme_exp(n):
+     &quot;&quot;&quot;If n == 1, returns a Scheme program that computes 48/(2*(9+3))
+     Otherwise, returns a Scheme program that computes (48/2)*(9+3)
+
+     NOTE: These doctests use eval_string, which will not work until
+     you have completed the entire homework.
+
+     &gt;&gt;&gt; first = scheme_exp(1)
+     &gt;&gt;&gt; assert &#x27;/&#x27; in first and &#x27;*&#x27; in first and &#x27;+&#x27; in first
+     &gt;&gt;&gt; assert &#x27;48&#x27; in first and &#x27;2&#x27; in first
+     &gt;&gt;&gt; assert &#x27;9&#x27; in first and &#x27;3&#x27; in first
+     &gt;&gt;&gt; eval_string(first)
+     2.0
+     &gt;&gt;&gt; second = scheme_exp(2)
+     &gt;&gt;&gt; assert &#x27;/&#x27; in second and &#x27;*&#x27; in second and &#x27;+&#x27; in second
+     &gt;&gt;&gt; assert &#x27;48&#x27; in second and &#x27;2&#x27; in second
+     &gt;&gt;&gt; assert &#x27;9&#x27; in second and &#x27;3&#x27; in second
+     &gt;&gt;&gt; eval_string(second)
+     288.0
+     &quot;&quot;&quot;
+     if n == 1:
+         "*** YOUR CODE HERE ***"
+     else:
+         "*** YOUR CODE HERE ***"</code></pre>
+
+
+<h2 id="tokenizing">Tokenizing</h2>
+
+<p>The first step is to take the program (which will be a simple string),
+and to <strong>tokenize</strong> it.  This just means to identify the various
+"things" in the program.  In Calculator, the "things" are parentheses
+(such as <code>&#x27;(&#x27;</code> and <code>&#x27;)&#x27;</code>), numbers (such as <code>&#x27;123&#x27;</code> and <code>&#x27;74.2&#x27;</code>), and
+operators (such as <code>&#x27;+&#x27;</code> and <code>&#x27;*&#x27;</code>).</p>
+
+<p>We will use a <code>tokenize</code> function, which will take a program
+(represented as a string) and return a list of tokens.  Since this is
+very similar to <code>extract_words</code> from the Trends project, we have
+filled it out for you:</p>
+
+<pre><code>def tokenize(s):
+    &quot;&quot;&quot;Splits the provided string into a list of tokens.
+
+    &gt;&gt;&gt; tokenize(&#x27;(* (+ 12 3) 5)&#x27;)
+    [&#x27;(&#x27;, &#x27;*&#x27;, &#x27;(&#x27;, &#x27;+&#x27;, &#x27;12&#x27;, &#x27;3&#x27;, &#x27;)&#x27;, &#x27;5&#x27;, &#x27;)&#x27;]
+    &quot;&quot;&quot;
+    s = s.replace(&#x27;(&#x27;, &#x27; ( &#x27;)
+    s = s.replace(&#x27;)&#x27;, &#x27; ) &#x27;)
+    return s.split()</code></pre>
+
+
+<h2 id="parsing">Parsing</h2>
+
+<p>The next step is to take this list of tokens and turn it into a
+structure that is easier to understand.  This structure is called an
+Abstract Syntax Tree (AST).  In particular, in Calculator, the
+parentheses show us the structure of the program.  We want to take in
+the list of tokens, and produce a <strong>deep</strong> linked list that shows the
+structure of the program.  Each subexpression in the Calculator
+expression should correspond to a smaller linked list in the deep
+linked list.</p>
+
+<h3 class="question" id="q2">Question 2</h3>
+First, we will write a helper method, that will convert strings to
+numbers when appropriate.  You will need to understand exceptions in
+order to do this part.  The
+<a href="https://docs.python.org/3/tutorial/errors.html">documentation</a> may be
+helpful.  In particular, section 8.3 covers how to handle exceptions,
+which you will need to do for this question.
+
+<pre><code>def numberize(atomic_exp):
+    &quot;&quot;&quot;Converts atomic_exp to a number if possible, otherwise leaves
+    it alone.  atomic_exp is guaranteed to be a single token, and will
+    not be a parenthesis.
+
+    &gt;&gt;&gt; numberize(&#x27;123&#x27;)
+    123
+    &gt;&gt;&gt; numberize(&#x27;3.14159&#x27;)
+    3.14159
+    &gt;&gt;&gt; numberize(&#x27;+&#x27;)
+    &#x27;+&#x27;
+    &quot;&quot;&quot;
+    # Consider doing int(atomic_exp) and float(atomic_exp).
+    # What does int(&#x27;123&#x27;) do?  What does int(&#x27;+&#x27;) do?
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Write <code>read_exp</code>, a function which parses the program for our
+calculator as described above.</p>
+
+<p><code>read_exp</code> takes in a list of tokens, and returns the first calculator
+expression encountered along with the unevaluated tokens.</p>
+
+<p>The first calculator expression could be a combination expression, an
+operator, or simply a number.  If the first expression is a
+combination expression (that is, the first token is <code>&#x27;(&#x27;</code>), then it
+returns a (possibly deep) linked list representing that expression.
+If the first token represents a number, that is a single Calculator
+expression and so it just returns that number.  Note that tokens such
+as <code>&#x27;2&#x27;</code> are converted into numbers in the returned AST.  If the first
+token is an operator, it just returns that operator.</p>
+
+<p><code>read_exp</code> also returns the rest of the tokens not included in the
+first calculator expression (see doctests for examples).  This will be
+helpful for the recursion.</p>
+
+<p><strong>To accomplish this task, <code>read_exp</code> mutually recurses with the
+helper function <code>read_until_close</code>.</strong>  This means that when
+implementing <code>read_exp</code>, you may want to use <code>read_until_close</code>, and
+when you implement <code>read_until_close</code>, you may want to use <code>read_exp</code>,
+and so you should not start writing code until you understand what
+<strong>both</strong> functions are supposed to do.  <code>read_until_close</code> also takes
+in a list of tokens, but only reads up to and includes the first
+mismatched closed parenthesis. <code>read_until_close</code> returns a linked
+list of all the expressions read up to that point, as well as the rest
+of the tokens not read (the tokens following the first unmatched
+parentheses).</p>
+
+<p>You've already been given some code in the beginning of
+<code>read_exp</code>. Read this code carefully to understand what constitutes an
+illegal input to <code>read_exp</code>.  Notice the keyword <code>raise</code> - this is how
+we create our own errors.  See the
+<a href="https://docs.python.org/3/tutorial/errors.html">documentation</a> for
+more details.</p>
+
+<p><strong>Make sure you read and understand all the doctests for both
+functions before you start writing code.</strong></p>
+
+<pre><code>def read_exp(tokens):
+    &quot;&quot;&quot;Given a list of tokens, returns the first calculator expression
+    (either a number, operator, or combination), and the rest of the
+    expression that has not been turned into an expression.
+
+    &gt;&gt;&gt; exp, unevaled = read_exp([&#x27;(&#x27;, &#x27;+&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;6&#x27;, &#x27;)&#x27;])
+    &gt;&gt;&gt; print_linked_list(exp)
+    &lt; &#x27;+&#x27; 2 3 6 &gt;
+    &gt;&gt;&gt; unevaled
+    []
+    &gt;&gt;&gt; exp, unevaled = read_exp([&#x27;2&#x27;, &#x27;3&#x27;])
+    &gt;&gt;&gt; exp
+    2
+    &gt;&gt;&gt; unevaled
+    [&#x27;3&#x27;]
+    &gt;&gt;&gt; exp, unevaled = read_exp([&#x27;(&#x27;, &#x27;/&#x27;, &#x27;6&#x27;, &#x27;2&#x27;, &#x27;)&#x27;, &#x27;(&#x27;, &#x27;&#x2d;&#x27;, &#x27;2&#x27;, &#x27;)&#x27;])
+    &gt;&gt;&gt; print_linked_list(exp)
+    &lt; &#x27;/&#x27; 6 2 &gt;
+    &gt;&gt;&gt; unevaled
+    [&#x27;(&#x27;, &#x27;&#x2d;&#x27;, &#x27;2&#x27;, &#x27;)&#x27;]
+    &gt;&gt;&gt; exp, unevaled = read_exp([&#x27;(&#x27;,&#x27;*&#x27;,&#x27;4&#x27;,&#x27;(&#x27;,&#x27;&#x2d;&#x27;,&#x27;12&#x27;,&#x27;8&#x27;,&#x27;)&#x27;,&#x27;)&#x27;,&#x27;3&#x27;,&#x27;2&#x27;])
+    &gt;&gt;&gt; print_linked_list(exp)
+    &lt; &#x27;*&#x27; 4 &lt; &#x27;&#x2d;&#x27; 12 8 &gt; &gt;
+    &gt;&gt;&gt; unevaled
+    [&#x27;3&#x27;, &#x27;2&#x27;]
+    &quot;&quot;&quot;
+    if tokens == []:
+        raise SyntaxError(&#x27;unexpected end of input&#x27;)
+    token, rest = tokens[0], tokens[1:]
+    if token == &#x27;)&#x27;:
+        raise SyntaxError(&#x27;unexpected )&#x27;)
+    elif token == &#x27;(&#x27;:
+        if rest == []:
+            raise SyntaxError(&#x27;mismatched parentheses&#x27;)
+        elif rest[0] == &#x27;)&#x27;:
+            raise SyntaxError(&#x27;empty combination&#x27;)
+        "*** YOUR CODE HERE ***"
+    else:
+        "*** YOUR CODE HERE ***"
+
+def read_until_close(tokens):
+    &quot;&quot;&quot;Reads up to and including the first mismatched close
+    parenthesis, then forms a combination out all of the values read
+    up to that point.
+
+    &gt;&gt;&gt; exp, unevaled = read_until_close([&#x27;+&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;)&#x27;, &#x27;4&#x27;, &#x27;)&#x27;])
+    &gt;&gt;&gt; print_linked_list(exp)
+    &lt; &#x27;+&#x27; 2 3 &gt;
+    &gt;&gt;&gt; unevaled
+    [&#x27;4&#x27;, &#x27;)&#x27;]
+    &gt;&gt;&gt; exp, unevaled = read_until_close([&#x27;+&#x27;, &#x27;(&#x27;, &#x27;&#x2d;&#x27;, &#x27;2&#x27;, &#x27;)&#x27;, &#x27;3&#x27;, &#x27;)&#x27;, &#x27;)&#x27;])
+    &gt;&gt;&gt; print_linked_list(exp)
+    &lt; &#x27;+&#x27; &lt; &#x27;&#x2d;&#x27; 2 &gt; 3 &gt;
+    &gt;&gt;&gt; unevaled
+    [&#x27;)&#x27;]
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+
+<h2 id="evaluation">Evaluation</h2>
+
+<p>Now that we have our AST, we can turn to the problem of <em>evaluating</em>
+the AST, that is, we figure out what the answer to the program is.</p>
+
+<p>First, we need to understand <code>calc_apply</code>.  <code>calc_apply</code> takes an
+operator and a linked list of numbers.  Note that the linked list is
+<strong>not</strong> a deep linked list.  <code>calc_apply</code> applies the operator to
+those numbers.  It checks what the operator is, and based on that, it
+calls a function that can do that specific operation.</p>
+
+<pre><code>def calc_apply(op, args):
+    &quot;&quot;&quot;Applies an operator to a linked list of arguments.
+
+    &gt;&gt;&gt; calc_apply(&#x27;+&#x27;, link(12, link(34, empty)))
+    46
+    &gt;&gt;&gt; calc_apply(&#x27;&#x2d;&#x27;, link(10, link(2, link(3, link(4, empty)))))
+    1
+    &gt;&gt;&gt; calc_apply(&#x27;&#x2d;&#x27;, link(3, empty))
+    &#x2d;3
+    &gt;&gt;&gt; calc_apply(&#x27;*&#x27;, empty)
+    1
+    &quot;&quot;&quot;
+    if op == &#x27;+&#x27;:
+        return do_addition(args)
+    elif op == &#x27;*&#x27;:
+        return do_multiplication(args)
+    elif op == &#x27;&#x2d;&#x27;:
+        return do_subtraction(args)
+    elif op == &#x27;/&#x27;:
+        return do_division(args)
+    else:
+        raise NameError(&#x27;unknown operator {}&#x27;.format(op))</code></pre>
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Now, we need to implement the functions that do specific
+operations. Addition, multiplication, and subtraction have been
+implemented for you.  They use the <code>reduce_linked_list</code> function which
+is defined near the end of the starter file.  Your job is to define
+<code>do_division</code>, which does the division operation.</p>
+
+<p>When an operation <code>op</code> is given more than two arguments, it is <em>left
+associative</em>.  For example,</p>
+
+<pre><code>(op a b c d)</code></pre>
+
+<p>would do that same thing as</p>
+
+<pre><code>(op (op (op a b) c) d)</code></pre>
+
+<p>So, <code>(/ 60 2 3 5)</code> is equivalent to <code>(/ (/ (/ 60 2) 3) 5)</code> which is
+equivalent to <code>(/ 60 (* 2 3 5))</code></p>
+
+<pre><code>def do_division(args):
+    &quot;&quot;&quot;Applies the division operation to args.
+    args must have a length of at least 1, as in do_subtraction.
+
+    &gt;&gt;&gt; do_division(link(4, empty))
+    0.25
+    &gt;&gt;&gt; do_division(link(7, link(2, empty)))
+    3.5
+    &gt;&gt;&gt; do_division(link(60, link(2, link(3, link(5, empty)))))
+    2.0
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q5">Question 5</h3>
+Now that we've written <code>calc_apply</code>, let's figure out how to use
+<code>calc_apply</code>. We'll call <code>calc_apply</code> inside of
+<code>calc_eval</code>. <code>calc_eval</code> takes in a calculator expression. A
+calculator expression can either be a number or a linked list that can
+contain multiple items where the first item is a operator and rest are
+more calculator expressions. Note that this linked list <strong>is</strong> a deep
+linked list.
+
+<p>Remember that we have two different types of calculator expressions -
+numbers and function calls.  For which type would we want to use
+<code>calc_apply</code>?  Don't forget that <code>calc_apply</code> takes in a linked list
+of <em>numbers</em>, but the subexpressions of <code>exp</code> can themselves be linked
+lists - how could you turn these subexpressions into numbers?  (Hint:
+Trust the recursion!  Domain and range will be helpful here.)  You may
+find the <code>map_linked_list</code> function helpful.  It is defined near the
+end of the starter file.</p>
+
+<p>The other type of expressions is just plain numbers.  What should we
+do for these expressions?</p>
+
+<pre><code>def calc_eval(exp):
+    &quot;&quot;&quot;Evaluates a calculator expression.
+
+    &gt;&gt;&gt; calc_eval(5)
+    5
+    &gt;&gt;&gt; calc_eval(link(&#x27;+&#x27;, link(12, link(3, empty))))
+    15
+    &gt;&gt;&gt; subexp1 = link(&#x27;*&#x27;, link(3, link(4, empty)))
+    &gt;&gt;&gt; subexp2 = link(&#x27;&#x2d;&#x27;, link(12, link(9, empty)))
+    &gt;&gt;&gt; exp = link(&#x27;+&#x27;, link(subexp1, link(subexp2, empty)))
+    &gt;&gt;&gt; print_linked_list(exp)
+    &lt; &#x27;+&#x27; &lt; &#x27;*&#x27; 3 4 &gt; &lt; &#x27;&#x2d;&#x27; 12 9 &gt; &gt;
+    &gt;&gt;&gt; calc_eval(exp)
+    15
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+  </body>
+
+  
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head><script src="http://www-inst.eecs.berkeley.edu/A2EB891D63C8/avg_ls_dom.js" type="text/javascript"></script>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, Berkeley, EECS" />
+    <meta name="author" content ="Tom Magrino, Jon Kotker, Eric Kim, Steven Tang, Joy Jeng, Stephen Martinis, Allen Nguyen, Albert Wu, Michael Ball" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="style.css" rel="stylesheet" type="text/css">
+
+    <title>CS61A Spring 2014: Submitting Assignments</title>
+     </head>
+
+ <body>
+
+<h1>CS61A Tutorial: Submitting Assignments</h1>
+
+<p>Here is a simple guide that will help you submit all your assignments
+for CS61A. Don't worry: it's easy!</p>
+
+<h3 class="section_title">The Basics</h3>
+
+<p>Before we begin to submit an assignment, we need to check for a few things:
+<ol>
+    <li>We are logged into our CS61A account (i.e. <code>cs61a-bh</code>).</li>
+    <li>We have the files we need to submit in our account.</li>
+    <li>We know what assignment we are supposed to submit.</li>
+</ol>
+</p>
+
+<p>To submit assignments for this class, we will use a simple command line program
+called&mdash;wait for it&mdash;<code>submit</code>. To start submitting an assignment,
+type <code>submit</code>, followed by the name of the assignment.
+When we are at the prompt, we should see something like this:
+<pre>
+cory [16] ~/hw1 # submit hw1
+</pre>
+This means that we are currently in our homework 1 directory, indicated by <code>~/hw1</code>, and that we are submitting the assignment <code>hw1</code>, the first homework assignment.
+
+<br/><br/>
+
+Tap <code>return</code> and you should then see that the sumbit program automatically searches for the files it wants in the current directory.
+<pre>
+Looking for files to turn in....
+Submitting hw1.py.
+</pre>
+
+<p> If there are other files (apart from the required files) in the current directory, the sumbit program will also ask to check those files. Once finished selecting the right files, you'll see: </p>
+
+<pre>
+Is this correct? [yes/no]
+</pre>
+
+<p> If any of the information above is incorrect, you have a chance to cancel your
+submission here (type <code>no</code> or <code>n</code>).  However, don't worry too much because you can submit as many times
+as you want before the deadline.  If it is correct, type <code>yes</code> or <code>y</code>.
+To finish up, the system should output: </p>
+
+<pre>
+Submission complete.
+</pre>
+
+<h3 class="section_title">Few Simple Rules</h3>
+<p>Here are some simple rules that you need to know to make sure all of your assignments get submitted properly.
+<h4>Names</h4>
+<p>
+<code>submit</code> only accepts certain names for assignments, but they are easy to remember:
+<ol>
+    <li><code>hw#</code>, for each homework assignment.</li>
+    <li><code>proj#</code>, for each project.</li>
+</ol>
+If you type in an incorrect name, <code>submit</code> will kindly remind you of all possible assignments.
+</p>
+<h4>Files</h4>
+<p>
+<code>submit</code> is only trained to look for certain files depending
+upon the assignment. In CS61A, we will provide you all of the files
+you will need to submit for each homework assignment and project.
+If you try to change the name of the file that <code>submit</code> is
+expecting (or the file isn't there), <code>submit</code> will let you
+know what files need to be present for the submission to be successful.
+
+<pre>
+Looking for files to turn in....
+Turn in ./interesting_file.something?  [yes/no] yes
+You must turn in a file hw1.py for this assignment.
+Here is the complete list of files you must turn in:
+  hw1.py
+Error: submission FAILED.
+</pre>
+If you have subdirectories (that is, a directory within a directory), then
+<code>submit</code> will ask you whether or not you would like it to check those.
+<pre>
+cory [32] ~/hw1 # submit hw1
+Looking for files to turn in....
+Look at files in directory ./Another_Dir? [yes/no] yes
+Look at files in directory ./Another_Dir/And_Another? [yes/no] yes
+Look at files in directory ./Another_Dir/And_Another/WHEN_WILL_IT_END? [yes/no] yes
+Look at files in directory ./Another_Dir/And_Another/WHEN_WILL_IT_END/NOW? [yes/no] no
+Skipping directory ./Another_Dir/And_Another/WHEN_WILL_IT_END/NOW.
+Turn in ./interesting_file.something?  [yes/no] yes
+Submitting hw1.py.
+The files you have submitted are:
+        ./hw1.py ./interesting_file.something
+Is this correct? [yes/no] yes
+Copying submission of assignment hw1....
+Submission complete.
+</pre>
+</p>
+<h3 class="section_title">Some Tips</h3>
+<p>These will help you make the most effective use of <code>submit</code>.
+<ol>
+<li>
+Remember that you tell <code>submit</code> the <em>name</em> of the
+<strong>assignment</strong> you are submitting, <em>not</em> the current directory.
+</li>
+<li>
+Whenever submit asks for [<code>yes</code>/<code>no</code>], typing in <code>y</code>
+is equivalent to typing in <code>yes</code> (and similarly, <code>n</code>
+for <code>no</code>).
+</li>
+<li>
+While you may submit from your home directory (<code>~/</code>), it is
+often best to create a separate folder for each assignment. This is
+to avoid having <code>submit</code> ask you if you would like to submit
+<em>every</em>, <em>single</em>, <em>file</em> in your current directory
+(including all hidden files used by Unix for its own purposes). Keeping your
+assignments organized by making separate directories for each assignment
+will make your life easier (i.e. <code>proj1/</code>,
+<code>hw1/</code>, etc.).
+</li>
+<li>
+If you want to cancel a submission while <code>submit</code> is running,
+issue the abort command with the key combination <code>Ctrl-C</code>.
+</li>
+<li>
+Finally, our submission system allows for repeated submits. We will
+always grade your <strong>last</strong> submission. Just make sure your last
+submission is done before the assignment deadline!
+</li>
+</ol>
+
+Remember, <code>submit</code> is a Unix program, so if you need any help
+don't forget to check out
+<a href="http://inst.eecs.berkeley.edu/~cs61a/su12/lab/lab01/unix_emacs_tutorial/unix_emacs.html">our Unix Tutorial</a>
+and
+<a href="http://inst.eecs.berkeley.edu/connecting.html#file_transfers">information
+on connecting to your CS61A account.</a> You can also get a brief description
+of <code>submit</code> using the command <code>submit -h</code>.
+</p>
+
+<p>If you have any other questions about <code>submit</code> or anything else
+CS61A related, don't forget to ask your friendly neighborhood staff or post on
+<a href="http://www.piazza.com/class#summer2014/cs61a/">Piazza</a>. &#9786;</p>
+</body>
+
+</html>

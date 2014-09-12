@@ -1,0 +1,389 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/lab.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.css" />
+
+    <title>Lab 14: Logic | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Lab 14: Logic</h1>
+
+    
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="lab14.html#logic">Logic</a></li>
+  <ul>
+  <li><a href="lab14.html#q1">Question 1</a></li>
+  <li><a href="lab14.html#complex-facts">Complex facts</a></li>
+  <li><a href="lab14.html#recursively-defined-rules">Recursively-Defined Rules</a></li>
+  <li><a href="lab14.html#q2">Question 2</a></li>
+  <li><a href="lab14.html#q3">Question 3</a></li>
+  <li><a href="lab14.html#q4">Question 4</a></li>
+  <li><a href="lab14.html#q5">Question 5</a></li>
+</ul>
+
+</ul>
+
+
+    
+<h2 id="submission">Deadline</h2>
+
+<p>By the end of this lab, you should have submitted the
+<code>lab14</code>
+assignment using the command <code>submit lab14</code>.</p>
+
+<p><strong>This lab is due by 11:59pm on 8/12/2014.</strong></p>
+
+<p>We have provided the following starter file:
+  <a href="lab14.logic">lab14.logic</a></p>
+
+<h2 id="logic">Logic</h2>
+
+
+<p>The language we will using is called Logic.  You can download the files
+necessary for Logic <a href="logic.zip">here</a>.</p>
+
+<p>To enter an interactive Logic session, you can use the command:</p>
+
+<pre><code>python3 logic.py</code></pre>
+
+<p>To load a file into an interactive session, include the <code>&#x2d;load</code> flag with the
+file name after it:</p>
+
+<pre><code>python3 logic.py &#x2d;load FILENAME</code></pre>
+
+<p>The skeleton files for labs and homeworks also contain tests, which you can run
+with <code>&#x2d;t</code> flag and the file name and the file name following it:</p>
+
+<pre><code>python3 logic.py &#x2d;t FILENAME</code></pre>
+
+<p>You can also use this online Logic interpreter for subsequent homeworks, found
+<a href="http://inst.eecs.berkeley.edu/~cs61a/su14/logic/logic.html">here</a>.</p>
+
+<p>In Declarative Programming, we aim to define facts about our universe.  With
+these in place, we can make queries in the form of assertions. The system will
+then check if the query is true, based on a database of facts. It will inform
+us of what replacements for the variables will make the query true.</p>
+
+<p>Let's review the basics. In Logic, the primitive data types are called symbols:
+these include numbers and strings. Unlike other languages we have seen in this
+course, numbers are not evaluated: they are still symbols, but they do not have
+their regular numerical meaning.  Variables in Logic are denoted with a <code>?</code>
+mark preceding the name. So for example, <code>?x</code> represents the variable <code>x</code>. A
+relation is a named tuple with a truth value.</p>
+
+<p>The next thing we need to do is begin to define facts about our universe. Facts
+are defined using a combination that starts with the fact keyword. The first
+relation that follows is the conclusion, and any remaining relations are
+hypotheses. All hypotheses must be satisfied for the conclusion to be valid.</p>
+
+<pre><code>(fact (food&#x2d;chain ?creature1 ?creature2)
+      (eats ?creature1 ?creature3)
+      (eats ?creature3 ?creature2))</code></pre>
+
+<p>Here we have defined the fact for a food chain: If <code>creature1</code> eats
+<code>creature3</code>, and <code>creature3</code> eats <code>creature2</code>, then <code>creature1</code> is higher on
+the food chain than <code>creature2</code>.</p>
+
+<p>Simple facts contain only a conclusion relation, which is always true.</p>
+
+<pre><code>(fact (eats shark big&#x2d;fish))
+(fact (eats big&#x2d;fish small&#x2d;fish))
+(fact (eats domo kittens))
+(fact (eats kittens small&#x2d;fish))
+(fact (eats zombie brains))</code></pre>
+
+<p>Here we have defined a few simple facts: that in our universe, <code>sharks</code> eat
+<code>big&#x2d;fish</code>, <code>big&#x2d;fish</code> eat <code>small&#x2d;fish</code>, <code>Domos</code> eat <code>kittens</code>, <code>kittens</code> eat
+<code>small&#x2d;fish</code>, and <code>zombies</code> eat <code>brains</code>. Poor kittens.</p>
+
+<p>Queries are combinations that start with the query keyword. The
+interpreter prints the truth value (either <code>Success!</code> or <code>Failed.</code>). If
+there are variables inside of the query, the interpreter will print all
+possible mappings that satisfy the query.</p>
+
+<pre><code>(query (eats zombie brains))
+; expect Success!
+
+(query (eats domo zombie))
+; expect Failed.
+
+(query (eats zombie ?what))
+; expect Success! ; ?what: brains</code></pre>
+
+<p>We're first asking Logic whether a zombie eats brains (the answer is
+<code>Success!</code>) and if a domo eats zombies (the answer is <code>Failed</code>). Then we ask
+whether a zombie can eat something (the answer is <code>Success!</code>), and Logic will
+figure out for us, based on predefined facts in our universe, what a zombie
+eats. If there are more possible values for what a zombie can eat, then Logic
+will print out all of the possible values.</p>
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>Write Logic queries that answers the following questions:</p>
+
+<ol>
+  <li>Do sharks eat big-fish?</li>
+  <li>What animal is higher on the food chain than small-fish?</li>
+  <li>What animals (if any, or multiple) eat small-fish?</li>
+  <li>What animals (if any, or multiple) eat sharks?</li>
+  <li>What animals (if any, or multiple) eat zombies?</li>
+</ol>
+
+
+    <button id='0' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 0">
+
+<pre><code>&#x28;&#x71;&#x75;&#x65;&#x72;&#x79;&#x20;&#x28;&#x65;&#x61;&#x74;&#x73;&#x20;&#x73;&#x68;&#x61;&#x72;&#x6b;&#x20;&#x62;&#x69;&#x67;&#x2d;&#x66;&#x69;&#x73;&#x68;&#x29;&#x29;&#xa;&#x28;&#x71;&#x75;&#x65;&#x72;&#x79;&#x20;&#x28;&#x66;&#x6f;&#x6f;&#x64;&#x2d;&#x63;&#x68;&#x61;&#x69;&#x6e;&#x20;&#x3f;&#x77;&#x68;&#x61;&#x74;&#x20;&#x73;&#x6d;&#x61;&#x6c;&#x6c;&#x2d;&#x66;&#x69;&#x73;&#x68;&#x29;&#x29;&#xa;&#x28;&#x71;&#x75;&#x65;&#x72;&#x79;&#x20;&#x28;&#x65;&#x61;&#x74;&#x73;&#x20;&#x3f;&#x77;&#x68;&#x61;&#x74;&#x20;&#x73;&#x6d;&#x61;&#x6c;&#x6c;&#x2d;&#x66;&#x69;&#x73;&#x68;&#x29;&#x29;&#xa;&#x28;&#x71;&#x75;&#x65;&#x72;&#x79;&#x20;&#x28;&#x65;&#x61;&#x74;&#x73;&#x20;&#x3f;&#x77;&#x68;&#x61;&#x74;&#x20;&#x73;&#x68;&#x61;&#x72;&#x6b;&#x73;&#x29;&#x29;&#xa;&#x28;&#x71;&#x75;&#x65;&#x72;&#x79;&#x20;&#x28;&#x65;&#x61;&#x74;&#x73;&#x20;&#x3f;&#x77;&#x68;&#x61;&#x74;&#x20;&#x7a;&#x6f;&#x6d;&#x62;&#x69;&#x65;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+
+<h3 id="complex-facts">Complex facts</h3>
+
+<p>Currently, the <code>food&#x2d;chain</code> fact is a little lacking. A query <code>(query
+(food&#x2d;chain A B))</code> will only output <code>Success!</code> if <code>A</code> and <code>B</code> are separated by
+only one animal. For instance, if we added the following facts:</p>
+
+<pre><code>(fact (eats shark big&#x2d;fish))
+(fact (eats big&#x2d;fish small&#x2d;fish))
+(fact (eats small&#x2d;fish shrimp))</code></pre>
+
+<p>We'd like the <code>food&#x2d;chain</code> to output that shark is higher on the food chain than
+shrimp. Currently, the <code>food&#x2d;chain</code> fact doesn't do this:</p>
+
+<pre><code>(query (food&#x2d;chain shark shrimp))
+; expect Failed.</code></pre>
+
+<p>We will define the <code>food&#x2d;chain&#x2d;v2</code> fact that correctly handles arbitrary length
+hierarchies. We'll use the following logic:</p>
+
+<ul>
+  <li>Given animals <code>A</code> and <code>B</code>, <code>A</code> is on top of the food chain of <code>B</code> if:</li>
+  <li><code>A</code> eats <code>B</code>, OR</li>
+  <li>There exists an animal <code>C</code> such that <code>A</code> eats <code>C</code>, and <code>C</code>
+   dominates <code>B</code>.</li>
+</ul>
+
+<p>Notice we have two different cases for the <code>food&#x2d;chain&#x2d;v2</code> fact. We can express
+different cases of a fact simply by entering in each case one at a time:</p>
+
+<pre><code>(fact (food&#x2d;chain&#x2d;v2 ?a ?b)
+      (eats ?a ?b))
+(fact (food&#x2d;chain&#x2d;v2 ?a ?b)
+      (eats ?a ?c)
+      (food&#x2d;chain&#x2d;v2 ?c ?b))
+
+(query (food&#x2d;chain&#x2d;v2 shark shrimp))
+; expect Success!
+(query (food&#x2d;chain&#x2d;v2 shark ?what))
+; expect Success! ; what: big&#x2d;fish ; what: small&#x2d;fish ; what: shrimp</code></pre>
+
+<p>Take a few moments and read through how the above facts work, and how it
+implements the approach we outlined. In particular, make a few queries to
+<code>food&#x2d;chain&#x2d;v2</code> &mdash; for instance, try retrieving all animals that dominate
+shrimp!</p>
+
+<p><em>Note</em>: In the Logic system, multiple 'definitions' of a fact can exist at the
+same time (as in <code>food&#x2d;chain&#x2d;v2</code>) - definitions don't overwrite each other.
+Instead, they are all checked when you execute a query against that particular
+fact.</p>
+
+
+<h3 id="recursively-defined-rules">Recursively-Defined Rules</h3>
+
+<p>Next, we will define append in the logic style.</p>
+
+<p>As we've done in the past, let's try to explain how <code>append</code> recursively. For
+instance, given two lists <code>[1, 2, 3], [5, 7</code>], the result of <code>append([1, 2, 3],
+[5, 7])</code> is:</p>
+
+<pre><code>[1] + append([2, 3], [5, 7]) =&gt; [1, 2, 3, 5, 7]</code></pre>
+
+<p>In Scheme, this would look like:</p>
+
+<pre><code>(define (append a b)
+        (if (null? a)
+            b
+            (cons (car a) (append (cdr a) b))))</code></pre>
+
+<p>Thus, we've broken up append into two different cases. Let's start translating
+this idea into Logic! The first base case is relatively straightforward:</p>
+
+<pre><code>(fact (append () ?b ?b))
+(query (append () (1 2 3) ?what))</code></pre>
+
+<p>So far so good! Now, we have to handle the general (recursive) case:</p>
+
+<pre><code>;;            |&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;A&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;|  B |&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;C&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;|
+(fact (append (?car . ?cdr) ?b (?car . ?partial))
+      (append ?cdr ?b ?partial))</code></pre>
+
+<p>This translates to: the list <code>A</code> appended to <code>B</code> is <code>C</code> if <code>C</code> is the result of
+sticking the CAR of <code>A</code> to the result of appending the CDR of <code>A</code> to <code>B</code>. Do
+you see how the Logic code corresponds to the recursive case of the Scheme
+function definition? As a summary, here is the complete definition for append:</p>
+
+<pre><code>(fact (append () ?b ?b))
+(fact (append (?a . ?r) ?y (?a . ?z))
+      (append ?r ?y ?z))</code></pre>
+
+<p>If it helps you, here's an alternate solution that might be a little easier to
+read:</p>
+
+<pre><code>(fact (car (?car . ?cdr) ?car))
+(fact (cdr (?car . ?cdr) ?cdr))
+(fact (append () ?b ?b))
+(fact (append ?a ?b (?car&#x2d;a . ?partial))
+      (car ?a ?car&#x2d;a)
+      (cdr ?a ?cdr&#x2d;a)
+      (append ?cdr&#x2d;a ?b ?partial))</code></pre>
+
+<p>Meditate on why this more-verbose solution is equivalent to the first
+definition for the append fact.</p>
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>Define a fact <code>(fact (interleave ?lst1 ?lst2 ?interleaved))</code> that outputs
+<code>Success</code> if <code>?interleaved</code> is the list resulting from interleaving the
+elements of <code>?lst1</code> and <code>?lst2</code>. The base case has been written for you.</p>
+
+<pre><code>; Base Case
+(fact (interleave () ?lst2 ()))
+; YOUR CODE HERE
+
+(query (interleave (1 2 3 4) (5 6 7 8) ?lst))
+; expect Success! ; lst: (1 5 2 6 3 7 4 8)
+
+(query (interleave (1) (2 3 4 5 6 7 8 9) ?lst))
+; expect Success! ; lst: (1 2)
+
+(query (interleave (1 3 5 7 9) ?evens (1 2 3 4 5 6 7 8 9)))
+; expect Success! ; evens: (2 4 6 8)</code></pre>
+
+
+    <button id='1' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 1">
+
+<pre><code>&#x28;&#x66;&#x61;&#x63;&#x74;&#x20;&#x28;&#x69;&#x6e;&#x74;&#x65;&#x72;&#x6c;&#x65;&#x61;&#x76;&#x65;&#x20;&#x28;&#x29;&#x20;&#x3f;&#x6c;&#x73;&#x74;&#x32;&#x20;&#x28;&#x29;&#x29;&#x29;&#xa;&#x28;&#x66;&#x61;&#x63;&#x74;&#x20;&#x28;&#x69;&#x6e;&#x74;&#x65;&#x72;&#x6c;&#x65;&#x61;&#x76;&#x65;&#x20;&#x28;&#x3f;&#x66;&#x69;&#x72;&#x73;&#x74;&#x31;&#x20;&#x2e;&#x20;&#x3f;&#x72;&#x65;&#x73;&#x74;&#x31;&#x29;&#x20;&#x3f;&#x6c;&#x73;&#x74;&#x32;&#x20;&#x28;&#x3f;&#x66;&#x69;&#x72;&#x73;&#x74;&#x31;&#x20;&#x2e;&#x20;&#x3f;&#x72;&#x65;&#x73;&#x74;&#x33;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x69;&#x6e;&#x74;&#x65;&#x72;&#x6c;&#x65;&#x61;&#x76;&#x65;&#x20;&#x3f;&#x6c;&#x73;&#x74;&#x32;&#x20;&#x3f;&#x72;&#x65;&#x73;&#x74;&#x31;&#x20;&#x3f;&#x72;&#x65;&#x73;&#x74;&#x33;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Define a fact <code>(fact (last&#x2d;element ?lst ?x))</code> that outputs <code>Success</code> if
+<code>?x</code> is the last element of the input list <code>?lst</code>.</p>
+
+<pre><code>(query (last&#x2d;element (a b c) c))
+; expect Success!
+
+(query (last&#x2d;element (3) ?x))
+; expect Success! ; x: 3
+
+(query (last&#x2d;element (1 2 3) ?x))
+; expect Success! ; x: 3
+
+(query (last&#x2d;element (2 ?x) 3))
+; expect Success! ; x: 3</code></pre>
+
+<p>Does your solution work correctly on queries such as <code>(query
+(last&#x2d;element ?x (3)))</code>? Why or why not?</p>
+
+
+    <button id='2' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 2">
+
+<pre><code>&#x28;&#x66;&#x61;&#x63;&#x74;&#x20;&#x28;&#x6c;&#x61;&#x73;&#x74;&#x2d;&#x65;&#x6c;&#x65;&#x6d;&#x65;&#x6e;&#x74;&#x20;&#x28;&#x3f;&#x78;&#x29;&#x20;&#x3f;&#x78;&#x29;&#x29;&#xa;&#x28;&#x66;&#x61;&#x63;&#x74;&#x20;&#x28;&#x6c;&#x61;&#x73;&#x74;&#x2d;&#x65;&#x6c;&#x65;&#x6d;&#x65;&#x6e;&#x74;&#x20;&#x28;&#x3f;&#x63;&#x61;&#x72;&#x20;&#x2e;&#x20;&#x3f;&#x63;&#x64;&#x72;&#x29;&#x20;&#x3f;&#x78;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x6c;&#x61;&#x73;&#x74;&#x2d;&#x65;&#x6c;&#x65;&#x6d;&#x65;&#x6e;&#x74;&#x20;&#x3f;&#x63;&#x64;&#x72;&#x20;&#x3f;&#x78;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Write a fact <code>(fact (firsts lst&#x2d;of&#x2d;lsts firsts))</code> that, will match a list of
+lists with a list with the first element of each list.</p>
+
+<p>When you finish, the following queries should succeed:</p>
+
+<pre><code>(query (firsts ((1 2 3 4) (2 3 4 5) (1 2 3 4) (1 2 3 2)) ?x))
+; expect Success! ; x: (1 2 1 1)
+
+(query (firsts ((2 3 4) (3 4 5) (2 3 4) (2 3 2)) ?y))
+; expect Success! ; y: (2 3 2 2)</code></pre>
+
+
+    <button id='3' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 3">
+
+<pre><code>&#x28;&#x66;&#x61;&#x63;&#x74;&#x20;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x73;&#x20;&#x28;&#x29;&#x20;&#x28;&#x29;&#x29;&#x29;&#xa;&#x28;&#x66;&#x61;&#x63;&#x74;&#x20;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x73;&#x20;&#x28;&#x28;&#x3f;&#x78;&#x20;&#x2e;&#x20;&#x3f;&#x5f;&#x29;&#x20;&#x2e;&#x20;&#x3f;&#x6c;&#x73;&#x29;&#x20;&#x28;&#x3f;&#x78;&#x20;&#x2e;&#x20;&#x3f;&#x78;&#x73;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x73;&#x20;&#x3f;&#x6c;&#x73;&#x20;&#x3f;&#x78;&#x73;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p>Now, instead of getting us the firsts, let's gather the rests! Write a fact
+<code>(fact (rests lst&#x2d;of&#x2d;lsts rests))</code> that will match a list of lists with a list
+of the rests of each list.</p>
+
+<p>When you finish, the following queries should succeed:</p>
+
+<pre><code>(query (rests ((1 2 3 4) (2 3 4 5) (1 2 3 4) (1 2 3 2)) ?x))
+; expect Success! ; x: ((2 3 4) (3 4 5) (2 3 4) (2 3 2))
+
+(query (rests ((2 3 4) (3 4 5) (2 3 4) (2 3 2)) ?y))
+; expect Success! ; y: ((3 4) (4 5) (3 4) (3 2))</code></pre>
+
+
+    <button id='4' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 4">
+
+<pre><code>&#x28;&#x66;&#x61;&#x63;&#x74;&#x20;&#x28;&#x72;&#x65;&#x73;&#x74;&#x73;&#x20;&#x28;&#x29;&#x20;&#x28;&#x29;&#x29;&#x29;&#xa;&#x28;&#x66;&#x61;&#x63;&#x74;&#x20;&#x28;&#x72;&#x65;&#x73;&#x74;&#x73;&#x20;&#x28;&#x28;&#x3f;&#x5f;&#x20;&#x2e;&#x20;&#x3f;&#x72;&#x29;&#x20;&#x2e;&#x20;&#x3f;&#x6c;&#x73;&#x29;&#x20;&#x28;&#x3f;&#x72;&#x20;&#x2e;&#x20;&#x3f;&#x78;&#x73;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x72;&#x65;&#x73;&#x74;&#x73;&#x20;&#x3f;&#x6c;&#x73;&#x20;&#x3f;&#x78;&#x73;&#x29;&#x29;</code></pre>
+
+</div>
+    
+  </body>
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<!-- Interactive interpreter -->
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/mode/scheme/scheme.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/jquery.min.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/lib-xj.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.js"> </script>
+<script>
+  $(function() {
+    set_interpreter_path("../../interpreter/");
+    set_language("logic");
+    
+  });
+</script>
+</html>

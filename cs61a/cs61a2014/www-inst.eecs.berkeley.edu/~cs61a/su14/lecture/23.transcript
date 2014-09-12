@@ -1,0 +1,109 @@
+>>> a = [1, 2, 3]
+>>> a is [1, 2, 3]
+False
+>>> a is a
+True
+>>> b = a[:]
+>>> b
+[1, 2, 3]
+>>> a is b
+False
+>>> a == b
+True
+>>> a[1] = [4, 5, 6]
+>>> a
+[1, [4, 5, 6], 3]
+>>> c = [1, [4, 5, 6, 3]
+... ]
+>>> c = [1, [4, 5, 6], 3]
+>>> a == c
+True
+>>> a[1] == c[1]
+True
+>>> a[1] is c[1]
+False
+>>> a[0] = a
+>>> a
+[[...], [4, 5, 6], 3]
+>>> c = [1, 2, 3]
+>>> c[0] = list(c)
+>>> 
+>>> c
+[[1, 2, 3], 2, 3]
+>>> c = [1, 2, 3]
+>>> c[0] = [i for i in c]
+>>> c
+[[1, 2, 3], 2, 3]
+>>> c = [1, 2, 3]
+>>> c[0] = [c]
+>>> c
+[[[...]], 2, 3]
+>>> c = [1, 2, 3]
+>>> c = list(d)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'd' is not defined
+>>> d = list(c)
+>>> c
+[1, 2, 3]
+>>> d
+[1, 2, 3]
+>>> d[1] = 4
+>>> d
+[1, 4, 3]
+>>> c
+[1, 2, 3]
+>>> 
+>>> 
+
+>>> z = [1, 2, [3, 4], 5]
+>>> x = list(z)
+>>> z[2][0] = 5
+>>> z
+[1, 2, [5, 4], 5]
+>>> x
+[1, 2, [5, 4], 5]
+>>> z[1] = 829834793287
+>>> z
+[1, 829834793287, [5, 4], 5]
+>>> x
+[1, 2, [5, 4], 5]
+>>> def my_gen():
+...   value = []
+...   while True:
+...     yield value
+  File "<stdin>", line 3
+    while True:
+              ^
+IndentationError: expected an indented block
+>>> def my_gen():
+...   value, count = [], 0
+...   while True:
+...     yield value
+...     value.append(count)
+...     count += 2
+... 
+>>> a = my_gen()
+>>> 
+>>> 
+>>> 
+>>> a
+<generator object my_gen at 0xb6e3ed74>
+>>> next(a)
+[]
+>>> next(a)
+[0]
+>>> next(a)
+[0, 2]
+>>> next(a)
+[0, 2, 4]
+>>> next(a)
+[0, 2, 4, 6]
+>>> a
+<generator object my_gen at 0xb6e3ed74>
+>>> a.__next__()
+[0, 2, 4, 6, 8]
+>>> next(a)
+[0, 2, 4, 6, 8, 10]
+
+

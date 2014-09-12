@@ -1,0 +1,581 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/lab.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.css" />
+
+    <title>Lab 02: Higher Order Functions and Environment Diagrams | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Lab 02: Higher Order Functions and Environment Diagrams</h1>
+
+    
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="lab02.html#error-messages">Error messages</a></li>
+  <li><a href="lab02.html#environment-diagrams">Environment Diagrams</a></li>
+  <ul>
+  <li><a href="lab02.html#q1">Question 1: (Optional, for extra practice)</a></li>
+</ul>
+
+  <li><a href="lab02.html#lambdas">Lambdas</a></li>
+  <ul>
+  <li><a href="lab02.html#q2">Question 2: What would Python print?</a></li>
+  <li><a href="lab02.html#q3">Question 3</a></li>
+  <li><a href="lab02.html#environment-diagrams-optional-for-extra-practice">Environment Diagrams (Optional, for extra practice)</a></li>
+</ul>
+
+  <li><a href="lab02.html#higher-order-functions">Higher Order Functions</a></li>
+  <ul>
+  <li><a href="lab02.html#q4">Question 4: What Would Python Output?</a></li>
+  <li><a href="lab02.html#q5">Question 5: Flight of the Bumblebee</a></li>
+  <li><a href="lab02.html#q6">Question 6: I heard you liked functions so I put functions in your functions</a></li>
+  <li><a href="lab02.html#q7">Question 7: Higher Order Functions and Linked Lists!</a></li>
+</ul>
+
+</ul>
+
+
+    
+<h2 id="submission">Deadline</h2>
+
+<p>By the end of this lab, you should have submitted the <code>lab02</code>
+assignment using the command <code>submit lab02</code>.</p>
+
+<p><strong>This lab is due by 11:59pm on 07/01/2014.</strong></p>
+
+<p>Here is a <a href="lab02.py">lab02.py</a> starter file for this lab.</p>
+
+<h2 id="error-messages">Error messages</h2>
+
+
+<p>By now, you've probably seen a couple of error messages. Even though
+they might look intimidating, error messages are actually very helpful
+in debugging code. The following are some common types of errors
+(found at the bottom of an error message):</p>
+
+<ul>
+  <li><strong>SyntaxError</strong>: Indicates that your code contains improper syntax
+  (e.g.  missing a colon after an <code>if</code> statement).</li>
+  <li><strong>IndentationError</strong>: Indicates that your code contains improper
+  indentation (e.g. inconsistent indentation of a function body)</li>
+  <li><strong>TypeError</strong>: Indicates an attempted operation on incompatible
+  types (e.g.  trying to add a function and an int)</li>
+  <li><strong>ZeroDivisionError</strong>: Indicates an attempted division by zero.</li>
+</ul>
+
+<p>Using these descriptions of error messages, you should be able to get
+a better idea of what went wrong with your code. <strong>If you run into
+error messages, try to identify the problem before asking for
+help.</strong> You can often Google unknown error messages to see what
+similar mistakes others have made to help you debug your own code.</p>
+
+<p>For example:</p>
+
+<pre><code>&gt;&gt;&gt; square(3, 3)
+Traceback (most recent call last):
+  File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;
+TypeError: square() takes 1 positional argument but 2 were given</code></pre>
+
+<p>Notice that the last line of the error message tells us exactly what
+we did wrong - we gave <code>square</code> 2 arguments when it only takes in 1
+argument.  In general, the last line is the most helpful.</p>
+
+<p>Here's a link to a helpful <a href="../../debugging.html">Debugging
+Guide</a> 
+written by Albert Wu.  Pay particular attention to the section called 
+"Error Types" (the other sections are fairly involved but will be 
+useful in the larger projects).</p>
+
+
+<h2 id="environment-diagrams">Environment Diagrams</h2>
+
+<h3 class="question" id="q1">Question 1: (Optional, for extra practice)</h3>
+
+<p>If you haven't found this gem already,
+<a href="http://tutor.composingprograms.com">tutor.composingprograms.com</a>
+has a great visualization tool for environment diagrams. Post in your
+python code and it will generate an environment diagram you can walk
+through step-by-step! Use it to help you check your answers!</p>
+
+<p>Try drawing environment diagrams for the following examples and
+predicting what Python will output:</p>
+
+
+    <pre><code>&gt;&gt;&gt; def square(x):
+...     return x * x
+&gt;&gt;&gt; def double(x):
+...     return x + x
+&gt;&gt;&gt; a = square(double(4))
+&gt;&gt;&gt; a
+<span class="blank5">______</span><span class="hidden solution 5">&#x36;&#x34;</span></code></pre>
+
+    <button id='5' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+    <pre><code>&gt;&gt;&gt; x, y = 4, 3
+&gt;&gt;&gt; def reassign(arg1, arg2):
+...     x = arg1
+...     y = arg2
+&gt;&gt;&gt; reassign(5, 6)
+&gt;&gt;&gt; x
+<span class="blank6">______</span><span class="hidden solution 6">&#x34;</span>
+&gt;&gt;&gt; y
+<span class="blank6">______</span><span class="hidden solution 6">&#x33;</span></code></pre>
+
+    <button id='6' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+    <pre><code>&gt;&gt;&gt; def f(x):
+...     f(x)
+&gt;&gt;&gt; print, f = f, print
+&gt;&gt;&gt; a = f(4)
+<span class="blank7">______</span><span class="hidden solution 7">&#x34;</span>
+&gt;&gt;&gt; a
+<span class="blank7">______</span><span class="hidden solution 7">&#x23;&#x20;&#x4e;&#x6f;&#x74;&#x68;&#x69;&#x6e;&#x67;&#x20;&#x73;&#x68;&#x6f;&#x77;&#x73;&#x20;&#x75;&#x70;&#x2c;&#x20;&#x62;&#x65;&#x63;&#x61;&#x75;&#x73;&#x65;&#x20;&#x61;&#x20;&#x3d;&#x20;&#x4e;&#x6f;&#x6e;&#x65;</span>
+&gt;&gt;&gt; b = print(4)
+<span class="blank7">______</span><span class="hidden solution 7">&#x34;</span>
+&gt;&gt;&gt; b
+<span class="blank7">______</span><span class="hidden solution 7">&#x23;&#x20;&#x4e;&#x6f;&#x74;&#x68;&#x69;&#x6e;&#x67;&#x20;&#x73;&#x68;&#x6f;&#x77;&#x73;&#x20;&#x75;&#x70;&#x2c;&#x20;&#x62;&#x65;&#x63;&#x61;&#x75;&#x73;&#x65;&#x20;&#x62;&#x20;&#x3d;&#x20;&#x4e;&#x6f;&#x6e;&#x65;</span></code></pre>
+
+    <button id='7' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+    <pre><code>&gt;&gt;&gt; def adder_maker(x):
+...     def adder(y):
+...         return x + y
+...     return adder
+&gt;&gt;&gt; add3 = adder_maker(3)
+&gt;&gt;&gt; add3(4)
+<span class="blank8">______</span><span class="hidden solution 8">&#x37;</span>
+&gt;&gt;&gt; sub5 = adder_maker(&#x2d;5)
+&gt;&gt;&gt; sub5(6)
+<span class="blank8">______</span><span class="hidden solution 8">&#x31;</span>
+&gt;&gt;&gt; sub5(10) == add3(2)
+<span class="blank8">______</span><span class="hidden solution 8">&#x54;&#x72;&#x75;&#x65;</span></code></pre>
+
+    <button id='8' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+<p>Now we'll see where environment diagrams come in <strong>really</strong> handy:
+Lambdas and Higher Order Functions.</p>
+
+
+<h2 id="lambdas">Lambdas</h2>
+
+
+<h3 class="question" id="q2">Question 2: What would Python print?</h3>
+
+
+    <pre><code>&gt;&gt;&gt; a = lambda: 5
+&gt;&gt;&gt; a()
+<span class="blank9">______</span><span class="hidden solution 9">&#x35;</span>
+&gt;&gt;&gt; a(5)
+<span class="blank9">______</span><span class="hidden solution 9">&#x54;&#x79;&#x70;&#x65;&#x45;&#x72;&#x72;&#x6f;&#x72;&#x3a;&#x20;&#x3c;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x3e;&#x28;&#x29;&#x20;&#x74;&#x61;&#x6b;&#x65;&#x73;&#x20;&#x30;&#x20;&#x70;&#x6f;&#x73;&#x69;&#x74;&#x69;&#x6f;&#x6e;&#x61;&#x6c;&#x20;&#x61;&#x72;&#x67;&#x75;&#x6d;&#x65;&#x6e;&#x74;&#x73;&#x20;&#x62;&#x75;&#x74;&#x20;&#x31;&#x20;&#x77;&#x61;&#x73;&#x20;&#x67;&#x69;&#x76;&#x65;&#x6e;</span>
+&gt;&gt;&gt; a()()
+<span class="blank9">______</span><span class="hidden solution 9">&#x54;&#x79;&#x70;&#x65;&#x45;&#x72;&#x72;&#x6f;&#x72;&#x3a;&#x20;&#x27;&#x69;&#x6e;&#x74;&#x27;&#x20;&#x6f;&#x62;&#x6a;&#x65;&#x63;&#x74;&#x20;&#x69;&#x73;&#x20;&#x6e;&#x6f;&#x74;&#x20;&#x63;&#x61;&#x6c;&#x6c;&#x61;&#x62;&#x6c;&#x65;</span>
+&gt;&gt;&gt; b = lambda: lambda x: 3
+&gt;&gt;&gt; b()(15)
+<span class="blank9">______</span><span class="hidden solution 9">&#x33;</span></code></pre>
+
+    <button id='9' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>For each of the following expressions, write functions <code>f1</code>, <code>f2</code>, <code>f3</code>, <code>f4</code> , and <code>f5</code> such that the evaluation of each expression succeeds, without causing an error. Be sure to use lambdas in your function definition instead of nested <code>def</code> statements. Each function should have a one line solution.</p>
+
+<pre><code>def f1():
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; f1()
+    3
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot; 
+
+def f2():
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; f2()()
+    3
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;
+
+def f3():
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; f3()(3)
+    3
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;
+
+def f4():
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; f4()()()
+    3
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;
+
+def f5():
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; f5()()(3)()
+    3
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='0' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 0">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x66;&#x31;&#x28;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x33;&#xa;&#xa;&#x64;&#x65;&#x66;&#x20;&#x66;&#x32;&#x28;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x3a;&#x20;&#x33;&#xa;&#xa;&#x64;&#x65;&#x66;&#x20;&#x66;&#x33;&#x28;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x78;&#xa;&#xa;&#x64;&#x65;&#x66;&#x20;&#x66;&#x34;&#x28;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x3a;&#x20;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x3a;&#x20;&#x33;&#xa;&#xa;&#x64;&#x65;&#x66;&#x20;&#x66;&#x35;&#x28;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x3a;&#x20;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x3a;&#x20;&#x78;</code></pre>
+
+</div>
+    
+
+
+<h3 id="environment-diagrams-optional-for-extra-practice">Environment Diagrams (Optional, for extra practice)</h3>
+
+<p>Try drawing environment diagrams for the following code and predicting
+what Python will output:</p>
+
+<pre><code># Q1
+a = lambda x : x * 2 + 1
+
+def b(x):
+    return x * y
+
+y = 3
+b(y)
+_________
+
+def c(x):
+    y = a(x)
+    return b(x) + a(x+y)
+c(y)
+_________
+
+# Q2: This one is pretty tough. A carefully drawn environment
+# diagram will be really useful.
+g = lambda x: x + 3
+
+def wow(f):
+    def boom(g):
+      return f(g)
+    return boom
+
+f = wow(g)
+f(2)
+_________
+g = lambda x: x * x
+f(3)
+_________</code></pre>
+
+
+    <button id='1' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 1">
+
+<p>Please use the online environment diagram drawer, linked at the bottom
+of the class webpage.</p>
+
+<ol>
+  <li>9 (for the first blank), 30 (for the second blank).</li>
+  <li>5 (for the first blank), 6 (for the second blank). Notice that the
+  line g = lambda x: x * x doesn't change what f(3) does!</li>
+</ol>
+
+</div>
+    
+
+
+<h2 id="higher-order-functions">Higher Order Functions</h2>
+
+
+<p>Higher order functions are functions that take a function as an input,
+and/or output a function. We will be exploring many applications of
+higher order functions.</p>
+
+<h3 class="question" id="q4">Question 4: What Would Python Output?</h3>
+
+
+    <pre><code>&gt;&gt;&gt; def square(x):
+...     return x*x
+&gt;&gt;&gt; def neg(f, x):
+...     return &#x2d;f(x)
+&gt;&gt;&gt; neg(square, 4)
+<span class="blank10">______</span><span class="hidden solution 10">&#x2d;&#x31;&#x36;</span></code></pre>
+
+    <button id='10' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+    <pre><code>&gt;&gt;&gt; def even(f):
+...     def odd(x):
+...         if x &lt; 0:
+...             return f(&#x2d;x)
+...         return f(x)
+...     return odd
+...
+&gt;&gt;&gt; def identity(x):
+...     return x
+...
+&gt;&gt;&gt; triangle = even(identity)
+&gt;&gt;&gt; triangle(61)
+<span class="blank11">______</span><span class="hidden solution 11">&#x36;&#x31;</span>
+&gt;&gt;&gt; triangle(&#x2d;4)
+<span class="blank11">______</span><span class="hidden solution 11">&#x34;</span></code></pre>
+
+    <button id='11' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+    <pre><code>&gt;&gt;&gt; def first(x):
+...     x += 8
+...     def second(y):
+...         print(&#x27;second&#x27;)
+...         return x + y
+...     print(&#x27;first&#x27;)
+...     return second
+...
+&gt;&gt;&gt; f = first(15)
+<span class="blank12">______</span><span class="hidden solution 12">&#x66;&#x69;&#x72;&#x73;&#x74;</span>
+&gt;&gt;&gt; f(16)
+<span class="blank12">______</span><span class="hidden solution 12">&#x73;&#x65;&#x63;&#x6f;&#x6e;&#x64;&#xa;&#x33;&#x39;</span></code></pre>
+
+    <button id='12' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+    <pre><code>&gt;&gt;&gt; def foo(x):
+...     def bar(y):
+...         return x + y
+...     return bar
+&gt;&gt;&gt; boom = foo(23)
+&gt;&gt;&gt; boom(42)
+<span class="blank13">______</span><span class="hidden solution 13">&#x36;&#x35;</span>
+&gt;&gt;&gt; foo(6)(7)
+<span class="blank13">______</span><span class="hidden solution 13">&#x31;&#x33;</span>
+&gt;&gt;&gt; func = boom
+&gt;&gt;&gt; func is boom
+<span class="blank13">______</span><span class="hidden solution 13">&#x54;&#x72;&#x75;&#x65;</span>
+&gt;&gt;&gt; func = foo(23)
+&gt;&gt;&gt; func is boom
+<span class="blank13">______</span><span class="hidden solution 13">&#x46;&#x61;&#x6c;&#x73;&#x65;</span></code></pre>
+
+    <button id='13' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+    <pre><code>&gt;&gt;&gt; def troy():
+...     abed = 0
+...     while abed &lt; 10:
+...         def britta():
+...             return abed
+...         abed += 1
+...     abed = 20
+...     return britta
+&gt;&gt;&gt; annie = troy()
+&gt;&gt;&gt; def shirley():
+...     return annie
+&gt;&gt;&gt; pierce = shirley()
+&gt;&gt;&gt; pierce()
+<span class="blank14">______</span><span class="hidden solution 14">&#x32;&#x30;</span></code></pre>
+
+    <button id='14' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+<h3 class="question" id="q5">Question 5: Flight of the Bumblebee</h3>
+
+<p>Write a function that takes in a number <code>n</code> and returns a function
+that takes in a number <code>range</code> which will print all numbers from <code>0</code>
+to <code>range</code> (including <code>0</code> but excluding <code>range</code>) but print <code>Buzz!</code>
+instead for all the numbers that are divisible by <code>n</code>.</p>
+
+<pre><code>def make_buzzer(n):
+    &quot;&quot;&quot; Returns a function that prints numbers in a specified
+    range except those divisible by n.
+
+    &gt;&gt;&gt; i_hate_fives = make_buzzer(5)
+    &gt;&gt;&gt; i_hate_fives(10)
+    Buzz!
+    1
+    2
+    3
+    4
+    Buzz!
+    6
+    7
+    8
+    9
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='2' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 2">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x6d;&#x61;&#x6b;&#x65;&#x5f;&#x62;&#x75;&#x7a;&#x7a;&#x65;&#x72;&#x28;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x62;&#x75;&#x7a;&#x7a;&#x28;&#x6d;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x20;&#x3d;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x77;&#x68;&#x69;&#x6c;&#x65;&#x20;&#x69;&#x20;&#x3c;&#x20;&#x6d;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x69;&#x20;&#x25;&#x20;&#x6e;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x70;&#x72;&#x69;&#x6e;&#x74;&#x28;&#x27;&#x42;&#x75;&#x7a;&#x7a;&#x21;&#x27;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x70;&#x72;&#x69;&#x6e;&#x74;&#x28;&#x69;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x20;&#x2b;&#x3d;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x62;&#x75;&#x7a;&#x7a;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q6">Question 6: I heard you liked functions so I put functions in your functions</h3>
+
+<p>Define a function <code>cycle</code> that takes in three functions <code>f1</code>, <code>f2</code>,
+<code>f3</code>, as arguments. <code>cycle</code> will return another function that should
+take in an integer argument <code>n</code> and return another function.  That
+final function should take in an argument <code>x</code> and cycle through
+applying <code>f1</code>, <code>f2</code>, and <code>f3</code> to <code>x</code>, depending on what <code>n</code>
+was. Here’s the what the final function should do to <code>x</code> for a few
+values of <code>n</code>:</p>
+
+<ul>
+  <li><code>n = 0</code>, return <code>x</code></li>
+  <li><code>n = 1</code>, apply <code>f1</code> to <code>x</code>, or return <code>f1(x)</code></li>
+  <li><code>n = 2</code>, apply <code>f1</code> to <code>x</code> and then <code>f2</code> to the result of that, or
+  return <code>f2(f1(x))</code></li>
+  <li><code>n = 3</code>, apply <code>f1</code> to <code>x</code>, <code>f2</code> to the result of applying <code>f1</code>,
+  and then <code>f3</code> to the result of applying <code>f2</code>, or <code>f3(f2(f1(x)))</code></li>
+  <li><code>n = 4</code>, start the cycle again applying <code>f1</code>, then <code>f2</code>, then <code>f3</code>,
+  then <code>f1</code> again, or <code>f1(f3(f2(f1(x))))</code></li>
+  <li>And so forth.</li>
+</ul>
+
+<p><em>Hint</em>: most of the work goes inside the most nested function.</p>
+
+<pre><code>def cycle(f1, f2, f3):
+    &quot;&quot;&quot; Returns a function that is itself a higher order function
+    &gt;&gt;&gt; def add1(x):
+    ...     return x + 1
+    ...
+    &gt;&gt;&gt; def times2(x):
+    ...     return x * 2
+    ...
+    &gt;&gt;&gt; def add3(x):
+    ...     return x + 3
+    ...
+    &gt;&gt;&gt; my_cycle = cycle(add1, times2, add3)
+    &gt;&gt;&gt; identity = my_cycle(0)
+    &gt;&gt;&gt; identity(5)
+    5
+    &gt;&gt;&gt; add_one_then_double = my_cycle(2)
+    &gt;&gt;&gt; add_one_then_double(1)
+    4
+    &gt;&gt;&gt; do_all_functions = my_cycle(3)
+    &gt;&gt;&gt; do_all_functions(2)
+    9
+    &gt;&gt;&gt; do_more_than_a_cycle = my_cycle(4)
+    &gt;&gt;&gt; do_more_than_a_cycle(2)
+    10
+    &gt;&gt;&gt; do_two_cycles = my_cycle(6)
+    &gt;&gt;&gt; do_two_cycles(1)
+    19
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='3' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 3">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x63;&#x79;&#x63;&#x6c;&#x65;&#x28;&#x66;&#x31;&#x2c;&#x20;&#x66;&#x32;&#x2c;&#x20;&#x66;&#x33;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x72;&#x65;&#x74;&#x5f;&#x66;&#x6e;&#x28;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x72;&#x65;&#x74;&#x28;&#x78;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x20;&#x3d;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x77;&#x68;&#x69;&#x6c;&#x65;&#x20;&#x69;&#x20;&#x3c;&#x20;&#x6e;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x69;&#x20;&#x25;&#x20;&#x33;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x78;&#x20;&#x3d;&#x20;&#x66;&#x31;&#x28;&#x78;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x69;&#x66;&#x20;&#x69;&#x20;&#x25;&#x20;&#x33;&#x20;&#x3d;&#x3d;&#x20;&#x31;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x78;&#x20;&#x3d;&#x20;&#x66;&#x32;&#x28;&#x78;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x78;&#x20;&#x3d;&#x20;&#x66;&#x33;&#x28;&#x78;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x20;&#x2b;&#x3d;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x78;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x72;&#x65;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x72;&#x65;&#x74;&#x5f;&#x66;&#x6e;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q7">Question 7: Higher Order Functions and Linked Lists!</h3>
+
+<p>Write a function that takes in a linked list <code>lst</code> of numbers and returns 
+the sum of the elements in the linked list.</p>
+
+<pre><code>def sum_linked_list(lst, term):
+    &quot;&quot;&quot; Applies a function TERM to each number in LST and returns the sum
+    of the resulting values
+
+    &gt;&gt;&gt; square = lambda x: x*x
+    &gt;&gt;&gt; double = lambda y: 2*y
+    &gt;&gt;&gt; lst1 = link(1, link(2, link(3, link(4, empty))))    
+    &gt;&gt;&gt; sum_linked_list(lst1, square)
+    30
+    &gt;&gt;&gt; lst2 = link(3, link(5, link(4, link(10, empty))))
+    &gt;&gt;&gt; sum_linked_list(lst2, double)
+    44
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='4' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 4">
+Recursive solution:
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x73;&#x75;&#x6d;&#x5f;&#x6c;&#x69;&#x6e;&#x6b;&#x65;&#x64;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x2c;&#x20;&#x74;&#x65;&#x72;&#x6d;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x3d;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x74;&#x65;&#x72;&#x6d;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x20;&#x2b;&#x20;&#x73;&#x75;&#x6d;&#x5f;&#x6c;&#x69;&#x6e;&#x6b;&#x65;&#x64;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x28;&#x72;&#x65;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x2c;&#x20;&#x74;&#x65;&#x72;&#x6d;&#x29;</code></pre>
+
+<p>Iterative solution:</p>
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x73;&#x75;&#x6d;&#x5f;&#x6c;&#x69;&#x6e;&#x6b;&#x65;&#x64;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x2c;&#x20;&#x74;&#x65;&#x72;&#x6d;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x73;&#x75;&#x6d;&#x20;&#x3d;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x77;&#x68;&#x69;&#x6c;&#x65;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x21;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x75;&#x6d;&#x20;&#x2b;&#x3d;&#x20;&#x74;&#x65;&#x72;&#x6d;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x72;&#x65;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x73;&#x75;&#x6d;</code></pre>
+
+</div>
+    
+
+<p>If you have extra time, go back to the environment diagram problems 
+in Questions 1 and 2 to get some extra practice.</p>
+  </body>
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<!-- Interactive interpreter -->
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/mode/scheme/scheme.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/jquery.min.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/lib-xj.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.js"> </script>
+<script>
+  $(function() {
+    set_interpreter_path("../../interpreter/");
+    set_language("");
+    
+  });
+</script>
+</html>

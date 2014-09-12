@@ -1,0 +1,265 @@
+logic> help
+Simple Commands:
+  exit:  Exit interpreter.
+  clear: Clear all facts.
+  help:  This message.
+
+All other valid logic expressions are Scheme lists:
+
+  (fact CONSEQUENT HYPOTHESIS1 ...) or (! CONSEQUENT HYPOTHESIS1 ...):
+      Assert a consequent, followed by zero or more hypotheses.
+  (query CLAUSE1 CLAUSE2...) or (? CLAUSE1 CLAUSE2...)
+      Query zero or more relations simultaneously.
+  (load PATH): Load a .logic file by evaluating its expressions
+  (depth NUM): Set the maximum search depth to NUM.
+
+logic> (fact (color sun yellow))
+logic> (fact (color sky blue))
+logic> (query (color sun ?what))
+Success!
+what: yellow
+logic> (query (color ?what blue))
+Success!
+what: sky
+logic> (query (color grass ?what))
+Failed.
+logic> (fact (grass color green))
+logic> (query (color grass ?what))
+Failed.
+logic> (fact (color grass green))
+logic> (query (color grass ?what))
+Success!
+what: green
+logic> (fact (color clouds red))
+logic> (query (color clouds ?color))
+Success!
+color: red
+logic> (fact (color clouds white))
+logic> (query (color clouds ?color))
+Success!
+color: red
+color: white
+logic> clear
+logic> (query (color clouds ?color))
+Failed.
+logic> (query (color sky ?color))
+Failed.
+logic> (fact (color clouds white))
+logic> (query (color clouds ?color))
+Success!
+color: white
+logic> clear
+logic> clear
+logic> (load database.logic)
+logic> (job ?who (computer ?y))
+Error: unrecognized command: please provide a fact or query.
+logic> (query (job ?who (computer ?y)))
+Success!
+who: (bitdiddle ben)	y: wizard
+who: (hacker alyssa p)	y: programmer
+who: (fect cy d)	y: programmer
+who: (tweakit lem e)	y: technician
+logic> (query (job ?who (computer . ?y)))
+Success!
+who: (bitdiddle ben)	y: (wizard)
+who: (hacker alyssa p)	y: (programmer)
+who: (fect cy d)	y: (programmer)
+who: (tweakit lem e)	y: (technician)
+who: (reasoner louis)	y: (programmer trainee)
+logic> (query (job (bitdiddle ben) (computer wizard)))
+Success!
+logic> (query (job (bitdiddle ben) (computer . wizard)))
+Failed.
+logic> (query (can-do-job ?x (computer programmer)))
+Success!
+x: (computer wizard)
+logic> (query (can-do-job ?job (computer programmer)) (job ?who ?job))
+Success!
+job: (computer wizard)	who: (bitdiddle ben)
+logic> (fact (can-do-job ?job ?job))
+logic> (query (can-do-job ?x (computer programmer)))Success!
+x: (computer wizard)
+x: (computer programmer)
+logic> (query (can-do-job ?job (computer programmer)) (job ?who ?job))
+Success!
+job: (computer wizard)	who: (bitdiddle ben)
+job: (computer programmer)	who: (hacker alyssa p)
+job: (computer programmer)	who: (fect cy d)
+logic> (query (address (bitdiddle ben) ?where))
+Success!
+where: (slumerville (ridge road) 10)
+logic> (query (address (reasoner louis) ?where))
+Success!
+where: (slumerville (pine tree road) 80)
+logic> (fact (lives-near ?person1 ?person2)
+       (address ?person1 (?town . ?street-address1))
+       (address ?person2 (?town . ?street-address2)))
+logic> (query (lives-near (bitdiddle ben) ?who))
+Success!
+who: (bitdiddle ben)
+who: (reasoner louis)
+who: (aull dewitt)
+logic> (query (?relation (bitdiddle ben) (reasoner louis)))
+Success!
+relation: lives-near
+logic> (query (?relation (hacker alyssa p) (bitdiddle ben)))
+Success!
+relation: supervisor
+logic> (fact (car (?elem . ?rest) ?elem))
+logic> (query (car (1 2 3) ?what))
+Success!
+what: 1
+logic> (query (car (1 2 3) 1))
+Success!
+logic> (query (car (1 2 3) 3))
+Failed.
+logic> (query (cdr (1 2 3) 3))
+Failed.
+logic> (query (cdr (1 2 3) ?what))
+Failed.
+logic> (fact (cdr (?elem . ?rest) ?rest))
+logic> (query (cdr (1 2 3) ?what))
+Success!
+what: (2 3)
+logic> (fact (evens (2 4 6 8)))
+logic> (query (car ?evens))
+Failed.
+logic> (query (car evens ?what))
+Failed.
+logic> (query (car ?evens ?what))
+Success!
+evens: (?what . ?rest_1290)	what: ?what
+logic> (query (evens ?lst) (car ?lst ?answer))
+Success!
+lst: (2 4 6 8)	answer: 2
+logic> (query (evens (?answer . ?who-cares)))
+Success!
+answer: 2	who-cares: (4 6 8)
+logic> (query (evens ?lst) (car (cdr ?lst ?answer) ?what))
+Success!
+lst: (2 4 6 8)	answer: ?answer	what: cdr
+logic> 
+       (query (evens ?lst) (cdr ?lst ?temp) (car ?temp ?ans))
+Success!
+lst: (2 4 6 8)	temp: (4 6 8)	ans: 4
+logic> (query (evens (?first ?ans . ?rest)))
+Success!
+first: 2	ans: 4	rest: (6 8)
+logic> (query (evens (?first . (?ans . ?rest))))
+Success!
+first: 2	ans: 4	rest: (6 8)
+logic> (fact (car (?x . ?y) ?x))
+logic> (query (evens ?lst) (car ?lst ?answer))
+Success!
+lst: (2 4 6 8)	answer: 2
+lst: (2 4 6 8)	answer: 2
+logic> (fact (car (?x . ?y) ?y))
+logic> (query (evens ?lst) (car ?lst ?answer))
+Success!
+lst: (2 4 6 8)	answer: 2
+lst: (2 4 6 8)	answer: 2
+lst: (2 4 6 8)	answer: (4 6 8)
+logic> 
+       (fact (append () ?b ?b))
+logic> 
+       (fact (append (?car . ?x) ?b (?car . ?z))
+             (append ?x ?b ?z))
+logic> (query (append (1 2) (3 4 5) (1 2 3 4 5))
+       )
+Success!
+logic> (query (append (1 2) (3 4 5) ?what))
+Success!
+what: (1 2 3 4 5)
+logic> (query (append ?what (1 4) (s u 1 4)))
+Success!
+what: (s u)
+logic> (query (append ?x ?y (1 2 3 4 5)))
+Success!
+x: ()	y: (1 2 3 4 5)
+x: (1)	y: (2 3 4 5)
+x: (1 2)	y: (3 4 5)
+x: (1 2 3)	y: (4 5)
+x: (1 2 3 4)	y: (5)
+x: (1 2 3 4 5)	y: ()
+logic> (fact (member ?item (?item . ?cdr)))
+logic> (fact (member ?item (?car . ?cdr))
+             (member ?item ?cdr))
+logic> (query (member ?what (1 2 3 1 2 3)))
+Success!
+what: 1
+what: 2
+what: 3
+what: 1
+what: 2
+what: 3
+logic> 
+       (query (member 3 (1 2 ?what)))
+Success!
+what: 3
+logic> (query (member 3 (1 2 3)))
+Success!
+logic> (query (member 3 ?what))
+Success!
+what: (3 . ?cdr_3529)
+what: (?car_3530 3 . ?cdr_3579)
+what: (?car_3530 ?car_3580 3 . ?cdr_3629)
+what: (?car_3530 ?car_3580 ?car_3630 3 . ?cdr_3679)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 3 . ?cdr_3729)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 3 . ?cdr_3779)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 3 . ?cdr_3829)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 3 . ?cdr_3879)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 3 . ?cdr_3929)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 3 . ?cdr_3979)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 ?car_3980 3 . ?cdr_4029)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 ?car_3980 ?car_4030 3 . ?cdr_4079)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 ?car_3980 ?car_4030 ?car_4080 3 . ?cdr_4129)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 ?car_3980 ?car_4030 ?car_4080 ?car_4130 3 . ?cdr_4179)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 ?car_3980 ?car_4030 ?car_4080 ?car_4130 ?car_4180 3 . ?cdr_4229)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 ?car_3980 ?car_4030 ?car_4080 ?car_4130 ?car_4180 ?car_4230 3 . ?cdr_4279)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 ?car_3980 ?car_4030 ?car_4080 ?car_4130 ?car_4180 ?car_4230 ?car_4280 3 . ?cdr_4329)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 ?car_3980 ?car_4030 ?car_4080 ?car_4130 ?car_4180 ?car_4230 ?car_4280 ?car_4330 3 . ?cdr_4379)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 ?car_3980 ?car_4030 ?car_4080 ?car_4130 ?car_4180 ?car_4230 ?car_4280 ?car_4330 ?car_4380 3 . ?cdr_4429)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 ?car_3980 ?car_4030 ?car_4080 ?car_4130 ?car_4180 ?car_4230 ?car_4280 ?car_4330 ?car_4380 ?car_4430 3 . ?cdr_4479)
+what: (?car_3530 ?car_3580 ?car_3630 ?car_3680 ?car_3730 ?car_3780 ?car_3830 ?car_3880 ?car_3930 ?car_3980 ?car_4030 ?car_4080 ?car_4130 ?car_4180 ?car_4230 ?car_4280 ?car_4330 ?car_4380 ?car_4430 ?car_4480 3 . ?cdr_4529)
+logic> 
+       (fact (remove-one ?item (?item . ?new-lst) ?new-lst))
+logic> (fact (remove-one ?item (?car . ?cdr) (?car . ?new-lst))
+             (remove-one ?item ?cdr ?new-lst))
+logic> 
+       
+       (fact (permutation () ()))
+logic> (fact (permutation (?first . ?rest) ?lst)
+             (member ?first ?lst)
+             (remove-one ?first ?lst ?new-lst)
+             (permutation ?rest ?new-lst))
+logic> (permutation ?perm (1 2 3))
+Error: unrecognized command: please provide a fact or query.
+logic> (query (permutation ?perm (1 2 3)))
+Success!
+perm: (1 2 3)
+perm: (1 3 2)
+perm: (2 1 3)
+perm: (2 3 1)
+perm: (3 1 2)
+perm: (3 2 1)
+logic> (query (permutation ?perm (1 1 2)))
+Success!
+perm: (1 1 2)
+perm: (1 2 1)
+perm: (1 1 2)
+perm: (1 2 1)
+perm: (1 1 2)
+perm: (1 2 1)
+perm: (1 1 2)
+perm: (1 2 1)
+perm: (2 1 1)
+perm: (2 1 1)
+perm: (2 1 1)
+perm: (2 1 1)
+logic> (query (permutation (1 2 3) ?perm))
+Success!
+perm: (1 2 3)
+perm: (1 3 2)
+^C
+KeyboardInterrupt
+logic> 

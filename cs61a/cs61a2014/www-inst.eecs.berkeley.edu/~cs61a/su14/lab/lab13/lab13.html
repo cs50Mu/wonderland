@@ -1,0 +1,763 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/lab.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.css" />
+
+    <title>Lab 13: Streams and Tail Recursion | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Lab 13: Streams and Tail Recursion</h1>
+
+    
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="lab13.html#streams">Streams</a></li>
+  <ul>
+  <li><a href="lab13.html#what-would-scheme-output">What would Scheme output?</a></li>
+  <li><a href="lab13.html#functions-that-output-streams">Functions that output streams</a></li>
+  <li><a href="lab13.html#q1">Question 1</a></li>
+  <li><a href="lab13.html#q2">Question 2</a></li>
+  <li><a href="lab13.html#higher-order-functions-on-streams">Higher Order Functions on Streams</a></li>
+  <li><a href="lab13.html#q3">Question 3</a></li>
+  <li><a href="lab13.html#q4">Question 4</a></li>
+  <li><a href="lab13.html#q5">Question 5</a></li>
+</ul>
+
+  <li><a href="lab13.html#tail-recursion">Tail Recursion</a></li>
+  <ul>
+  <li><a href="lab13.html#q6">Question 6</a></li>
+  <li><a href="lab13.html#q7">Question 7</a></li>
+  <li><a href="lab13.html#q8">Question 8</a></li>
+</ul>
+
+  <li><a href="lab13.html#optional-problems">Optional Problems</a></li>
+  <ul>
+  <li><a href="lab13.html#q9">Question 9</a></li>
+  <li><a href="lab13.html#q10">Question 10</a></li>
+  <li><a href="lab13.html#q11">Question 11</a></li>
+</ul>
+
+</ul>
+
+
+    
+<h2 id="submission">Deadline</h2>
+
+<p>By the end of this lab, you should have submitted the
+<code>lab13</code>
+assignment using the command <code>submit lab13</code>.</p>
+
+<p><strong>This lab is due by 11:59pm on 8/7/2014.</strong></p>
+
+<p>We have provided the following starter file:
+  <a href="lab13.scm">lab13.scm</a></p>
+
+<h2 id="streams">Streams</h2>
+
+
+<p>A stream is another example of a lazy sequence. A stream is a lazily
+evaluated linked list. In other words, the stream's elements (except for the
+first element) are only evaluated when the values are needed. In addition,
+streams are <em>memoized</em>: the elements that have already been computed are saved!</p>
+
+<p>We have many built-in procedures that can manipulate streams:</p>
+
+<ul>
+  <li>List creation: <code>cons&#x2d;stream</code>, <code>stream&#x2d;car</code>, <code>stream&#x2d;cdr</code></li>
+  <li>Higher-order: <code>stream&#x2d;map</code>, <code>stream&#x2d;filter</code></li>
+  <li>Empty handling: <code>the&#x2d;empty&#x2d;stream</code>, <code>stream&#x2d;null?</code></li>
+  <li>Other: <code>interleave</code>, <code>stream&#x2d;ref</code>, <code>stream&#x2d;enumerate&#x2d;interval</code></li>
+</ul>
+
+<p>Now we are ready to look at a simple example. This stream is an infinite
+stream where each element is 1.</p>
+
+<pre><code>STk&gt; (define ones (cons&#x2d;stream 1 ones))
+STk&gt; (stream&#x2d;car ones)
+1
+STk&gt; (stream&#x2d;cdr ones)
+(1 . #[promise 23cc98 (forced)])</code></pre>
+
+<p>Notice what is happening here. We start out with a stream whose first
+element is 1, and whose <code>rest</code> is an unevaluated expression that will
+lead to another stream. Thus, we can recurse on the name <code>ones</code> that
+we are trying to define in the first place.</p>
+
+<p>Next, here's one way to build a stream of the natural numbers.</p>
+
+<pre><code> (define naturals
+   (cons&#x2d;stream 0
+     (stream&#x2d;map (lambda (x) (+ x 1))
+                 naturals)))</code></pre>
+
+<p>So when we do compute the <code>rest</code>, we get another stream whose first
+element is one greater than the previous element, and whose <code>rest</code>
+creates another stream. Hence, we effectively get an infinite stream
+of integers, computed one at a time. This is almost like an infinite
+recursion, but one which can be viewed one step at a time, and so does
+not crash.</p>
+
+
+<h3 id="what-would-scheme-output">What would Scheme output?</h3>
+
+<p>These questions are meant to help you gain confidence in writing
+streams code in Scheme. Please type the following into the interpreter.
+Guess what outputs, and see if the results are the same or different.</p>
+
+
+    <pre><code>STk&gt; (define ones (cons&#x2d;stream 1 ones))
+<span class="blank15">______</span><span class="hidden solution 15">&#x6f;&#x6e;&#x65;&#x73;</span>
+STk&gt; (define twos (cons&#x2d;stream 2 twos))
+<span class="blank15">______</span><span class="hidden solution 15">&#x74;&#x77;&#x6f;&#x73;</span>
+STk&gt; (ss (interleave ones twos)) ; The ss command is very useful!
+<span class="blank15">______</span><span class="hidden solution 15">&#x28;&#x31;&#x20;&#x32;&#x20;&#x31;&#x20;&#x32;&#x20;&#x31;&#x20;&#x32;&#x20;&#x31;&#x20;&#x32;&#x20;&#x31;&#x20;&#x32;&#x20;&#x2e;&#x2e;&#x2e;&#x29;</span>
+STk&gt; (define (has&#x2d;even? s)
+...    (cond ((stream&#x2d;null? s) #f)
+...          ((even? (stream&#x2d;car s)) #t)
+...          (else (has&#x2d;even? (stream&#x2d;cdr s)))))
+<span class="blank15">______</span><span class="hidden solution 15">&#x68;&#x61;&#x73;&#x2d;&#x65;&#x76;&#x65;&#x6e;&#x3f;</span>
+STk&gt; (has&#x2d;even? twos)
+<span class="blank15">______</span><span class="hidden solution 15">&#x23;&#x74;</span>
+STk&gt; (has&#x2d;even? ones)
+<span class="blank15">______</span><span class="hidden solution 15">&#x49;&#x6e;&#x66;&#x69;&#x6e;&#x69;&#x74;&#x65;&#x20;&#x6c;&#x6f;&#x6f;&#x70;</span>
+STk&gt; (define (foo x) (+ x 1))
+<span class="blank15">______</span><span class="hidden solution 15">&#x66;&#x6f;&#x6f;</span>
+STk&gt; (define bar (cons&#x2d;stream (foo 1) (cons&#x2d;stream (foo 2) bar)))
+<span class="blank15">______</span><span class="hidden solution 15">&#x62;&#x61;&#x72;</span>
+STk&gt; (stream&#x2d;car bar)
+<span class="blank15">______</span><span class="hidden solution 15">&#x32;</span>
+STk&gt; (define (foo x) (+ x 5))
+<span class="blank15">______</span><span class="hidden solution 15">&#x66;&#x6f;&#x6f;</span>
+STk&gt; (stream&#x2d;car bar)
+<span class="blank15">______</span><span class="hidden solution 15">&#x32;</span>
+STk&gt; (stream&#x2d;cdr bar)
+<span class="blank15">______</span><span class="hidden solution 15">&#x28;&#x37;&#x20;&#x2e;&#x20;&#x23;&#x5b;&#x70;&#x72;&#x6f;&#x6d;&#x69;&#x73;&#x65;&#x20;&#x32;&#x34;&#x37;&#x39;&#x66;&#x30;&#x20;&#x28;&#x6e;&#x6f;&#x74;&#x20;&#x66;&#x6f;&#x72;&#x63;&#x65;&#x64;&#x29;&#x5d;&#x29;</span>
+STk&gt; (define (foo x) (+ x 7))
+<span class="blank15">______</span><span class="hidden solution 15">&#x66;&#x6f;&#x6f;</span>
+STk&gt; (stream&#x2d;cdr bar)
+<span class="blank15">______</span><span class="hidden solution 15">&#x28;&#x37;&#x20;&#x2e;&#x20;&#x23;&#x5b;&#x70;&#x72;&#x6f;&#x6d;&#x69;&#x73;&#x65;&#x20;&#x32;&#x34;&#x37;&#x39;&#x66;&#x30;&#x20;&#x28;&#x6e;&#x6f;&#x74;&#x20;&#x66;&#x6f;&#x72;&#x63;&#x65;&#x64;&#x29;&#x5d;&#x29;</span>
+STk&gt; (define baz (stream&#x2d;map foo ones))
+<span class="blank15">______</span><span class="hidden solution 15">&#x62;&#x61;&#x7a;</span>
+STk&gt; (ss baz)
+<span class="blank15">______</span><span class="hidden solution 15">&#x28;&#x38;&#x20;&#x38;&#x20;&#x38;&#x20;&#x38;&#x20;&#x38;&#x20;&#x38;&#x20;&#x38;&#x20;&#x38;&#x20;&#x38;&#x20;&#x38;&#x20;&#x2e;&#x2e;&#x2e;&#x29;</span>
+STk&gt; (define (boom x y) (+ x y))
+<span class="blank15">______</span><span class="hidden solution 15">&#x62;&#x6f;&#x6f;&#x6d;</span>
+STk&gt; (ss (stream&#x2d;map boom baz twos))
+<span class="blank15">______</span><span class="hidden solution 15">&#x28;&#x31;&#x30;&#x20;&#x31;&#x30;&#x20;&#x31;&#x30;&#x20;&#x31;&#x30;&#x20;&#x31;&#x30;&#x20;&#x31;&#x30;&#x20;&#x31;&#x30;&#x20;&#x31;&#x30;&#x20;&#x31;&#x30;&#x20;&#x31;&#x30;&#x20;&#x2e;&#x2e;&#x2e;&#x29;</span></code></pre>
+
+    <button id='15' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+<h3 id="functions-that-output-streams">Functions that output streams</h3>
+
+<p>We do not need to limit ourselves to predefined streams or the built-in
+stream functions for the <code>rest</code> part of <code>cons&#x2d;streams</code>. We can actually
+define our own functions that output streams. It's important to consider
+domain and range here, as well as the myriad ways to combine streams now that
+we can write our own stream-outputting functions.
+Try out this example:</p>
+
+
+    <pre><code>STk&gt; (define (start&#x2d;naturals x) (cons&#x2d;stream x (start&#x2d;naturals (+ 1 x))))
+<span class="blank16">______</span><span class="hidden solution 16">&#x73;&#x74;&#x61;&#x72;&#x74;&#x2d;&#x6e;&#x61;&#x74;&#x75;&#x72;&#x61;&#x6c;&#x73;</span>
+STk&gt; (ss (start&#x2d;naturals 0))
+<span class="blank16">______</span><span class="hidden solution 16">&#x28;&#x30;&#x20;&#x31;&#x20;&#x32;&#x20;&#x33;&#x20;&#x34;&#x20;&#x35;&#x20;&#x36;&#x20;&#x37;&#x20;&#x38;&#x20;&#x39;&#x20;&#x2e;&#x2e;&#x2e;&#x29;</span>
+STk&gt; (ss (stream&#x2d;filter (lambda (x) (= (remainder x 2) 0)) (start&#x2d;naturals 0)))
+<span class="blank16">______</span><span class="hidden solution 16">&#x28;&#x30;&#x20;&#x32;&#x20;&#x34;&#x20;&#x36;&#x20;&#x38;&#x20;&#x31;&#x30;&#x20;&#x31;&#x32;&#x20;&#x31;&#x34;&#x20;&#x31;&#x36;&#x20;&#x31;&#x38;&#x20;&#x2e;&#x2e;&#x2e;&#x29;</span>
+STk&gt; (ss (interleave (start&#x2d;naturals 0) (start&#x2d;naturals 10)))
+<span class="blank16">______</span><span class="hidden solution 16">&#x28;&#x30;&#x20;&#x31;&#x30;&#x20;&#x31;&#x20;&#x31;&#x31;&#x20;&#x32;&#x20;&#x31;&#x32;&#x20;&#x33;&#x20;&#x31;&#x33;&#x20;&#x34;&#x20;&#x31;&#x34;&#x20;&#x2e;&#x2e;&#x2e;&#x29;</span></code></pre>
+
+    <button id='16' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>Define implicitly an infinite stream <code>multiples&#x2d;of&#x2d;three</code> that contains
+the multiples of 3.  <strong>Do not use any helper functions.</strong></p>
+
+<pre><code>(define multiples&#x2d;of&#x2d;three
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE)
+
+;; Doctests for multiples&#x2d;stream
+(assert&#x2d;equal 1 &quot;multiples&#x2d;stream&quot;
+	      (ss multiples&#x2d;of&#x2d;three)
+	      &#x27;(3 6 9 12 15 18 21 24 27 30 ...))</code></pre>
+
+
+    <button id='0' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 0">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x6d;&#x75;&#x6c;&#x74;&#x69;&#x70;&#x6c;&#x65;&#x73;&#x2d;&#x6f;&#x66;&#x2d;&#x74;&#x68;&#x72;&#x65;&#x65;&#xa;&#x20;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x20;&#x33;&#xa;&#x20;&#x20;&#x20;&#x20;&#x28;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x2d;&#x6d;&#x61;&#x70;&#x20;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x28;&#x78;&#x29;&#x20;&#x28;&#x2b;&#x20;&#x78;&#x20;&#x33;&#x29;&#x29;&#x20;&#x6d;&#x75;&#x6c;&#x74;&#x69;&#x70;&#x6c;&#x65;&#x73;&#x2d;&#x6f;&#x66;&#x2d;&#x74;&#x68;&#x72;&#x65;&#x65;&#x29;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q2">Question 2</h3>
+Guess what the following code does before typing it into the
+interpreter.
+
+    <pre><code>STk&gt; (define (foo x) (* x x))
+<span class="blank17">______</span><span class="hidden solution 17">&#x66;&#x6f;&#x6f;</span>
+STk&gt; (define (foo&#x2d;stream x) (cons&#x2d;stream (foo x) (foo&#x2d;stream x)))
+<span class="blank17">______</span><span class="hidden solution 17">&#x66;&#x6f;&#x6f;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;</span>
+STk&gt; (define bar (foo&#x2d;stream 2))
+<span class="blank17">______</span><span class="hidden solution 17">&#x62;&#x61;&#x72;</span>
+STk&gt; (stream&#x2d;car bar)
+<span class="blank17">______</span><span class="hidden solution 17">&#x34;</span>
+STk&gt; (stream&#x2d;car (stream&#x2d;cdr bar))
+<span class="blank17">______</span><span class="hidden solution 17">&#x34;</span>
+STk&gt; (define (foo x) x)
+<span class="blank17">______</span><span class="hidden solution 17">&#x66;&#x6f;&#x6f;</span>
+STk&gt; (ss bar)
+<span class="blank17">______</span><span class="hidden solution 17">&#x28;&#x34;&#x20;&#x34;&#x20;&#x32;&#x20;&#x32;&#x20;&#x32;&#x20;&#x32;&#x20;&#x32;&#x20;&#x32;&#x20;&#x32;&#x20;&#x32;&#x20;&#x2e;&#x2e;&#x2e;&#x29;</span></code></pre>
+
+    <button id='17' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+<h3 id="higher-order-functions-on-streams">Higher Order Functions on Streams</h3>
+
+<p>Naturally, as the theme has always been in this class, we can abstract
+our stream procedures to be higher order.</p>
+
+
+    <pre><code>STk&gt; (define big&#x2d;stream (stream&#x2d;enumerate&#x2d;interval 1 100000))
+<span class="blank18">______</span><span class="hidden solution 18">&#x62;&#x69;&#x67;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;</span>
+STk&gt; (ss big&#x2d;stream)
+<span class="blank18">______</span><span class="hidden solution 18">&#x28;&#x31;&#x20;&#x32;&#x20;&#x33;&#x20;&#x34;&#x20;&#x35;&#x20;&#x36;&#x20;&#x37;&#x20;&#x38;&#x20;&#x39;&#x20;&#x31;&#x30;&#x20;&#x2e;&#x2e;&#x2e;&#x29;</span>
+STk&gt; (define big&#x2d;evens (stream&#x2d;filter even? big&#x2d;stream))
+<span class="blank18">______</span><span class="hidden solution 18">&#x62;&#x69;&#x67;&#x2d;&#x65;&#x76;&#x65;&#x6e;&#x73;</span>
+STk&gt; (stream&#x2d;cdr big&#x2d;evens)
+<span class="blank18">______</span><span class="hidden solution 18">&#x28;&#x34;&#x20;&#x2e;&#x20;&#x23;&#x5b;&#x70;&#x72;&#x6f;&#x6d;&#x69;&#x73;&#x65;&#x20;&#x78;&#x78;&#x78;&#x78;&#x78;&#x78;&#x20;&#x28;&#x6e;&#x6f;&#x74;&#x20;&#x66;&#x6f;&#x72;&#x63;&#x65;&#x64;&#x29;&#x5d;&#x29;</span>
+STk&gt; (ss big&#x2d;evens)
+<span class="blank18">______</span><span class="hidden solution 18">&#x28;&#x32;&#x20;&#x34;&#x20;&#x36;&#x20;&#x38;&#x20;&#x31;&#x30;&#x20;&#x31;&#x32;&#x20;&#x31;&#x34;&#x20;&#x31;&#x36;&#x20;&#x31;&#x38;&#x20;&#x32;&#x30;&#x20;&#x2e;&#x2e;&#x2e;&#x29;</span>
+STk&gt; (stream&#x2d;cdr big&#x2d;evens)
+<span class="blank18">______</span><span class="hidden solution 18">&#x28;&#x34;&#x20;&#x2e;&#x20;&#x23;&#x5b;&#x70;&#x72;&#x6f;&#x6d;&#x69;&#x73;&#x65;&#x20;&#x78;&#x78;&#x78;&#x78;&#x78;&#x78;&#x20;&#x28;&#x66;&#x6f;&#x72;&#x63;&#x65;&#x64;&#x29;&#x5d;&#x29;</span></code></pre>
+
+    <button id='18' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+<p>Notice how the stream we create has as its <code>rest</code> a <em>promise</em>
+to filter out the rest of the stream when asked.  So at any one point,
+the entire stream has not been filtered.  Instead, only the part of the
+stream that has been referenced has been filtered, but the rest will be
+filtered when asked. We can model other higher order Stream procedures
+after this one, and we can combine our higher order Stream procedures
+to do incredible things!</p>
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Define a function <code>find</code> which takes in as input a stream and a
+predicate, and returns the first element in the stream satisfying the
+predicate.</p>
+
+<p><em>Note</em>: Consider the case where there is no element in the stream
+satisfying the predicate. Could we add to the specification that this
+function must return <code>okay</code> in that case? Explain the difficulty
+implementing such a specification, and the conditions under which one
+can and cannot meet it.</p>
+
+<pre><code>(define (find stream predicate)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE)
+
+; Doctests for find
+(define m (cons&#x2d;stream 1 (cons&#x2d;stream 2 the&#x2d;empty&#x2d;stream)))
+(assert&#x2d;equal 1 &quot;find&quot; (find m even?) 2)
+(assert&#x2d;equal 2 &quot;find&quot; (find m (lambda (x) (= x 3))) &#x27;okay)
+(assert&#x2d;equal 3 &quot;find&quot; (find m (lambda (x) (= x 1))) 1)</code></pre>
+
+
+    <button id='1' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 1">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x66;&#x69;&#x6e;&#x64;&#x20;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x20;&#x70;&#x72;&#x65;&#x64;&#x69;&#x63;&#x61;&#x74;&#x65;&#x29;&#x20;&#xa;&#x20;&#x20;&#x28;&#x69;&#x66;&#x20;&#x28;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x2d;&#x6e;&#x75;&#x6c;&#x6c;&#x3f;&#x20;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x27;&#x6f;&#x6b;&#x61;&#x79;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x69;&#x66;&#x20;&#x28;&#x70;&#x72;&#x65;&#x64;&#x69;&#x63;&#x61;&#x74;&#x65;&#x20;&#x28;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x2d;&#x63;&#x61;&#x72;&#x20;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x29;&#x29;&#xa;&#x9;&#x20;&#x20;&#x28;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x2d;&#x63;&#x61;&#x72;&#x20;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x29;&#xa;&#x9;&#x20;&#x20;&#x28;&#x66;&#x69;&#x6e;&#x64;&#x20;&#x28;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x2d;&#x63;&#x64;&#x72;&#x20;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x29;&#x20;&#x70;&#x72;&#x65;&#x64;&#x69;&#x63;&#x61;&#x74;&#x65;&#x29;&#x29;&#x29;&#x29;</code></pre>
+
+<p><em>Note</em>: The exception can only be reached on finite streams Find will
+simply run forever on infinite streams which lack a suitable element!</p>
+
+</div>
+    
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Define a function <code>cycle</code> which takes in as input an ordinary Scheme
+list and returns a stream which just repeats that list over and over 
+For example, <code>(cycle &#x27;(a b c) ))</code> is the stream containing elements
+<code>(a b c a b c ...)</code>. If the input list is empty, output the empty stream;
+otherwise, the output stream should be infinite.</p>
+
+<pre><code>(define (cycle lst)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE)
+
+; Doctests for cycle
+(define n &#x27;(1 2 3))
+(assert&#x2d;equal 1 &quot;cycle&quot; (ss (cycle n)) &#x27;(1 2 3 1 2 3 1 2 3 1 ...))
+(define o nil)
+(assert&#x2d;equal 2 &quot;cycle&quot; (cycle o) the&#x2d;empty&#x2d;stream)</code></pre>
+
+
+    <button id='2' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 2">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x63;&#x79;&#x63;&#x6c;&#x65;&#x20;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x28;&#x69;&#x66;&#x20;&#x28;&#x6e;&#x75;&#x6c;&#x6c;&#x3f;&#x20;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x74;&#x68;&#x65;&#x2d;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x20;&#x28;&#x63;&#x61;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x20;&#xa;&#x9;&#x9;&#x20;&#x20;&#x20;&#x28;&#x63;&#x79;&#x63;&#x6c;&#x65;&#x20;&#x28;&#x61;&#x70;&#x70;&#x65;&#x6e;&#x64;&#x20;&#x28;&#x63;&#x64;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x28;&#x6c;&#x69;&#x73;&#x74;&#x20;&#x28;&#x63;&#x61;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x29;&#x29;&#x29;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p>Recall that a stream remembers elements it has previously computed and
+does not recompute them. This can play in unexpected ways with
+computations whose values may change over time (so-called "impure"
+computations).</p>
+
+<p>Suppose one wants to define a random infinite stream of numbers via the
+recursive definition "A random infinite stream consists of a first
+random number, followed by a remaining random infinite stream".
+Consider an attempt to implement this via the code:</p>
+
+<pre><code>(define random&#x2d;stream (cons&#x2d;stream (random 100) random&#x2d;stream))</code></pre>
+
+<p>What it is unsatisfactory about this?</p>
+
+
+    <button id='3' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 3">
+The provided code will generate a single random number, and then
+produce an infinite stream which simply repeats that one number over
+and over.
+</div>
+    
+
+
+<h2 id="tail-recursion">Tail Recursion</h2>
+
+
+<p>Recall from lecture that Scheme supports tail-call optimization.  The
+example we used was factorial (shown in both Python and Scheme):</p>
+
+<pre><code># Python
+def fact(n):
+    if n == 0:
+        return 1
+    return n * fact(n &#x2d; 1)
+
+# Scheme
+(define (fact n)
+  (if (= n 0)
+      1
+      (* n (fact (&#x2d; n 1)))))</code></pre>
+
+<p>Notice that in this version of <code>factorial</code>, the return expressions both
+use recursive calls, and then use the values for more "work." In other
+words, the current frame needs to sit around, waiting for the recursive
+call to return with a value. Then the current frame can use that value
+to calculate the final answer.</p>
+
+<p>As an example, consider a call to <code>fact(5)</code> (Shown with Scheme below).
+We make a new frame for the call, and in carrying out the body of the
+function, we hit the recursive case, where we want to multiply 5 by the
+return value of the call to <code>fact(4)</code>.  Then we want to return this
+product as the answer to <code>fact(5)</code>.  However, before calculating this
+product, we must wait for the call to <code>fact(4)</code>.  The current frame
+stays while it waits.  This is true for every successive recursive
+call, so by calling <code>fact(5)</code>, at one point we will have the frame of
+<code>fact(5)</code> as well as the frames of <code>fact(4)</code>, <code>fact(3)</code>, <code>fact(2)</code>, and
+<code>fact(1)</code>, all waiting for <code>fact(0)</code>.</p>
+
+<pre><code>(fact 5)
+(* 5 (fact 4))
+(* 5 (* 4 (fact 3)))
+(* 5 (* 4 (* 3 (fact 2))))
+(* 5 (* 4 (* 3 (* 2 (fact 1)))))
+(* 5 (* 4 (* 3 (* 2 (* 1 (fact 0))))))
+(* 5 (* 4 (* 3 (* 2 (* 1 1)))))
+(* 5 (* 4 (* 3 (* 2 1))))
+(* 5 (* 4 (* 3 2)))
+(* 5 (* 4 6))
+(* 5 24)
+120</code></pre>
+
+<p>Keeping all these frames around wastes a lot of space, so our goal is
+to come up with an implementation of factorial that uses a constant
+amount of space. We notice that in Python we can do this with a while
+loop:</p>
+
+<pre><code>def fact_while(n):
+    total = 1
+    while n &gt; 0:
+        total = total * n
+        n = n &#x2d; 1
+    return total</code></pre>
+
+<p>However, Scheme doesn't have <code>for</code> and <code>while</code> constructs. No problem!
+Everything that can be written with while and <code>for</code> loops and also be
+written recursively.  Instead of a variable, we introduce a new
+parameter to keep track of the total.</p>
+
+<pre><code>def fact(n):
+    def fact_optimized(n, total):
+        if n == 0:
+            return total
+        return fact_optimized(n &#x2d; 1, total * n)
+    return fact_optimized(n, 1)
+
+(define (fact n)
+  (define (fact&#x2d;optimized n total)
+    (if (= n 0)
+        total
+        (fact&#x2d;optimized (&#x2d; n 1) (* total n))))
+  (fact&#x2d;optimized n 1))</code></pre>
+
+<p>Why is this better? Consider calling <code>fact(n)</code> on based on this definition:</p>
+
+<pre><code>(fact 5)
+(fact&#x2d;optimized 5   1)
+(fact&#x2d;optimized 4   5)
+(fact&#x2d;optimized 3  20)
+(fact&#x2d;optimized 2  60)
+(fact&#x2d;optimized 1 120)
+(fact&#x2d;optimized 0 120)
+120</code></pre>
+
+<p>Because Scheme supports tail-call optimization (note that Python
+<strong>does not</strong>), it knows when it no longer needs to keep around
+frames because there is no further calculation to do. Looking at the last line
+in <code>fact_optimized</code>, we notice that it returns the same thing that
+its recursive call returns:. <code>(fact 5)</code> returns whatever
+<code>(fact&#x2d;optimized 5 1)</code> returns;  <code>(fact&#x2d;optimized 5
+1)</code> returns whatever <code>fact&#x2d;optimized 4 5)</code> returns; etc.
+Thus the Scheme interpreter kills the intermediate frames since we no longer
+need them to produce the solution. We say that the last line in
+<code>fact_optimized</code> is a <strong>tail-call</strong>.</p>
+
+<p><em>One way</em> to identify tail calls is by identifying <strong>tail contexts</strong>:</p>
+
+<ul>
+  <li>The last body sub-expression in a <code>lambda</code> expression</li>
+  <li>Sub-expressions 2 and 3 in a tail context <code>if</code> expression</li>
+  <li>All non-predicate sub-expressions in a tail context <code>cond</code></li>
+  <li>The last sub-expression in a tail context <code>and</code> or <code>or</code></li>
+  <li>The last sub-expression in a tail context <code>begin</code></li>
+</ul>
+
+<p>Call expressions in "tail contexts" are tail calls, because there is no
+reason to keep the current frame "active."</p>
+
+<h3 class="question" id="q6">Question 6</h3>
+
+<p>For the following procedures, decide whether each is tail-call
+optimized.  Do not run the procedures (they may not work)!</p>
+
+<p>Check the recursive calls in tail positions (there might be multiple).
+Is it in a tail context?  In other words, does the last recursive call
+need to return to the caller because there is still more work to be
+done with it?</p>
+
+<p>List what each of the tail-calls are to help decide of they are
+optimized.</p>
+
+<pre><code>(define (question&#x2d;a x)
+  (if (= x 0)
+      0
+      (+ x (question&#x2d;a (&#x2d; x 1)))))</code></pre>
+
+
+    <button id='4' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 4">
+The tail call is a <code>+</code>.  This is not optimized, because a recursive
+call is an argument to the call to <code>+</code>.
+</div>
+    
+
+<pre><code>(define (question&#x2d;b x y)
+  (if (= x 0)
+      y
+      (question&#x2d;b (&#x2d; x 1) (+ y x))))</code></pre>
+
+
+    <button id='5' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 5">
+Tail-call to <code>question&#x2d;b</code>.  It is in sub-expression 3 in a tail context
+<code>if</code> expression.
+</div>
+    
+
+<pre><code>(define (question&#x2d;c x y)
+  (if (= x y)
+      #t
+      (if (&lt; x y)
+	  #f
+	  (or (question&#x2d;c (&#x2d; x 1) (&#x2d; y 2)) #f))))</code></pre>
+
+
+    <button id='6' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 6">
+Does not have a tail-call. (<code>question&#x2d;c</code> would need to be called
+outside of the <code>or</code> statement or in the last sub-expression)
+</div>
+    
+
+<pre><code>(define (question&#x2d;d x y)
+  (cond ((= x y) #t)
+	((&lt; x y) #f)
+	(else (or #f (question&#x2d;d (&#x2d; x 1) (&#x2d; y 2))))))</code></pre>
+
+
+    <button id='7' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 7">
+There is a tail-call to <code>question&#x2d;d</code> because it is the last
+sub-expression in a tail context or statement.
+</div>
+    
+
+<h3 class="question" id="q7">Question 7</h3>
+
+<p>Write a function <code>last</code>, which takes in a Scheme list and returns the last
+element of the list. Make sure it is tail recursive! The tests don't check, but
+our autograder will!</p>
+
+<pre><code>(define (last s)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE)</code></pre>
+
+
+    <button id='8' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 8">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x6c;&#x61;&#x73;&#x74;&#x20;&#x73;&#x29;&#xa;&#x20;&#x20;&#x28;&#x69;&#x66;&#x20;&#x28;&#x6e;&#x75;&#x6c;&#x6c;&#x3f;&#x20;&#x28;&#x63;&#x64;&#x72;&#x20;&#x73;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x63;&#x61;&#x72;&#x20;&#x73;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x6c;&#x61;&#x73;&#x74;&#x20;&#x28;&#x63;&#x64;&#x72;&#x20;&#x73;&#x29;&#x29;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q8">Question 8</h3>
+
+<p>Write a function <code>filter</code>, which takes in a predicate and a Scheme list and
+returns a Scheme list whose elements are the elements from the inputted Scheme
+list that satisfy the predicate. Make sure it is tail recursive! The tests
+don't check, but our autograder will!</p>
+
+<pre><code>(define (filter pred lst)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE)</code></pre>
+
+
+    <button id='9' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 9">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x66;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x20;&#x70;&#x72;&#x65;&#x64;&#x20;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x73;&#x6f;&#x2d;&#x66;&#x61;&#x72;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x28;&#x69;&#x66;&#x20;&#x28;&#x6e;&#x75;&#x6c;&#x6c;&#x3f;&#x20;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x9;&#x73;&#x6f;&#x2d;&#x66;&#x61;&#x72;&#xa;&#x9;&#x28;&#x69;&#x66;&#x20;&#x28;&#x70;&#x72;&#x65;&#x64;&#x20;&#x28;&#x63;&#x61;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x29;&#xa;&#x9;&#x20;&#x20;&#x20;&#x20;&#x28;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x20;&#x28;&#x63;&#x64;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x28;&#x61;&#x70;&#x70;&#x65;&#x6e;&#x64;&#x20;&#x73;&#x6f;&#x2d;&#x66;&#x61;&#x72;&#x20;&#x28;&#x6c;&#x69;&#x73;&#x74;&#x20;&#x28;&#x63;&#x61;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x29;&#x29;&#xa;&#x9;&#x20;&#x20;&#x20;&#x20;&#x28;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x20;&#x28;&#x63;&#x64;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x73;&#x6f;&#x2d;&#x66;&#x61;&#x72;&#x29;&#x29;&#x29;&#x29;&#xa;&#x20;&#x20;&#x28;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x27;&#x28;&#x29;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+
+<h2 id="optional-problems">Optional Problems</h2>
+
+
+<h3 class="question" id="q9">Question 9</h3>
+We want to implement <code>starts&#x2d;with</code> from homework 3 in Scheme.  Recall
+that <code>starts&#x2d;with</code> is supposed to return <code>#t</code> if <code>sublst</code> is a prefix
+of <code>lst</code> (that is, if <code>lst</code> starts with <code>sublst</code>), and <code>#f</code>
+otherwise.  Note that unlike homework 3, we assume that <code>sublst</code> will
+never be longer than <code>lst</code>.
+
+<p>Here are three implementations. For each implementation:</p>
+
+<p>a) Does it work?</p>
+
+<p>b) Is it tail recursive?</p>
+
+<pre><code>(define (starts&#x2d;with&#x2d;a lst sublst)
+  (or (null? sublst)
+      (and (equal? (car lst) (car sublst))
+	   (starts&#x2d;with&#x2d;a (cdr lst) (cdr sublst)))))</code></pre>
+
+
+    <button id='10' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 10">
+a) Yes, it is a valid implementation. (try it out in the interpeter!)
+
+<p>b) Yes, it is tail recursive, because there is a tail call to
+<code>starts&#x2d;with</code> in the last sub-expression in a tail context <code>and</code>
+statement.</p>
+
+</div>
+    
+
+<pre><code>(define (starts&#x2d;with&#x2d;b lst sublst)
+  (or (null? sublst)
+      (and (starts&#x2d;with&#x2d;b (cdr lst) (cdr sublst))
+	   (equal? (car lst) (car sublst)))))</code></pre>
+
+
+    <button id='11' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 11">
+a) Yes, it is a valid implementation.
+
+<p>b) No, it is not tail recursive, because, like question-c, the
+   recursive call to starts-with is not a tail call.
+</div>
+    </p>
+
+<pre><code>(define (starts&#x2d;with lst sublst)
+  (or (and (equal? (car lst) (car sublst))
+	   (starts&#x2d;with (cdr lst) (cdr sublst)))
+      (null? sublst)))</code></pre>
+
+
+    <button id='12' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 12">
+a) No, this is not a valid implementation. It will break on the case
+   that sublst is a null list.
+
+<p>b) No, it is not tail recursive.
+</div>
+    </p>
+
+<h3 class="question" id="q10">Question 10</h3>
+
+<p>Remember in calculus that we can make pretty good approximations like
+<code>e</code>, <code>cos</code>, and <code>sin</code> using power series. For instance, we have
+e^x = 1 + x + x^2/2! + x^3/3! + ...</p>
+
+<p>First, define a stream whose elements are closer and closer approximations
+to e^x. This means the first element is 1, the second is x, the third is
+x^2/2! and so forth.</p>
+
+<p><em>Hint</em>: Speaking of calculus, here is a quote from Rene Descartes:</p>
+
+<pre><code>&quot;Divide each of the difficulties under examination into as many parts 
+as possible, and as might be necessary for its adequate solution.&quot;</code></pre>
+
+<p>You should also use your naturals stream, which starts from 1.</p>
+
+<pre><code>; Note: Helper code will help!
+(define (e&#x2d;to&#x2d;the x)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE)
+
+; Doctests for e&#x2d;to&#x2d;the
+(assert&#x2d;equal 1 &quot;e&#x2d;to&#x2d;the&quot;
+	      (&lt; (abs (&#x2d; (stream&#x2d;ref (e&#x2d;to&#x2d;the 2) 10) 7.3890561)) 0.0001)
+	      #t)</code></pre>
+
+
+    <button id='13' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 13">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x66;&#x61;&#x63;&#x74;&#x6f;&#x72;&#x69;&#x61;&#x6c;&#x20;&#x6e;&#x29;&#xa;&#x20;&#x20;&#x28;&#x69;&#x66;&#x20;&#x28;&#x3c;&#x3d;&#x20;&#x6e;&#x20;&#x31;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x2a;&#x20;&#x6e;&#x20;&#x28;&#x66;&#x61;&#x63;&#x74;&#x6f;&#x72;&#x69;&#x61;&#x6c;&#x20;&#x28;&#x2d;&#x20;&#x6e;&#x20;&#x31;&#x29;&#x29;&#x29;&#x29;&#x29;&#xa;&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x63;&#x6f;&#x6d;&#x70;&#x75;&#x74;&#x65;&#x2d;&#x74;&#x65;&#x72;&#x6d;&#x20;&#x78;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x29;&#xa;&#x20;&#x20;&#x28;&#x2a;&#x20;&#x28;&#x2f;&#x20;&#x31;&#x20;&#x28;&#x66;&#x61;&#x63;&#x74;&#x6f;&#x72;&#x69;&#x61;&#x6c;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x29;&#x29;&#x20;&#x28;&#x65;&#x78;&#x70;&#x74;&#x20;&#x78;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x29;&#x29;&#x29;&#xa;&#xa;&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x74;&#x65;&#x72;&#x6d;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x20;&#x78;&#x29;&#x20;&#x28;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x2d;&#x6d;&#x61;&#x70;&#x20;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x28;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x29;&#x20;&#x28;&#x63;&#x6f;&#x6d;&#x70;&#x75;&#x74;&#x65;&#x2d;&#x74;&#x65;&#x72;&#x6d;&#x20;&#x78;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x29;&#x29;&#x20;&#x6e;&#x61;&#x74;&#x75;&#x72;&#x61;&#x6c;&#x73;&#x29;&#x29;&#xa;&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x65;&#x2d;&#x74;&#x6f;&#x2d;&#x74;&#x68;&#x65;&#x20;&#x78;&#x29;&#x20;&#xa;&#x20;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x20;&#x28;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x2d;&#x63;&#x61;&#x72;&#x20;&#x28;&#x74;&#x65;&#x72;&#x6d;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x20;&#x78;&#x29;&#x29;&#xa;&#x9;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x61;&#x64;&#x64;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x73;&#x20;&#x28;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x2d;&#x63;&#x64;&#x72;&#x20;&#x28;&#x74;&#x65;&#x72;&#x6d;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x20;&#x78;&#x29;&#x29;&#x20;&#x28;&#x65;&#x2d;&#x74;&#x6f;&#x2d;&#x74;&#x68;&#x65;&#x20;&#x78;&#x29;&#x29;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q11">Question 11</h3>
+Note that to get the cosine stream, all one has to do is just 
+change the way each term is computed. Let's write a general function
+<code>power&#x2d;series</code> that does the same thing as <code>e&#x2d;to&#x2d;the</code>, but takes in a
+function to compute the term this time.
+
+<pre><code>(define (power&#x2d;series x compute&#x2d;term)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE)
+
+;; Doctests for power&#x2d;series
+(define (sine&#x2d;term x count)
+  (* (/ (expt &#x2d;1 count) (factorial (+ (* 2 count) 1)))
+     (expt x (+ (* 2 count) 1))))
+;; Do not change this test
+(define sin&#x2d;series (power&#x2d;series 3 sine&#x2d;term))
+(define error (&lt; (abs (&#x2d; (stream&#x2d;ref sin&#x2d;series 10) (sin 3))) 0.00001))
+(assert&#x2d;equal 1 &quot;power&#x2d;series&quot; error #t)</code></pre>
+
+</question>
+
+
+    <button id='14' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 14">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x70;&#x6f;&#x77;&#x65;&#x72;&#x2d;&#x73;&#x65;&#x72;&#x69;&#x65;&#x73;&#x20;&#x78;&#x20;&#x63;&#x6f;&#x6d;&#x70;&#x75;&#x74;&#x65;&#x2d;&#x74;&#x65;&#x72;&#x6d;&#x29;&#xa;&#x20;&#x20;&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x74;&#x65;&#x72;&#x6d;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x20;&#x78;&#x29;&#x20;&#x28;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x2d;&#x6d;&#x61;&#x70;&#x20;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x28;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x29;&#x20;&#x28;&#x63;&#x6f;&#x6d;&#x70;&#x75;&#x74;&#x65;&#x2d;&#x74;&#x65;&#x72;&#x6d;&#x20;&#x78;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x29;&#x29;&#x20;&#x6e;&#x61;&#x74;&#x75;&#x72;&#x61;&#x6c;&#x73;&#x29;&#x29;&#xa;&#x20;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x20;&#x28;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x2d;&#x63;&#x61;&#x72;&#x20;&#x28;&#x74;&#x65;&#x72;&#x6d;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x20;&#x78;&#x29;&#x29;&#xa;&#x9;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x61;&#x64;&#x64;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x73;&#x20;&#x28;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x2d;&#x63;&#x64;&#x72;&#x20;&#x28;&#x74;&#x65;&#x72;&#x6d;&#x2d;&#x73;&#x74;&#x72;&#x65;&#x61;&#x6d;&#x20;&#x78;&#x29;&#x29;&#x20;&#x28;&#x70;&#x6f;&#x77;&#x65;&#x72;&#x2d;&#x73;&#x65;&#x72;&#x69;&#x65;&#x73;&#x20;&#x78;&#x20;&#x63;&#x6f;&#x6d;&#x70;&#x75;&#x74;&#x65;&#x2d;&#x74;&#x65;&#x72;&#x6d;&#x29;&#x29;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+<p>Now, all it takes to calculate derivatives and integrals of these functions
+is to properly implement a <code>deriv</code> or <code>integrate</code> function and then map
+them on the stream you created, right?</p>
+  </body>
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<!-- Interactive interpreter -->
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/mode/scheme/scheme.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/jquery.min.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/lib-xj.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.js"> </script>
+<script>
+  $(function() {
+    set_interpreter_path("../../interpreter/");
+    set_language("");
+    
+  });
+</script>
+</html>

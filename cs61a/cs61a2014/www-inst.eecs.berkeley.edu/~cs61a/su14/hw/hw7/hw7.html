@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/hw.css" />
+
+    <title>61A Homework 7 | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">61A Homework 7</h1>
+
+    <p><em>Due by 11:59pm on Saturday, 7/19</em></p>
+
+<p><strong>Readings:</strong> You might find the following references
+useful:</p>
+
+<ul>
+  <li><a href="http://composingprograms.appspot.com/pages/24-mutable-data.html#dictionaries">Section 2.4.3</a></li>
+  <li><a href="http://composingprograms.appspot.com/pages/24-mutable-data.html#sequence-objects">Section 2.4.2</a></li>
+</ul>
+
+<p>This assignment is a bit different from the rest. For the first half, you'll be
+using dictionaries to create your own Shakespearean sentences. In the
+second half, you'll be diving into cryptography and using what you've learned
+this week to create a cypher. <em>The entire second half of this assignment is
+optional</em>. While it is good practice on the material for this week, you don't 
+have to turn it in to get full points for this assignment. You worked very hard 
+last week, so hopefully this homework will be a bit of a break. 
+
+<p><strong>Submission:</strong> See the online <a
+  href="../../submit_tutorial_solo.html">submission
+  instructions</a>.  We have provided a <a
+  href="hw7.py">hw7.py</a> starter file for the questions
+below.</p>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hw7.html#dictionaries-and-shakespeare">Dictionaries and Shakespeare</a></li>
+  <ul>
+  <li><a href="hw7.html#q1">Question 1</a></li>
+  <li><a href="hw7.html#q2">Question 2</a></li>
+</ul>
+
+  <li><a href="hw7.html#creating-a-cypher-optional">Creating a Cypher (Optional)</a></li>
+  <ul>
+  <li><a href="hw7.html#q3">Question 3</a></li>
+  <li><a href="hw7.html#q4">Question 4</a></li>
+  <li><a href="hw7.html#q5">Question 5</a></li>
+  <li><a href="hw7.html#q6">Question 6</a></li>
+</ul>
+
+</ul>
+
+
+    
+
+<h2 id="dictionaries-and-shakespeare">Dictionaries and Shakespeare</h2>
+
+
+<p>Now that you know how dictionaries work, we can approximate the 
+entire works of Shakespeare! We're going to use a bigram language 
+model. Here's the idea: We start with some word &mdash; we'll use "The" 
+as an example. Then we look through all of the texts of Shakespeare 
+and for every instance of "The" we record the word that follows "The" 
+and add it to a list, known as the <em>successors</em> of "The". Now suppose 
+we've done this for every word Shakespeare has used, ever.</p>
+
+<p>Let's go back to "The". Now, we randomly choose a word from this list,
+say "cat". Then we look up the successors of "cat" and randomly choose
+a word from that list, and we continue this process. This eventually
+will terminate in a period (".") and we will have generated a
+Shakespearean sentence!</p>
+
+<p>The object that we'll be looking things up in is called a "successor
+table", although really it's just a dictionary. The keys in this
+dictionary are words, and the values are lists of successors to those
+words.</p>
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>Here's an incomplete definition of the <code>build_successors_table</code>
+function. The input is a list of words (corresponding to a
+Shakespearean text), and the output is a successors table. (By
+default, the first word is a successor to "."). See the example below:</p>
+
+<pre><code>def build_successors_table(tokens):
+    &quot;&quot;&quot;Return a dictionary: keys are words; values are lists of
+    successors.
+
+    &gt;&gt;&gt; text = [&#x27;We&#x27;, &#x27;came&#x27;, &#x27;to&#x27;, &#x27;investigate&#x27;, &#x27;,&#x27;, &#x27;catch&#x27;, \
+                &#x27;bad&#x27;, &#x27;guys&#x27;, &#x27;and&#x27;, &#x27;to&#x27;, &#x27;eat&#x27;, &#x27;pie&#x27;, &#x27;.&#x27;]
+    &gt;&gt;&gt; table = build_successors_table(text)
+    &gt;&gt;&gt; expected = {&#x27;and&#x27;: [&#x27;to&#x27;], &#x27;We&#x27;: [&#x27;came&#x27;], &#x27;bad&#x27;: [&#x27;guys&#x27;], \
+                &#x27;pie&#x27;: [&#x27;.&#x27;], &#x27;,&#x27;: [&#x27;catch&#x27;], &#x27;.&#x27;: [&#x27;We&#x27;], \
+                &#x27;to&#x27;: [&#x27;investigate&#x27;, &#x27;eat&#x27;], &#x27;investigate&#x27;: [&#x27;,&#x27;], \
+                &#x27;catch&#x27;: [&#x27;bad&#x27;], &#x27;guys&#x27;: [&#x27;and&#x27;], &#x27;eat&#x27;: [&#x27;pie&#x27;], \
+                &#x27;came&#x27;: [&#x27;to&#x27;]}
+    &gt;&gt;&gt; expected == table
+    True
+    &quot;&quot;&quot;
+    table = {}
+    prev = &#x27;.&#x27;
+    for word in tokens:
+        if prev in table:
+            "*** YOUR CODE HERE ***"
+        else:
+            "*** YOUR CODE HERE ***"
+
+        prev = word
+    return table</code></pre>
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>Let's generate some sentences! Suppose we're given a starting word. We
+can look up this word in our table to find its list of successors, and
+then randomly select a word from this list to be the next word in the
+sentence. Then we just repeat until we reach some ending punctuation.</p>
+
+<p><em>Hint</em>: to randomly select from a list, first make sure you import the
+Python random library with <code>import random</code> and then use the expression
+<code>random.choice(my_list)</code>)</p>
+
+<p>This might not be a bad time to play around with adding strings
+together as well. Let's fill in the <code>construct_sent</code> function!</p>
+
+<pre><code>def construct_sent(word, table):
+    &quot;&quot;&quot;Returns a random sentence starting with word, sampling from
+    table.
+    &quot;&quot;&quot;
+    import random
+    result = &#x27; &#x27;
+    while word not in [&#x27;.&#x27;, &#x27;!&#x27;, &#x27;?&#x27;]:
+        "*** YOUR CODE HERE ***"
+    return result + word</code></pre>
+
+<p>Great! Now all that's left is to run our functions with some actual
+code. The following snippet included in the skeleton code will return
+a list containing the words in all of the works of Shakespeare.</p>
+
+<p><em>Warning</em>: do <strong>NOT</strong> try to print the return result of this function):</p>
+
+<pre><code>def shakespeare_tokens(path = &#x27;shakespeare.txt&#x27;, url = &#x27;http://goo.gl/SztLfX&#x27;):
+    &quot;&quot;&quot;Return the words of Shakespeare&#x27;s plays as a list.&quot;&quot;&quot;
+    import os
+    from urllib.request import urlopen
+    if os.path.exists(path):
+        return open(&#x27;shakespeare.txt&#x27;, encoding=&#x27;ascii&#x27;).read().split()
+    else:
+        shakespeare = urlopen(url)
+        return shakespeare.read().decode(encoding=&#x27;ascii&#x27;).split()</code></pre>
+
+<p>Next, we probably want an easy way to refer to our list of tokens and
+our successors table.  Let's make the following assignments:</p>
+
+<pre><code>&gt;&gt;&gt; tokens = shakespeare_tokens()
+&gt;&gt;&gt; table = build_successors_table(tokens)</code></pre>
+
+<p>Finally, let's define an easy to call utility function:</p>
+
+<pre><code>&gt;&gt;&gt; def sent():
+        return construct_sent(&#x27;The&#x27;, table)
+
+&gt;&gt;&gt; sent()
+&#x27; The plebeians have done us must be news&#x2d;cramm&#x27;d &#x27;
+
+&gt;&gt;&gt; sent()
+&#x27; The ravish&#x27;d thee , with the mercy of beauty &#x27;
+
+&gt;&gt;&gt; sent()
+&#x27; The bird of Tunis , or two white and plucker down with better ; that&#x27;s God&#x27;s sake &#x27;</code></pre>
+
+<p>Now, if we want to start the sentence with a random word, we can use
+the folowing:</p>
+
+<pre><code>def random_sent():
+    import random
+    return construct_sent(random.choice(table[&#x27;.&#x27;]), table)
+
+&gt;&gt;&gt; random_sent()
+&#x27; You have our thoughts to blame his next to be praised and think ?&#x27;
+
+&gt;&gt;&gt; random_sent()
+&#x27; Long live by thy name , then , Dost thou more angel , good Master Deep&#x2d;vow , And tak&#x27;st more ado but following her , my sight Of speaking false !&#x27;
+
+&gt;&gt;&gt; random_sent()
+&#x27; Yes , why blame him , as is as I shall find a case , That plays at the public weal or the ghost .&#x27;</code></pre>
+
+
+<h2 id="creating-a-cypher-optional">Creating a Cypher (Optional)</h2>
+
+<p>In this section, we'll be making our own message encryptor using a technique
+called a <a href="http://en.wikipedia.org/wiki/One-time_pad">one-time pad</a>.</p>
+
+<p>Basically, this technique works by randomly generating a <em>pad</em> for 
+each word in a message. A pad is just a random string of letters the 
+same length as the word. For example, a pad for the word <code>&#x27;dog&#x27;</code> might
+be the string <code>&#x27;yaz&#x27;</code>.</p>
+
+<p>Then, we create our encryption by adding the letters of the original word 
+to our pad, mod 26, then using that as the new value for that letter.</p>
+
+<p>For example, the first letter our word <code>&#x27;dog&#x27;</code> is <em>d</em>, which is the
+3rd letter in the alphabet (indexing from 0). The first letter in our
+pad <code>&#x27;yaz&#x27;</code> is <em>y</em>, the 24th letter in the alphabet. Therefore, the
+first letter in our encryption would be <em>b</em> (<code>24 + 3 = 27 % 26 = 1</code>).</p>
+
+<p>Since decrypting this type of message relies on the pad we randomly generate,
+after encrypting our message, we're going to use higher order functions and 
+nonlocal to lock our randomly generated pad away.</p>
+
+<p>In the Cypher section of your starter file, you've already been given
+the function <code>pad_creator</code>. This function takes in a single word, and
+returns a pad for it. See the doctests for further clarification on
+the domain and range of <code>pad_creator</code>.</p>
+
+<p>You've also been given the dictionary <code>letter_dict</code>, which contains key-value
+pairs of letters of the alphabet with their corresponding index.</p>
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>What is a pad? What is it used for? How is it different from our
+encrypted word?</p>
+
+<p>How are we encrypting our words? Review the Wikipedia article linked
+above if you are still unclear on this process.</p>
+
+<p>Make sure you can answer these questions before moving on.</p>
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>The first thing we need to do is to find a way to encrypt a single
+word.</p>
+
+<p>Write the function <code>word_mutator</code> which takes in a single word and a pad, 
+and returns the encrypted version of that word. You may find <code>letter_dict</code> 
+useful for this task. You may also find the value <code>string.ascii_lowercase</code> 
+useful. <code>string.ascii_lowercase</code> returns a string of all of the lowercase
+ASCII characters in order.</p>
+
+<pre><code>def word_mutator(word, pad):
+    &quot;&quot;&quot;Returns an encrypted version of word using
+    the one&#x2d;time pass techinique.
+
+    &gt;&gt;&gt; word_mutator(&#x27;charms&#x27;, &#x27;secret&#x27;)
+    &#x27;ulciql&#x27;
+    &quot;&quot;&quot;
+    new_word = &#x27;&#x27;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p>Switching gears briefly for this problem, we need to consider the
+security of our pad. We can only decrypt our original message if we
+have the pad that encrypted it. However, we don't just want to return
+the pad with our encrypted message. Instead, lets create a higher
+order function <code>make_lock</code>.</p>
+
+<p><code>make_lock</code> takes in the pad we want to secure, a password, and a
+number of guesses which defaults to 3. <code>make_lock</code> returns a function
+which takes in a password attempt.</p>
+
+<p>If the password is not the same as what was given to <code>make_lock</code>, we
+want to reduce the number of guesses left by 1, and store that
+attempted guess away. If a password is attempted more than once, or
+the amount of guess attempts left reduces to zero, the pad should be
+locked away forever.</p>
+
+<p>However, if one gives the correct password before the guess attempts
+hits zero, the lock should return the pad given to <code>make_lock</code>, and
+then never return the pad again.</p>
+
+<p>Make sure you read and understand the doctests for <code>make_lock</code> before
+you start writing your code.</p>
+
+<pre><code>def make_lock(pad, password, n=3):
+    &quot;&quot;&quot;Returns a function which takes in password attempts.
+    If more than n passwords are attempted, then the pad is 
+    locked away forever.
+
+    If the same password is attempted more than one, the pad 
+    is locked away forever.
+
+    If the password is correct, the pad is returned, and can 
+    never be retrieved again from this lock.
+
+    &gt;&gt;&gt; lock1 = make_lock(&#x27;correcthorsebatterystaple&#x27;, &#x27;letmein&#x27;)
+    &gt;&gt;&gt; lock1(&#x27;bad password&#x27;)
+    &#x27;Sorry, wrong password. Try again?&#x27;
+    &gt;&gt;&gt; lock1(&#x27;123456&#x27;)
+    &#x27;Sorry, wrong password. Try again?&#x27;
+    &gt;&gt;&gt; lock1(&#x27;letmein&#x27;)
+    &#x27;correcthorsebatterystaple&#x27;
+    &gt;&gt;&gt; lock1(&#x27;letmein&#x27;)
+    &#x27;Out of password attempts!&#x27;
+    &gt;&gt;&gt; lock2 = make_lock(&#x27;xyzzy&#x27;, &#x27;worst. password. ever.&#x27;)
+    &gt;&gt;&gt; lock2(&#x27;Pikachu&#x27;)
+    &#x27;Sorry, wrong password. Try again?&#x27;
+    &gt;&gt;&gt; lock2(&#x27;Pikachu&#x27;)
+    &#x27;Password attempt repeated: security system locked!&#x27;
+    &quot;&quot;&quot;
+    attempts = []
+    def lock(attempt):
+        "*** YOUR CODE HERE ***"
+    return lock</code></pre>
+
+<h3 class="question" id="q6">Question 6</h3>
+Now we can finally write our encryption function!
+
+<p>Write the function <code>OTP_encrypter</code>, which takes in a list of words to
+encrypt, and a password to lock the corresponding pad
+with. <code>OTP_encrypter</code> should encrypt the <em>original</em> list of words, and
+mutate the <code>message</code> to store the encrypted words in it.  It should
+return a lock for the pad corresponding to the message.  In order to
+recover the list of words, we would have to use the password to
+recover the pad (which would be a list of strings, one for each
+word).</p>
+
+<pre><code>def OTP_encrypter(message, password):
+    &quot;&quot;&quot;Encrypts the words in the orignial list message, and
+    returns a lock for the pad generated using password.
+
+    &gt;&gt;&gt; message = [&#x27;robbery&#x27;, &#x27;planned&#x27;, &#x27;on&#x27;, &#x27;monday&#x27;]
+    &gt;&gt;&gt; message_copy = message[:]
+    &gt;&gt;&gt; lock = OTP_encrypter(message, &#x27;open sesame&#x27;)
+    &gt;&gt;&gt; message == message_copy
+    False
+    &gt;&gt;&gt; lock(&#x27;open please?&#x27;)
+    &#x27;Sorry, wrong password. Try again?&#x27;
+    &gt;&gt;&gt; pad = lock(&#x27;open sesame&#x27;)
+    &gt;&gt;&gt; assert type(pad) == list
+    &gt;&gt;&gt; assert len(pad) == len(message)
+    &gt;&gt;&gt; assert len(message) == len(message_copy)
+    &gt;&gt;&gt; for i in range(len(message)):
+    ...     assert word_mutator(message_copy[i], pad[i]) == message[i]
+    ...
+    &quot;&quot;&quot;
+    pad = []
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<p>Congratuations! You've made your very own cryptography program.</p>
+
+  </body>
+
+  
+</html>

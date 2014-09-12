@@ -1,0 +1,1 @@
+wget -r -p -k -np http://www-inst.eecs.berkeley.edu/~cs61a/su14/

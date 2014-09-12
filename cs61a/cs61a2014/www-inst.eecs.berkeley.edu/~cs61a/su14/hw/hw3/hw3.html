@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/hw.css" />
+
+    <title>61A Homework 3 | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">61A Homework 3</h1>
+
+    <p><em>Due by 11:59pm on Saturday, 7/5</em></p>
+
+<p><strong>Readings:</strong> You might find the following references
+useful:</p>
+
+<ul>
+  <li><a href="http://composingprograms.com/pages/17-recursive-functions.html">Section 1.7</a></li>
+</ul>
+
+
+<p><strong>Submission:</strong> See the online <a
+  href="../../submit_tutorial_solo.html">submission
+  instructions</a>.  We have provided a <a
+  href="hw3.py">hw3.py</a> starter file for the questions
+below.</p>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hw3.html#q1">Question 1</a></li>
+  <li><a href="hw3.html#q2">Question 2</a></li>
+  <li><a href="hw3.html#q3">Question 3</a></li>
+  <li><a href="hw3.html#q4">Question 4</a></li>
+  <li><a href="hw3.html#q5">Question 5: Challenge Problem (optional)</a></li>
+</ul>
+
+
+    
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>Write a function <code>has_seven</code> that takes a positive integer <code>n</code> and
+returns whether <code>n</code> contains the digit 7.  <em>Do not use any assignment
+statements - use recursion instead</em>:</p>
+
+<pre><code>def has_seven(k):
+    &quot;&quot;&quot;Returns True if at least one of the digits of k is a 7, False otherwise.
+
+    &gt;&gt;&gt; has_seven(3)
+    False
+    &gt;&gt;&gt; has_seven(7)
+    True
+    &gt;&gt;&gt; has_seven(2734)
+    True
+    &gt;&gt;&gt; has_seven(2634)
+    False
+    &gt;&gt;&gt; has_seven(734)
+    True
+    &gt;&gt;&gt; has_seven(7777)
+    True
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>World-famous mad scientist John Harvey Hilfinger has discovered the
+gene which causes people to be crazy enough to lecture for CS
+61A. Andrew and Rohin (last names hidden due to privacy concerns) are
+thus far the only two people confirmed to possess the J.H.H. gene.</p>
+
+<p>We believe many more people may be afflicted, but it is very hard to
+search for the presence of this J.H.H. gene in a given string of
+DNA. You decide to use a <code>linked_list</code> to solve this problem.</p>
+
+<p>Given a DNA sequence (a linked list whose elements are 'A', 'G', 'C'
+or 'T'), your task is to find the J.H.H. gene, which is the sequence
+'CATCAT'.  You decide to split this up into separate parts:</p>
+
+<p>First, write a function <code>starts_with</code> that takes two inputs, <code>lst</code> and
+<code>sublst</code>, and returns <code>True</code> if <code>sublst</code> is a prefix of <code>lst</code> (that
+is, if <code>lst</code> starts with <code>sublist</code>), and <code>False</code> otherwise.  Note that
+<code>sublst</code> may be larger than <code>lst</code> - in this case you should return
+<code>False</code>.</p>
+
+<pre><code>def starts_with(lst, sublst):
+    &quot;&quot;&quot;Returns True if sublst is a prefix of lst, False otherwise.
+    Note that it is possible for sublst to be larger than lst.
+
+    &gt;&gt;&gt; x = link(3, link(&#x27;foo&#x27;, link(6, link(6, empty))))
+    &gt;&gt;&gt; print_linked_list(x)
+    &lt; 3 &#x27;foo&#x27; 6 6 &gt;
+    &gt;&gt;&gt; starts_with(x, empty)
+    True
+    &gt;&gt;&gt; starts_with(x, link(3, empty))
+    True
+    &gt;&gt;&gt; starts_with(x, link(6, empty))
+    False
+    &gt;&gt;&gt; starts_with(x, x)
+    True
+    &gt;&gt;&gt; starts_with(link(2, empty), link(2, link(3, empty)))
+    False
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<p>Now, write a function <code>has_sublist</code> that takes two inputs, <code>lst</code> and
+<code>sublst</code>, and returns <code>True</code> if <code>sublst</code> is present anywhere in <code>lst</code>,
+and <code>False</code> otherwise.</p>
+
+<pre><code>def has_sublist(lst, sublst):
+    &quot;&quot;&quot;Returns True if sublst is present anywhere in lst, False otherwise.
+
+    &gt;&gt;&gt; has_sublist(empty, empty)
+    True
+    &gt;&gt;&gt; x = link(&#x27;A&#x27;, link(&#x27;G&#x27;, link(&#x27;T&#x27;, link(&#x27;T&#x27;, link(&#x27;G&#x27;, link(&#x27;C&#x27;, empty))))))
+    &gt;&gt;&gt; print_linked_list(x)
+    &lt; &#x27;A&#x27; &#x27;G&#x27; &#x27;T&#x27; &#x27;T&#x27; &#x27;G&#x27; &#x27;C&#x27; &gt;
+    &gt;&gt;&gt; has_sublist(x, empty)
+    True
+    &gt;&gt;&gt; has_sublist(x, link(2, link(3, empty)))
+    False
+    &gt;&gt;&gt; has_sublist(x, link(&#x27;A&#x27;, link(&#x27;T&#x27;, empty)))
+    False
+    &gt;&gt;&gt; has_sublist(x, link(&#x27;G&#x27;, link(&#x27;T&#x27;, link(&#x27;T&#x27;, empty))))
+    True
+    &gt;&gt;&gt; has_sublist(link(1, link(2, link(3, empty))), link(2, empty))
+    True
+    &gt;&gt;&gt; has_sublist(x, link(&#x27;A&#x27;, x))
+    False
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<p>Finally, we can solve the original problem as follows:</p>
+
+<pre><code>def has_jhh_gene(dna_seq):
+    &quot;&quot;&quot;Returns True if dna_seq contains the J.H.H. gene &#x27;CATCAT&#x27;.
+    &gt;&gt;&gt; dna = link(&#x27;C&#x27;, link(&#x27;A&#x27;, link(&#x27;T&#x27;, empty)))
+    &gt;&gt;&gt; dna = link(&#x27;C&#x27;, link(&#x27;A&#x27;, link(&#x27;T&#x27;, link(&#x27;G&#x27;, dna))))
+    &gt;&gt;&gt; print_linked_list(dna)
+    &lt; &#x27;C&#x27; &#x27;A&#x27; &#x27;T&#x27; &#x27;G&#x27; &#x27;C&#x27; &#x27;A&#x27; &#x27;T&#x27; &gt;
+    &gt;&gt;&gt; has_jhh_gene(dna)
+    False
+    &gt;&gt;&gt; dna = link(&#x27;T&#x27;, link(&#x27;C&#x27;, link(&#x27;A&#x27;, link(&#x27;T&#x27;, link(&#x27;G&#x27;, empty)))))
+    &gt;&gt;&gt; dna = link(&#x27;G&#x27;, link(&#x27;T&#x27;, link(&#x27;A&#x27;, link(&#x27;C&#x27;, link(&#x27;A&#x27;, dna)))))
+    &gt;&gt;&gt; print_linked_list(dna)
+    &lt; &#x27;G&#x27; &#x27;T&#x27; &#x27;A&#x27; &#x27;C&#x27; &#x27;A&#x27; &#x27;T&#x27; &#x27;C&#x27; &#x27;A&#x27; &#x27;T&#x27; &#x27;G&#x27; &gt;
+    &gt;&gt;&gt; has_jhh_gene(dna)
+    True
+    &quot;&quot;&quot;
+    jhh = link(&#x27;C&#x27;, link(&#x27;A&#x27;, link(&#x27;T&#x27;, link(&#x27;C&#x27;, link(&#x27;A&#x27;, link(&#x27;T&#x27;, empty))))))
+    return has_sublist(dna_seq, jhh)</code></pre>
+
+<p>Note:  This is actually a problem of importance.  CS 176 goes into
+more detail on this topic, with smarter algorithms that are faster,
+and can deal with errors in the DNA (because DNA sequencing is not
+100% correct).</p>
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>A set of coins makes change for <code>n</code> if the sum of the values of the
+coins is <code>n</code>.  For example, if you have 1-cent, 2-cent and 4-cent
+coins, the following sets make change for <code>7</code>:</p>
+
+<ul>
+  <li>7 1-cent coins</li>
+  <li>5 1-cent, 1 2-cent coins</li>
+  <li>3 1-cent, 2 2-cent coins</li>
+  <li>3 1-cent, 1 4-cent coins</li>
+  <li>1 1-cent, 3 2-cent coins</li>
+  <li>1 1-cent, 1 2-cent, 1 4-cent coins</li>
+</ul>
+
+<p>Thus, there are 6 ways to make change for <code>7</code>.  Write a function
+<code>count_change</code> that takes a positive integer <code>n</code> and a linked list of
+the coin denominations and returns the number of ways to make change
+for <code>n</code> using these coins:</p>
+
+<pre><code>def count_change(amount, denominations):
+    &quot;&quot;&quot;Returns the number of ways to make change for amount.
+
+    &gt;&gt;&gt; denominations = link(50, link(25, link(10, link(5, link(1, empty)))))
+    &gt;&gt;&gt; print_linked_list(denominations)
+    &lt; 50 25 10 5 1 &gt;
+    &gt;&gt;&gt; count_change(7, denominations)
+    2
+    &gt;&gt;&gt; count_change(100, denominations)
+    292
+    &gt;&gt;&gt; denominations = link(16, link(8, link(4, link(2, link(1, empty)))))
+    &gt;&gt;&gt; print_linked_list(denominations)
+    &lt; 16 8 4 2 1 &gt;
+    &gt;&gt;&gt; count_change(7, denominations)
+    6
+    &gt;&gt;&gt; count_change(10, denominations)
+    14
+    &gt;&gt;&gt; count_change(20, denominations)
+    60
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>A classic puzzle called the Towers of Hanoi is a game that consists of
+three rods, and a number of disks of different sizes which can slide
+onto any rod. The puzzle starts with the disks in a neat stack in
+ascending order of size on one rod, the smallest at the top, thus
+making a conical shape.</p>
+
+<p><img src="tower.jpg" alt="Towers of Hanoi"></p>
+
+<p>The objective of the puzzle is to move the entire stack to another rod,
+obeying the following rules:</p>
+
+<ul>
+  <li>Only one disk may be moved at a time.</li>
+  <li>Each move consists of taking the upper disk from one of the rods and
+  sliding it onto another rod, on top of the other disks that may
+  already be present on that rod.</li>
+  <li>No disk may be placed on top of a smaller disk.</li>
+</ul>
+
+<p>Complete the definition of <code>towers_of_hanoi</code> which prints out the steps
+to solve this puzzle for any number of <code>n</code> disks starting from the
+<code>start</code> rod and moving them to the <code>end</code> rod:</p>
+
+<pre><code>def towers_of_hanoi(n, start, end):
+    &quot;&quot;&quot;Print the moves required to solve the towers of hanoi game if we start
+    with n disks on the start pole and want to move them all to the end pole.
+
+    The game is to assumed to have 3 poles (which is traditional).
+
+    &gt;&gt;&gt; towers_of_hanoi(1, 1, 3)
+    Move 1 disk from rod 1 to rod 3
+    &gt;&gt;&gt; towers_of_hanoi(2, 1, 3)
+    Move 1 disk from rod 1 to rod 2
+    Move 1 disk from rod 1 to rod 3
+    Move 1 disk from rod 2 to rod 3
+    &gt;&gt;&gt; towers_of_hanoi(3, 1, 3)
+    Move 1 disk from rod 1 to rod 3
+    Move 1 disk from rod 1 to rod 2
+    Move 1 disk from rod 3 to rod 2
+    Move 1 disk from rod 1 to rod 3
+    Move 1 disk from rod 2 to rod 1
+    Move 1 disk from rod 2 to rod 3
+    Move 1 disk from rod 1 to rod 3
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+def move_disk(start, end):
+    print(&quot;Move 1 disk from rod&quot;, start, &quot;to rod&quot;, end)</code></pre>
+
+<h3 class="question" id="q5">Question 5: Challenge Problem (optional)</h3>
+
+<p>The recursive factorial function can be written as a single expression
+by using a <a href="http://docs.python.org/py3k/reference/expressions.html#conditional-expressions">conditional expression</a>.</p>
+
+<pre><code>&gt;&gt;&gt; fact = lambda n: 1 if n == 1 else mul(n, fact(sub(n, 1)))
+&gt;&gt;&gt; fact(5)
+120</code></pre>
+
+<p>However, this implementation relies on the fact (no pun intended) that
+<code>fact</code> has a name, to which we refer in the body of <code>fact</code>.  To write a
+recursive function, we have always given it a name using a <code>def</code> or
+assignment statement so that we can refer to the function within its
+own body.  In this question, your job is to define fact recursively
+without giving it a name!</p>
+
+<p>Write an expression that computes <code>n</code> factorial using only call
+expressions, conditional expressions, and lambda expressions (no
+assignment or def statements).  <em>Note in particular that you are not
+allowed to use <code>make_anonymous_factorial</code> in your return expression.</em>
+The <code>sub</code> and <code>mul</code> functons from the <code>operator</code> module are the only
+built-in function required to solve this problem:</p>
+
+<pre><code>from operator import sub, mul
+
+def make_anonymous_factorial():
+    &quot;&quot;&quot;Return the value of an expression that computes factorial.
+
+    &gt;&gt;&gt; make_anonymous_factorial()(5)
+    120
+    &quot;&quot;&quot;
+    return YOUR_EXPRESSION_HERE</code></pre>
+
+  </body>
+
+  
+</html>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.11: http://docutils.sourceforge.net/" />
+<title>Scheme Recursion Exhibition</title>
+<style type="text/css">
+
+/*
+:Author: John DeNero
+:Contact: papajohn@gmail.com
+:Copyright: This stylesheet has been placed in the public domain.
+
+Stylesheet for use with docutils for 61A lecture notes.
+
+*/
+
+body {
+  font-family: Helvetica, sans-serif;
+  font-size: 12pt;
+  line-height: 1.6;
+  color: #222;
+  font-weight: 300;
+  max-width: 900px;
+}
+
+pre, kbd, samp, code, var, pre span {
+  font: medium/1 'Andale Mono', monospace;
+  line-height: 1.3;
+}
+
+h1, h2, h3, aside {
+  font-family: "Book Antiqua", Palatino, Georgia, serif;
+  font-size: x-large;
+  margin-top: 30px;
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+h1.title {
+  margin: 0;
+}
+
+h2.subtitle {
+  margin: 0;
+}
+
+abbr {
+  font-variant: small-caps;
+  text-transform: lowercase;
+  letter-spacing: 0.1em;
+}
+
+p {
+  margin: 1.25em 0;
+}
+
+p.first {
+  margin: 0 0;
+}
+
+html {
+  background: #fff;
+  color: #222;
+}
+
+body {
+  margin: 1em 40px;
+}
+
+tt {
+  color: #002;
+}
+
+/* links */
+
+a:link, .w a {
+  color: steelblue;
+}
+
+a:visited {
+  color: #b44582;
+}
+
+/* Code */
+
+pre.literal-block, pre.doctest-block {
+  border-left: 2px solid #EEE;
+  border-right: 2px solid #EEE;
+  background-color: #F3F3F6;
+  color: #000;
+  padding: 12px;
+  margin: 0px;
+}
+
+p.attribution {
+  text-align: right ;
+  margin-left: 20% }
+
+/* Ordered lists */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+}
+
+</style>
+</head>
+<body>
+<div class="document" id="scheme-recursion-exhibition">
+<h1 class="title">Scheme Recursion Exhibition</h1>
+
+<p>Please vote for your favorite entry in this semester's 61A Recursion Exposition
+contest. The winner should exemplify the principles of elegance, beauty, and
+abstraction that are prized in the Berkeley computer science curriculum. As an
+academic community, we should strive to recognize and reward merit and
+achievement (translation: please don't just vote for your friends).</p>
+<p>In order to vote, complete and submit Lab 15. Voting is
+due on Thursday, August 14, 10:59am.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="scheme_contest.html#featherweight-division" id="id9">Featherweight Division</a><ul>
+<li><a class="reference internal" href="scheme_contest.html#submission-0-recursive-probing" id="id10">Submission 0 - Recursive Probing</a></li>
+<li><a class="reference internal" href="scheme_contest.html#submission-1-taijitu" id="id11">Submission 1 - Taijitu</a></li>
+<li><a class="reference internal" href="scheme_contest.html#submission-2-do-you-even-square" id="id12">Submission 2 - Do you even square?</a></li>
+<li><a class="reference internal" href="scheme_contest.html#submission-3-cube-chains" id="id13">Submission 3 - Cube Chains</a></li>
+<li><a class="reference internal" href="scheme_contest.html#submission-4-strange-loop-inspired-by-i-am-a-strange-loop-by-douglas-hofstadter" id="id14">Submission 4 - Strange Loop  (inspired by &quot;I am a Strange Loop&quot; by Douglas Hofstadter )</a></li>
+<li><a class="reference internal" href="scheme_contest.html#submission-5-sunflower" id="id15">Submission 5 - Sunflower</a></li>
+<li><a class="reference internal" href="scheme_contest.html#submission-6-the-kracken" id="id16">Submission 6 - The Kracken</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="scheme_contest.html#heavyweight-division" id="id17">Heavyweight Division</a><ul>
+<li><a class="reference internal" href="scheme_contest.html#submission-7-scheme-master-rohin" id="id18">Submission 7 - Scheme Master Rohin</a></li>
+<li><a class="reference internal" href="scheme_contest.html#submission-8-spinning-illusion" id="id19">Submission 8 - Spinning Illusion</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="featherweight-division">
+<h1><a class="toc-backref" href="scheme_contest.html#id9">Featherweight Division</a></h1>
+<div class="section" id="submission-0-recursive-probing">
+<h2><a class="toc-backref" href="scheme_contest.html#id10">Submission 0 - Recursive Probing</a></h2>
+<div class="line-block">
+<div class="line">An alien beam,</div>
+<div class="line">So this is an abduction</div>
+<div class="line">No probe for god's sake</div>
+</div>
+<img alt="0.png" src="0.png" />
+<p><a class="reference external" href="0.scm">0.scm</a> (86 tokens)</p>
+</div>
+<div class="section" id="submission-1-taijitu">
+<h2><a class="toc-backref" href="scheme_contest.html#id11">Submission 1 - Taijitu</a></h2>
+<div class="line-block">
+<div class="line">Pure black and pure white</div>
+<div class="line">Yin in Yang and Yang in Yin</div>
+<div class="line">Perfect harmony</div>
+</div>
+<img alt="1.png" src="1.png" />
+<p><a class="reference external" href="1.scm">1.scm</a> (106 tokens)</p>
+</div>
+<div class="section" id="submission-2-do-you-even-square">
+<h2><a class="toc-backref" href="scheme_contest.html#id12">Submission 2 - Do you even square?</a></h2>
+<div class="line-block">
+<div class="line">We present to you</div>
+<div class="line">Genertic Recursive Art</div>
+<div class="line">Sponsored by no skill.</div>
+</div>
+<img alt="2.png" src="2.png" />
+<p><a class="reference external" href="2.scm">2.scm</a> (161 tokens)</p>
+</div>
+<div class="section" id="submission-3-cube-chains">
+<h2><a class="toc-backref" href="scheme_contest.html#id13">Submission 3 - Cube Chains</a></h2>
+<div class="line-block">
+<div class="line">Chains of little cubes</div>
+<div class="line">Connected by the deep blue</div>
+<div class="line">That is what we are</div>
+</div>
+<img alt="3.png" src="3.png" />
+<p><a class="reference external" href="3.scm">3.scm</a> (198 tokens)</p>
+</div>
+<div class="section" id="submission-4-strange-loop-inspired-by-i-am-a-strange-loop-by-douglas-hofstadter">
+<h2><a class="toc-backref" href="scheme_contest.html#id14">Submission 4 - Strange Loop  (inspired by &quot;I am a Strange Loop&quot; by Douglas Hofstadter )</a></h2>
+<div class="line-block">
+<div class="line">In the end, we are:</div>
+<div class="line">We are: self-inventing mirages,</div>
+<div class="line">of self-perception</div>
+</div>
+<img alt="4.png" src="4.png" />
+<p><a class="reference external" href="4.scm">4.scm</a> (50 tokens)</p>
+</div>
+<div class="section" id="submission-5-sunflower">
+<h2><a class="toc-backref" href="scheme_contest.html#id15">Submission 5 - Sunflower</a></h2>
+<div class="line-block">
+<div class="line">Each flower tried to</div>
+<div class="line">Eat the sun; all burnt to crisps.</div>
+<div class="line">The star plots revenge...</div>
+</div>
+<img alt="5.png" src="5.png" />
+<p><a class="reference external" href="5.scm">5.scm</a> (190 tokens)</p>
+</div>
+<div class="section" id="submission-6-the-kracken">
+<h2><a class="toc-backref" href="scheme_contest.html#id16">Submission 6 - The Kracken</a></h2>
+<div class="line-block">
+<div class="line">Take a paper strip</div>
+<div class="line">Fold it end over end times n</div>
+<div class="line">Unfold a dragon</div>
+</div>
+<img alt="6.png" src="6.png" />
+<p><a class="reference external" href="6.scm">6.scm</a> (142 tokens)</p>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="heavyweight-division">
+<h1><a class="toc-backref" href="scheme_contest.html#id17">Heavyweight Division</a></h1>
+<div class="section" id="submission-7-scheme-master-rohin">
+<h2><a class="toc-backref" href="scheme_contest.html#id18">Submission 7 - Scheme Master Rohin</a></h2>
+<div class="line-block">
+<div class="line">Scheme master Rohin</div>
+<div class="line">Hours of work and no play</div>
+<div class="line">Please show us your ways</div>
+</div>
+<img alt="7.png" src="7.png" />
+<p><a class="reference external" href="7.scm">7.scm</a> (1026 tokens)</p>
+</div>
+<div class="section" id="submission-8-spinning-illusion">
+<h2><a class="toc-backref" href="scheme_contest.html#id19">Submission 8 - Spinning Illusion</a></h2>
+<div class="line-block">
+<div class="line">You may ask ...</div>
+<div class="line">Where is the Illusion</div>
+<div class="line">Stare at the middle</div>
+<div class="line">Bring your head closer</div>
+<div class="line">Rubberduck</div>
+</div>
+<img alt="8.png" src="8.png" />
+<p><a class="reference external" href="8.scm">8.scm</a> (829 tokens)</p>
+</div>
+</div>
+</div>
+</body>
+</html>

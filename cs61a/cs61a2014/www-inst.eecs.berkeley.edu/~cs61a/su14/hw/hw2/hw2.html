@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/hw.css" />
+
+    <title>61A Homework 2 | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">61A Homework 2</h1>
+
+    <p><em>Due by 11:59pm on Wednesday, 7/2</em></p>
+
+<p><strong>Readings:</strong> You might find the following references
+useful:</p>
+
+<ul>
+  <li><a href="http://composingprograms.com/pages/16-higher-order-functions.html">Section 1.6</a></li>
+</ul>
+
+
+<p><strong>Submission:</strong> See the online <a
+  href="../../submit_tutorial_solo.html">submission
+  instructions</a>.  We have provided a <a
+  href="hw2.py">hw2.py</a> starter file for the questions
+below.</p>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hw2.html#q1">Question 1</a></li>
+  <li><a href="hw2.html#q2">Question 2</a></li>
+  <li><a href="hw2.html#q3">Question 3</a></li>
+  <li><a href="hw2.html#q4">Question 4: Challenge Problem (optional)</a></li>
+</ul>
+
+
+    
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>The <code>summation</code> function from lecture is only the simplest of a vast
+number of similar abstractions that can be captured as higher-order
+functions.  Write a similar <code>product</code> function that returns the product
+of the values of a function for <code>n</code> natural number arguments.  Show how
+to define the <a href="http://en.wikipedia.org/wiki/Factorial">factorial</a>
+function in terms of <code>product</code>:</p>
+
+<pre><code>def product(n, term):
+    &quot;&quot;&quot; Return the product of the first n terms in a sequence.
+
+    term &#x2d;&#x2d; a function that takes one argument
+
+    &gt;&gt;&gt; product(4, square)
+    576
+    &gt;&gt;&gt; product(3, lambda x: 2 * x)
+    48
+    &gt;&gt;&gt; product(6, lambda x: 2)
+    64
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+def factorial(n):
+    &quot;&quot;&quot; Return n factorial for n &gt;= 0 by calling product.
+
+    &gt;&gt;&gt; factorial(4)
+    24
+    &gt;&gt;&gt; factorial(6)
+    720
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>Show that both <code>summation</code> and <code>product</code> are instances of a more
+general function, called <code>accumulate</code>, with the following signature:</p>
+
+<pre><code>def accumulate(combiner, start, n, term):
+    &quot;&quot;&quot; Return the result of combining the first n terms in a sequence.
+
+    &gt;&gt;&gt; accumulate(lambda a, b: a + b, 0, 5, lambda x: x)
+    15
+    &gt;&gt;&gt; accumulate(pow, 2, 3, lambda x: 2)
+    65536
+    &gt;&gt;&gt; accumulate(lambda x, y: x * y, 1, 4, lambda k: 3)
+    81
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<p>Accumulate takes as arguments the same arguments <code>term</code> and <code>n</code> as
+<code>summation</code> and <code>product</code>, together with a <code>combiner</code> function (of two
+arguments) that specifies how the current term is to be combined with
+the accumulation of the preceding terms and a <code>start</code> value that
+specifies what base value to use to start the accumulation. Implement
+<code>accumulate</code> and show how <code>summation</code> and <code>product</code> can both be defined
+as simple calls to <code>accumulate</code>:</p>
+
+<pre><code>def summation_using_accumulate(n, term):
+    &quot;&quot;&quot; An implementation of summation using accumulate.
+
+    &gt;&gt;&gt; summation_using_accumulate(4, square)
+    30
+    &gt;&gt;&gt; summation_using_accumulate(4, lambda x: 2**x)
+    30
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+def product_using_accumulate(n, term):
+    &quot;&quot;&quot; An implementation of product using accumulate.
+
+    &gt;&gt;&gt; product_using_accumulate(4, square)
+    576
+    &gt;&gt;&gt; product_using_accumulate(6, lambda x: 3)
+    729
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>If <code>f</code> is a numerical function and <code>n</code> is a positive integer, then we
+can form the nth repeated application of <code>f</code>, which is defined to be
+the function whose value at <code>x</code> is <code>f(f(...(f(x))...))</code>. For example,
+if <code>f</code> adds <code>1</code> to its argument, then the nth repeated application of
+<code>f</code> adds <code>n</code>. Write a function that takes as inputs a function <code>f</code> and
+a positive integer <code>n</code> and returns the function that computes the nth
+repeated application of f:</p>
+
+<pre><code>def repeated(f, n):
+    &quot;&quot;&quot; Return the function that computes the nth application of f.
+
+    f &#x2d;&#x2d; a function that takes one argument
+    n &#x2d;&#x2d; a positive integer
+
+    &gt;&gt;&gt; repeated(square, 2)(5)
+    625
+    &gt;&gt;&gt; repeated(square, 4)(5) # square(square(square(square(square(x)))))
+    152587890625
+    &gt;&gt;&gt; repeated(lambda x: x + 1, 5)(309)
+    314
+    &gt;&gt;&gt; repeated(lambda x: 2**x, 3)(2)
+    65536
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+def double(f):
+    &quot;&quot;&quot; Return a function that applies f twice.
+
+    f &#x2d;&#x2d; a function that takes one argument
+
+    &gt;&gt;&gt; double(square)(2)
+    16
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<p><em>Hint</em>: You may find it convenient to use <code>compose1</code> from the
+ textbook:</p>
+
+<pre><code>def compose1(f, g):
+    &quot;&quot;&quot; Return a function h, such that h(x) = f(g(x)). &quot;&quot;&quot;
+    def h(x):
+        return f(g(x))
+    return h</code></pre>
+
+
+
+<p>Using <code>repeated</code> define a function <code>double</code> that takes a function of
+one argument as an argument and returns a function that applies the
+original function twice. For example, if <code>inc</code> is a function that
+returns <code>1</code> more than its argument, then <code>double(inc)</code> should be a
+function that returns two more:</p>
+
+
+
+<h3 class="question" id="q4">Question 4: Challenge Problem (optional)</h3>
+
+<p>The logician Alonzo Church invented a system of representing
+non-negative integers entirely using functions. Here are the
+definitions of <code>0</code>, and a function that returns <code>1</code> more than its
+argument:</p>
+
+<pre><code>def zero(f):
+    return lambda x: x
+
+def successor(n):
+    return lambda f: lambda x: f(n(f)(x))</code></pre>
+
+<p>This representation is known as <em>Church numerals</em>.  Define <code>one</code> and
+<code>two</code> directly, which are also functions.  To get started, apply
+<code>successor</code> to <code>zero</code>.  Then, give a direct definition of the <code>add</code>
+function (not in terms of repeated application of <code>successor</code>) over
+Church numerals.  Finally, implement a function <code>church_to_int</code> that
+converts a church numeral argument to a regular Python <code>int</code>:</p>
+
+<pre><code>def one(f):
+    &quot;&quot;&quot; Church numeral 1. &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+def two(f):
+    &quot;&quot;&quot; Church numeral 2. &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+def church_to_int(n):
+    &quot;&quot;&quot; Convert the Church numeral n to a Python integer.
+
+    &gt;&gt;&gt; church_to_int(zero)
+    0
+    &gt;&gt;&gt; church_to_int(one)
+    1
+    &gt;&gt;&gt; church_to_int(two)
+    2
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+def add_church(m, n):
+    &quot;&quot;&quot; Return the Church numeral for m + n, for Church numerals m and n.
+
+    &gt;&gt;&gt; three = successor(two)
+    &gt;&gt;&gt; church_to_int(add_church(two, three))
+    5
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+def mul_church(m, n):
+    &quot;&quot;&quot; Return the Church numeral for m * n, for Church numerals m and n.
+
+    &gt;&gt;&gt; three = successor(two)
+    &gt;&gt;&gt; four = successor(three)
+    &gt;&gt;&gt; church_to_int(mul_church(two, three))
+    6
+    &gt;&gt;&gt; church_to_int(mul_church(three, four))
+    12
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<p>It is easy to find answers to this question on the Internet.  Try to
+solve it on your own before looking it up!</p>
+
+<p><em>Note</em>: "Challenge" problems are completely optional.  You are
+encouraged to try these questions, but certainly don't be discouraged
+if you don't solve them.</p>
+
+
+
+  </body>
+
+  
+</html>

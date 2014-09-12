@@ -1,0 +1,559 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/lab.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.css" />
+
+    <title>Lab 00: Introduction to UNIX/Emacs | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Lab 00: Introduction to UNIX/Emacs</h1>
+
+    
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="lab00.html#introduction">Introduction</a></li>
+  <li><a href="lab00.html#downloading-python">Downloading Python</a></li>
+  <li><a href="lab00.html#finding-a-good-text-editor">Finding a Good Text Editor</a></li>
+  <li><a href="lab00.html#downloading-and-manipulating-files">Downloading and Manipulating Files</a></li>
+  <li><a href="lab00.html#editing-files-using-a-productive-workflow">Editing Files using a Productive Workflow</a></li>
+  <ul>
+  <li><a href="lab00.html#doctests">Doctests</a></li>
+</ul>
+
+  <li><a href="lab00.html#logging-in-to-the-instructional-server">Logging in to the Instructional Server</a></li>
+  <ul>
+  <li><a href="lab00.html#windows">Windows</a></li>
+  <li><a href="lab00.html#mac-linux">Mac/Linux</a></li>
+  <li><a href="lab00.html#registering-and-changing-your-password">Registering and Changing Your Password</a></li>
+  <li><a href="lab00.html#copying-files-to-the-server">Copying Files to the Server</a></li>
+  <ul>
+  <li><a href="lab00.html#windows">Windows</a></li>
+  <li><a href="lab00.html#mac-linux">Mac/Linux</a></li>
+</ul>
+
+</ul>
+
+  <li><a href="lab00.html#submitting-your-homework-and-projects">Submitting your Homework and Projects</a></li>
+</ul>
+
+
+    
+<h2 id="submission">Deadline</h2>
+
+<p>By the end of this lab, you should have submitted the <code>lab00</code>
+assignment using the command <code>submit lab00</code>.</p>
+
+<p><strong>This lab is due by 11:59pm on 06/25/2014.</strong></p>
+
+<p>Here is a <a href="lab00.py">lab00.py</a> starter file for this lab.</p>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>Hello and welcome to 61A! Before class gets started, we are going to
+have you do a preliminary lab to set up your computer. In this lab,
+we'll show you how to download Python, write code in a text editor,
+and run it on your interpreter so you can complete and submit labs,
+homeworks, and projects. In the process, we will walk you through how
+to submit your first assignment.</p>
+
+
+<h2 id="downloading-python">Downloading Python</h2>
+
+<p>The first step is to download Python. If you have a Mac, Python 2
+comes pre-installed, but for 61A you'll need Python 3 (either 3.3 or
+3.4). You can download <a href="https://www.python.org/downloads/">here</a>. Make sure to choose the correct
+operating system (most likely Mac OSX, Windows, or Linux).</p>
+
+
+<h2 id="finding-a-good-text-editor">Finding a Good Text Editor</h2>
+
+<p>You'll need a text editor to edit code. We've provided some options
+below, but if you've gotten comfortable editing code (not regular
+text) on some other text editor, feel free to continue using
+that. Note that <strong>Microsoft Word, Notepad, and related products are
+not good text editors.</strong></p>
+
+<table>
+  <tr>
+    <th>Windows</th>
+    <th>Mac</th>
+    <th>Linux</th>
+  </tr>
+  <tr>
+    <td><a href="http://www.sublimetext.com/2">Sublime Text 2</a></td>
+    <td><a href="http://www.sublimetext.com/2">Sublime Text 2</a></td>
+    <td><a href="http://www.sublimetext.com/2">Sublime Text 2</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://notepad-plus-plus.org/download/v6.4.5.html">Notepad++</a></td>
+    <td><a href="http://macromates.com/download">TextMate 2</a></td>
+    <td>Vim<sup><a href="lab00.html#fnref-1">1</a></sup></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><a href="http://textwrangler.onfreedownload.com/">TextWrangler</a></td>
+    <td>Emacs</td>
+  </tr>
+  <tr>
+    <td>
+    <td>Vim<sup><a href="lab00.html#fnref-2">2</a></sup> or <a href="https://code.google.com/p/macvim/downloads/list">MacVim</a></td>
+    <td><a href="https://wiki.gnome.org/Apps/Gedit">Gedit</a></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><a href="http://aquamacs.org/">AquaMacs</a></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><a href="https://wiki.gnome.org/Apps/Gedit">Gedit</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<!--
+
+
+<table>
+  <tr>
+    <th>Windows</th>
+    <th>Mac</th>
+    <th>Linux</th>
+  </tr>
+  <tr>
+    <td><a href="http://www.sublimetext.com/2">Sublime Text 2</a></td>
+    <td><a href="http://www.sublimetext.com/2">Sublime Text 2</a></td>
+    <td><a href="http://www.sublimetext.com/2">Sublime Text 2</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://notepad-plus-plus.org/download/v6.4.5.html">Notepad++</a></td>
+    <td><a href="http://macromates.com/download">TextMate 2</a></td>
+    <td>Vim<sup><a href="#fnref-1">1</a></sup></td>
+  </tr>
+  <tr>
+    <td><a href="http://textwrangler.onfreedownload.com/">TextWrangler</a></td>
+    <td>Emacs</td>
+  </tr>
+  <tr>
+    <td>Vim<sup><a href="#fnref-2">2</a></sup> or <a href="https://code.google.com/p/macvim/downloads/list">MacVim</a></td>
+    <td><a href="https://wiki.gnome.org/Apps/Gedit">Gedit</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://aquamacs.org/">AquaMacs</a></td>
+  </tr>
+  <tr>
+    <td><a href="https://wiki.gnome.org/Apps/Gedit">Gedit</a></td>
+  </tr>
+</table>
+
+
+-->
+
+<blockquote><p>Note: Even though a standard download of Python will come with a
+  text editor called Idle, we <strong>do not</strong> recommend it at all. The
+  reason is that you won't gain as much experience using the command
+  line to run your Python programs. This will hurt you a lot once you
+  start working on the projects for this class so we highly recommend
+  that you use the command line to run your files from day 1!</p></blockquote>
+
+<p>Most people who are new to programming find Sublime Text to be the
+most comfortable first text editor, but you should definitely explore
+all the options above to find the one that works for you.</p>
+
+
+<h2 id="downloading-and-manipulating-files">Downloading and Manipulating Files</h2>
+
+<p>Now that we have a text editor, let's start editing some files! Every
+homework assignment, we will provide you with a template with a lot of
+starter code already filled in for you. Remember, that assignment we
+mentioned at the beginning? You can get the template we just mentioned
+for it <a href="../../src/lab00/lab00.py">here</a>!</p>
+
+<p>You should now have a file called <strong><code>lab00.py</code></strong> somewhere on your
+computer. Go ahead and open up that file in your text editor of
+choice.</p>
+
+<p>For the screenshots that you'll see below, we're using Sublime Text 2
+on Mac OS X with the Solarized color scheme. Sublime Text 2 runs the
+same on any computer so don't worry if yours looks a little different,
+the functionality is identical.</p>
+
+<p>Now before we edit our file, the first thing that you should notice is
+the text wrapped in three quotation marks <code>&quot;&quot;&quot;</code> at the beginning of
+each function definition. That text is called a <em>docstring</em>, which is
+a description of what the function is intended to do. Docstrings are
+extremely useful because other programmers can read them to get a nice
+description of what the function is supposed to do, without having to
+read your code.</p>
+
+<p>Within the docstring, there are lines which begin with<code>&gt;&gt;&gt;</code>. That's
+the start of a <em>doctest</em>. The first line of a doctest shows the
+function being called on a particular input (if the function takes
+inputs). The line immediately underneath shows the expected output of
+that call. Doctests are a great way both to describe the function in
+terms of what it's supposed to do and check that you've written it
+correctly. Let's try an example, the <code>my_last_name()</code> function.</p>
+
+<p><img src="assets/my_name.png" alt="my_last_name doctest"></p>
+
+<p>The two tests in our docstring check two things:</p>
+
+<ol>
+  <li>That you changed the return value from the default <code>&#x27;PUT YOUR LAST
+  NAME HERE&#x27;</code></li>
+  <li>That the return value is a string and not something else (like a
+  number)</li>
+</ol>
+
+<p>In order to use these tests to check that we've written our function correctly, we will have to open the Python interpreter on a <em>terminal window</em>. If you are using Mac OSX or Linux, you should have a program called Terminal already installed, and can simply open it up. If you're on Windows, you have a few options:</p>
+
+<table>
+  <tr>
+    <th>Mac or Unix</th>
+    <th>Windows</th>
+  </tr>
+  <tr>
+    <td>Terminal</td>
+    <td><a href="https://openhatch.org/missions/windows-setup/install-git-bash">GitBash</a> (Runs a Unix like terminal)</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><a href="http://cygwin.com/install.html">Cygwin</a> (More advanced version of GitBash)</td>
+  </tr>
+</table>
+
+<p>Once you have your terminal window set up, we're going to learn some
+Unix commands - Unix commands are a way to navigate files and folders,
+open applications, and much more, all from the Terminal (and without
+having to use a mouse).</p>
+
+<p><img src="assets/terminal.png" alt="terminal"></p>
+
+<p>Right now, you should be in your home directory (a directory is simply
+a folder on your computer). Don't worry if your terminal doesn't look
+exactly the same. The important part is that the text on the left hand
+side is relatively similar (with a different name) and there should
+definitely be a <code>~</code>. (The <code>~</code> is a shortcut for the home directory).</p>
+
+<p>Now for our commands. The first three commands that we will be
+learning are <code>ls</code>, <code>cd</code>, and <code>mkdir</code>.</p>
+
+<ul>
+  <li><code>ls</code> lists all the sub-directories or files in your current directory</li>
+  <li><code>cd</code> lets you switch directories (it stands for "change directory")</li>
+  <li><code>cd destination_directory_name</code> changes you into a <em>sub-directory</em> named
+  <code>destination_directory_name</code> (it will fail if <code>destination_directory_name</code> is not immediately inside the current directory)</li>
+  <li><code>cd ..</code> switches you into the parent directory of your current directory</li>
+  <li><code>cd</code> jumps you back to the home directory</li>
+  <li>To <code>cd</code> into any directory in your computer (not necessarily a
+  sub-directory of the current directory), you need to know its entire
+  <em>file-path</em>, or all the directories from the home directory to the
+  one you want. If I want to find lab00 inside labs inside cs61a
+  inside home, for example, I would type <code>cd ~/labs/lab00</code></li>
+  <li><code>mkdir</code> creates a new sub-directory in your current directory like
+  so: <code>mkdir new_directory_name</code></li>
+</ul>
+
+<p>Since it's a good idea to have a folder dedicated to containing all
+your materials for this course, let's make a directory called
+<code>cs61a</code>. To do this, just type <code>mkdir cs61a</code> and magically, a new
+folder called <code>cs61a</code> will be created! We can now <code>cd</code> into this new
+folder and add some more folders for organization. Let's add a <code>hw</code>
+and a <code>lab</code> folder inside our <code>cs61a</code> directory and then, another
+<code>lab00</code> folder inside of the <code>lab</code> folder like so:</p>
+
+<pre><code>stuff ~ $ cd cs61a
+stuff cs61a $ mkdir hw
+stuff cs61a $ mkdir labs
+stuff cs61a $ mkdir labs/lab00</code></pre>
+
+<p>Now if we list the contents of the directory with <code>ls</code>, we can see
+that we have the two folders <code>hw</code> and <code>labs</code>.</p>
+
+<p>The next thing we have to do is find our downloaded file. By default,
+it's probably in <code>~/Downloads</code> if you're using Mac OS/Linux/Windows
+(GitBash or Cygwin) or <code>C:/Users/NAMEOFUSER/Downloads</code>if you're using
+the Windows Command Line (cmd.exe). Let's <code>cd</code> into that directory.</p>
+
+<p>Next, we'll use the <code>mv</code> command to move our file into our homework
+directory like so:</p>
+
+<pre><code>stuff Downloads $ mv lab00.py ~/cs61a/labs/lab00</code></pre>
+
+<p>This command tells the terminal that we want to move the file located
+at <code>~/Downloads/lab00.py</code> to the directory <code>~/cs61a/labs/lab00</code>.</p>
+
+<p>We should change back to our <code>lab00</code> folder now that our file has been
+moved there. We're just about ready to start editing!</p>
+
+<pre><code>stuff Downloads $ cd ~/cs61a/labs/lab00</code></pre>
+
+<p>Don't worry if this seems like a lot to take in at the moment, it will
+get way easier over time. Just keep practicing!</p>
+
+
+<h2 id="editing-files-using-a-productive-workflow">Editing Files using a Productive Workflow</h2>
+
+<p>Open up your file which is now located in <code>~/cs61a/labs/lab00</code> in your text
+editor of choice and let's begin editing!</p>
+
+<p>We suggest having these two windows open and simultaneously visible at
+all times:</p>
+
+<ol>
+  <li>Your text editor with the files that you're editing</li>
+  <li>Your terminal window so you can easily run doctests</li>
+</ol>
+
+<p>Here's a screenshot of a typical workspace. We've got our text editor
+on the left, and our terminal on the right!</p>
+
+<p><img src="assets/productive_workflow.png" alt="workspace"></p>
+
+
+<h3 id="doctests">Doctests</h3>
+
+<p>Let's get back to doctests. Again, doctests are a way for us to write simple tests for our
+code. We're basically asking ourselves, "What is the expected output
+of this function if I put in this specific input?"</p>
+
+<p>To run our doctests, we type this command in our terminal:</p>
+
+<pre><code>python3 &#x2d;m doctest lab00.py</code></pre>
+
+<p>This will give us a lot of output that shows which tests we are
+currently failing. Try running it on the file you just downloaded. You
+should see something like this:</p>
+
+<p><img src="assets/doctest_output.png" alt="Doctest with 6 failures"></p>
+
+<p>Since we haven't edited the template at all yet, we're not too surprised that the doctests failed. But let's take this opportunity to analyze the failure messages. Take a look at the <code>my_last_name</code> test, highlighted here:</p>
+
+<p><img src="assets/my_name_test_failure.png" alt="my_last_name failure"></p>
+
+<p>This output gives us some pretty good debugging info. For
+this particular test, it's saying we have an error in our <code>lab00.py</code>
+file on line 12 in the function <code>my_last_name</code>. Now we know where to
+look to fix the error (now is a good time to make sure your text
+editor displays line numbers). After we find the line, let's
+understand why we failed this test. The test expected that when the
+<code>my_last_name</code> function is called with no inputs, it should <strong>not</strong>
+return the string <code>&#x27;PUT YOUR LAST NAME HERE&#x27;</code>. Change that line to
+return your actual last name. Make sure you enter this information
+carefully because this is how we will associate all homework,
+projects, and exams with you and your account.</p>
+
+<p>Once you have changed the return value of the function <code>my_last_name</code>
+(make sure that you are returning a string, which has quotes around
+it), you should be able to run the doctests again and your test for
+<code>my_last_name</code> should pass, leaving only five failures to fix.</p>
+
+<p><strong>Other notes about doctests:</strong> You might run your doctests and see
+  that there is no output.  This is good! Doctests will only print
+  output when you have failures in your tests. However, if you want to
+  be super sure that you're passing all of the tests, you can add a
+  command flag <code>&#x2d;v</code> to the command to see the <code>verbose</code> output:</p>
+
+<pre><code>python3 &#x2d;m doctest &#x2d;v lab00.py</code></pre>
+
+<p>For the section number, you can find a complete list of all the
+sections on the class calendar which is located
+<a href="../../index.html#schedule">here</a>.</p>
+
+<p>Once you have successfully completed the homework and have 0 tests
+failing, the verbose output of the doctests should look something like
+this:</p>
+
+<p><img src="assets/successful_doctests.png" alt="verbose doctests with 0 failures"></p>
+
+
+<h2 id="logging-in-to-the-instructional-server">Logging in to the Instructional Server</h2>
+
+<p>Before you can submit, you'll want to log in to the instructional
+server using the login and default password provided on the sheet
+which should have been passed out in the beginning of lab.</p>
+
+
+<h3 id="windows">Windows</h3>
+
+<p>For Windows, you'll be using a program called
+<a href="http://www.putty.org/">PuTTY</a>. See
+<a href="http://www-inst.eecs.berkeley.edu/~cs61a/fa10/fromhome.pdf">this</a>
+guide on how to set it up.  Note that instead of
+<code>h50.cs.berkeley.edu</code>, you should use <code>cory.eecs.berkeley.edu</code>.</p>
+
+
+<h3 id="mac-linux">Mac/Linux</h3>
+
+<p>You'll be using a command on your terminal called <code>ssh</code> to log in to
+the instructional accounts.<code>ssh</code> stands for "secure shell" - a shell
+is a way to access an operating system (your terminal is a type of
+shell), so <code>ssh</code> allows you to securely access a remote operating
+system. The format is as follows:</p>
+
+<pre><code>ssh cs61a&#x2d;??@cory.eecs.berkeley.edu</code></pre>
+
+<p>When you type it in, replace <code>??</code> with your CS 61A login (found on the
+login sheet passed out at the beginning of lab). You'll be prompted
+for your password (the one given on the login sheet). Once you enter
+it, you're logged in as your username on the <code>cory</code> server at
+<code>eecs.berkeley.edu</code>.</p>
+
+
+<h3 id="registering-and-changing-your-password">Registering and Changing Your Password</h3>
+
+<p>Once logged in, you'll see something like this:</p>
+
+<p><img src="assets/inst_login.png" alt="login screen"></p>
+
+<p>The first thing you want to do is register. To get started, simply
+enter the command <code>register</code> and you'll be prompted for information
+such as your name, email, SID, etc. <strong>Please answer all of those
+questions accurately - it is how we determine your identity for the
+purposes of grading.</strong> Once you're done, use the command
+<code>check&#x2d;register</code> to make sure all your information is correct.</p>
+
+<p>The next thing you'll want to do is replace the annoying default
+password we provided you with something more memorable. For that, type
+in the command <code>ssh update</code>. You should be taken to a menu bar which
+is currently set on "Change Password". Hit enter and change your
+password settings, then exit.</p>
+
+
+<h3 id="copying-files-to-the-server">Copying Files to the Server</h3>
+
+<p>Now that you have finished the lab and your registration, it's time
+to copy the lab file to the instructional server.</p>
+
+
+<h4 id="windows">Windows</h4>
+
+<p>For Windows, you'll need to download a program called
+<a href="http://winscp.net/eng/download.php">WinSCP</a> in order to copy files. After you've installed WinSCP, you'll have to configure it so that you
+can log in to the server. Here's a screenshot of a typical log in:</p>
+
+<p><img src="assets/WinSCP.png" alt="winscp configuration"></p>
+
+<p>Once you're logged in, all you have to do is navigate to your
+<code>~/cs61a/labs/lab00</code> folder on the left and drag your file over to the server
+on the right.</p>
+
+
+<h4 id="mac-linux">Mac/Linux</h4>
+
+<p>Mac and Linux users can use the built-in terminal you've used to log in to the server.</p>
+
+<p>First, open a new terminal window (without closing the terminal window you used to log in). Navigate to the directory which contains your <code>lab00</code> file. Then type in the following command:</p>
+
+<pre><code>stuff lab00 $ scp lab00.py cs61a&#x2d;??@cory.eecs.berkeley.edu:~/</code></pre>
+
+<p>Again, replace <code>??</code> with your login. Here <code>scp</code> stands for "secure
+copy" - you are telling the computer to securely copy the file
+<code>lab00.py</code> from the <code>lab00</code> directory on your home computer to your
+account on the instructional server.</p>
+
+<p>The text that comes after the colon is important. We're specifying
+where on the server we want the file to go. In this case, we're
+placing it in the server's home directory, again represented by the
+<code>~</code> symbol. If you later add folders on the server, you could specify
+a destination like <code>cs61a&#x2d;??@cory.eecs.berkeley.edu:~/labs/lab00</code>.</p>
+
+<p>After typing this command, you'll be asked for your password and the
+the file will transfer over - now we can go on to submitting.</p>
+
+
+<h2 id="submitting-your-homework-and-projects">Submitting your Homework and Projects</h2>
+
+<p>Now that you have all of your files for your assignment on the
+instructional servers, we can submit the assignment.</p>
+
+<p>Switch back into the window where you are logged in to the instructional server. You should be able to use <code>ls</code> to see the file you just copied over.</p>
+
+<p>We're going to first create a folder for our <code>lab00.py</code> file. In the
+future, you'll be submitting projects with multiple files so it's good
+to get in the habit of creating a new folder for each
+assignment. Let's make the new <code>lab00</code> directory, move our <code>lab00.py</code> into
+it, and then change into our <code>lab00</code> folder:</p>
+
+<pre><code>stuff ~ # mkdir lab00
+stuff ~ # mv lab00.py lab00
+stuff ~ # cd lab00
+stuff ~/lab00 #</code></pre>
+
+<p>To submit the lab, use the command</p>
+
+<pre><code>stuff ~/lab00 # submit lab00</code></pre>
+
+<p>Answer the questions that come up by typing <code>yes</code> or <code>no</code>. Once that's
+done, you can check that you sucessfully submitted with:</p>
+
+<pre><code>stuff ~/lab00 # glookup &#x2d;t</code></pre>
+
+<p><code>glookup</code> is the name of the command that you will use this semester
+to check your grades. At any time, you can simply enter <code>glookup</code> to
+check for the grades of your submitted assignments (the ones that have
+been graded so far). Adding a <code>&#x2d;t</code> to the <code>glookup</code> command allows you
+to see all the times that you have successfully submitted a homework
+or project. You should see a successful submission of about 1 minute
+ago.</p>
+
+<p>Congratulations! You've just submitted your first assignment!</p>
+
+<hr/>
+
+<div id="footnotes">
+  <ol>
+    <li id="fnref-1"><p>To install vim on Ubuntu, you can type <code>sudo apt&#x2d;get install vim</code>. An alternative that has a graphical interface, vim-gnome, can be installed with <code>sudo apt&#x2d;get install vim&#x2d;gnome</code></p></li>
+    <li id="fnref-2"><p>Preinstalled on Mac OS X</p></li>
+  </ol>
+</div>
+  </body>
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+  $(function() {
+    if (new Date("06/26/2014") < new Date()) {
+      $('.toggleButton').css('display', 'inline-block');
+      $('.toggleButton').click(function() {
+        var solution_id = $(this).attr('id');
+        $('div.' + solution_id).slideToggle(600);
+
+        var shown = $('span.' + solution_id).hasClass('hidden');
+        if (shown) {
+          $('span.blank' + solution_id).toggle();
+          $('span.' + solution_id).fadeToggle(600);
+        } else {
+          $('span.' + solution_id).toggle();
+          $('span.blank' + solution_id).fadeToggle(600);
+        }
+        $('span.' + solution_id).toggleClass('hidden');
+      });
+    }
+  });
+</script>
+
+<!-- Interactive interpreter -->
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/mode/scheme/scheme.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/jquery.min.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/lib-xj.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.js"> </script>
+<script>
+  $(function() {
+    set_interpreter_path("../../interpreter/");
+    set_language("");
+    
+  });
+</script>
+</html>

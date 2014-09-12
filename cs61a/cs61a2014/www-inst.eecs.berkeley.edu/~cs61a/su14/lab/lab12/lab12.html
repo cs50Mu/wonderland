@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/lab.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.css" />
+
+    <title>Lab 12: Project 4 Scheme Interpreter | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Lab 12: Project 4 Scheme Interpreter</h1>
+
+    
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="lab12.html#project-4">Project 4</a></li>
+</ul>
+
+
+    
+<h2 id="submission">Deadline</h2>
+
+<p>By the end of this lab, you should have submitted the
+<code>lab12</code>
+assignment using the command <code>submit lab12</code>.</p>
+
+<p><b>This lab is due by 11:59pm on 8/5/2014.</b></p>
+
+<p>Here is a <a href="lab12.html"></a> starter file for this lab.</p>
+
+<h2 id="project-4">Project 4</h2>
+
+<p>For today's lab, we will be having you get started on Project 4, building a 
+Scheme interpreter in Python. For today's lab submission, you must modify 
+<code>scheme.py</code>, <code>scheme_reader.py</code>, and <code>scheme_primitives.py</code>. To get full credit 
+on today's lab, you must finish and submit up to and including Question 6 on the 
+project. Head over to 
+<a href="http://inst.eecs.berkeley.edu/~cs61a/su14/proj/scheme/scheme.html">Project 4</a> 
+to grab the necessary files and get started.</p>
+  </body>
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+  $(function() {
+    if (new Date("8/6/2014") < new Date()) {
+      $('.toggleButton').css('display', 'inline-block');
+      $('.toggleButton').click(function() {
+        var solution_id = $(this).attr('id');
+        $('div.' + solution_id).slideToggle(600);
+
+        var shown = $('span.' + solution_id).hasClass('hidden');
+        if (shown) {
+          $('span.blank' + solution_id).toggle();
+          $('span.' + solution_id).fadeToggle(600);
+        } else {
+          $('span.' + solution_id).toggle();
+          $('span.blank' + solution_id).fadeToggle(600);
+        }
+        $('span.' + solution_id).toggleClass('hidden');
+      });
+    }
+  });
+</script>
+
+<!-- Interactive interpreter -->
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/mode/scheme/scheme.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/jquery.min.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/lib-xj.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.js"> </script>
+<script>
+  $(function() {
+    set_interpreter_path("../../interpreter/");
+    set_language("");
+    
+  });
+</script>
+</html>

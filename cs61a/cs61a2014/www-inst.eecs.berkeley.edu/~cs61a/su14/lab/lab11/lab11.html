@@ -1,0 +1,800 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/lab.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.css" />
+
+    <title>Lab 11: Scheme | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Lab 11: Scheme</h1>
+
+    
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="lab11.html#introduction-to-scheme">Introduction to Scheme</a></li>
+  <ul>
+  <li><a href="lab11.html#downloading-scheme">Downloading Scheme</a></li>
+  <li><a href="lab11.html#primitives-and-functions">Primitives and Functions</a></li>
+  <li><a href="lab11.html#defining-functions">Defining Functions</a></li>
+  <li><a href="lab11.html#q1">Question 1</a></li>
+</ul>
+
+  <li><a href="lab11.html#control">Control</a></li>
+  <ul>
+  <li><a href="lab11.html#q2">Question 2</a></li>
+  <li><a href="lab11.html#using-conditionals">Using Conditionals</a></li>
+  <li><a href="lab11.html#q3">Question 3</a></li>
+</ul>
+
+  <li><a href="lab11.html#recursion">Recursion</a></li>
+  <ul>
+  <li><a href="lab11.html#q4">Question 4</a></li>
+</ul>
+
+  <li><a href="lab11.html#lambda">Lambda</a></li>
+  <ul>
+  <li><a href="lab11.html#q5">Question 5</a></li>
+  <li><a href="lab11.html#q6">Question 6</a></li>
+</ul>
+
+  <li><a href="lab11.html#lists">Lists</a></li>
+  <ul>
+  <li><a href="lab11.html#q7">Question 7</a></li>
+  <li><a href="lab11.html#q8">Question 8</a></li>
+</ul>
+
+  <li><a href="lab11.html#optional-section----more-lists">Optional Section &mdash; More Lists</a></li>
+  <ul>
+  <li><a href="lab11.html#q9">Question 9</a></li>
+  <li><a href="lab11.html#q10">Question 10</a></li>
+</ul>
+
+</ul>
+
+
+    
+<h2 id="submission">Deadline</h2>
+
+<p>By the end of this lab, you should have submitted the
+<code>lab11</code>
+assignment using the command <code>submit lab11</code>.</p>
+
+<p><strong>This lab is due by 11:59pm on 7/31/2014.</strong></p>
+
+<p>Here is a <a href="lab11.scm">lab11.scm</a> starter file for this lab.</p>
+
+<p><strong>Note that Scheme will be on the exam, but you will not have a
+  homework on Scheme.  As a result, we have made this lab longer than
+  usual so that you get enough practice with Scheme.</strong></p>
+
+
+<h2 id="introduction-to-scheme">Introduction to Scheme</h2>
+
+
+<p>Scheme is a famous functional programming language from the 1970s.  It
+is a dialect of Lisp (which stands for LISt Processing).  The first
+observation most people make is the unique syntax, which uses
+Polish-prefix notation and (often many) nested parenthesis.  (See:
+<a href="http://xkcd.com/297/">http://xkcd.com/297/</a>).
+Scheme features first-class functions and optimized tail-recursion,
+which were relatively new features at the time.</p>
+
+
+<h3 id="downloading-scheme">Downloading Scheme</h3>
+
+<p>Our course uses a custom version of Scheme called STk. Use these instructions 
+to set up STk on your own computer. If you are working on a lab machine, STk 
+is already installed and you can skip installation for now, but make sure to
+install STk when you get home! You can download STk <a href="https://inst.eecs.berkeley.edu/~scheme/source/">here</a>. Make sure
+to choose the correct operating system (most likely Mac OSX, Windows, or Linux).</p>
+
+<p>If you are using Windows, open up your Cygwin terminal (it should be on your desktop). 
+To navigate to your libraries where you store your lab, first type in <code>cd /cygdrive/c/Users</code>. 
+Then type <code>ls</code>: this will give you a list of all the users on your computer. You should then <code>cd</code> 
+into your user (for example <code>cd sally</code>). From here, you can navigate to your lab file as you 
+usually do.</p>
+
+
+<h3 id="primitives-and-functions">Primitives and Functions</h3>
+
+<p>Let's take a look at the primitives in Scheme. Open up the Scheme
+interpreter in your terminal with the command <code>stk</code>, and try typing in
+the following expressions to see what Scheme would print.</p>
+
+<pre><code>STk&gt; 1          ; Anything following a &#x27;;&#x27; is a comment
+?
+STk&gt; 1.0
+?
+STk&gt; &#x2d;27
+?
+STk&gt; #t         ; True
+?
+STk&gt; #f         ; False
+?
+STk&gt; &quot;A string&quot;
+?
+STk&gt; &#x27;symbol
+?
+STk&gt; nil
+()</code></pre>
+
+<p>Of course, what kind of programming language would Scheme be if it
+didn't have any functions? Scheme uses Polish prefix notation, where
+the operator comes before the operands. For example, to evaluate <code>3 +
+4</code>, we would type into the Scheme interpreter:</p>
+
+<pre><code>STk&gt; (+ 3 4)</code></pre>
+
+<p>Notice that to <em>call</em> a function we need to enclose it in parenthesis,
+with its arguments following. Be careful about this, as while in
+Python an extra set of parentheses won't hurt, in Scheme, it will
+interpret the parentheses as a function call. Evaluating <code>(3)</code> results
+in an error because Scheme tries to call a function called <code>3</code> that
+takes no arguments, which would result in an error.</p>
+
+<p>Let's familiarize ourselves with some of the built-in functions in
+Scheme. Try out the following in the interpreter</p>
+
+<pre><code>STk&gt; (+ 3 5)
+?
+STk&gt; (&#x2d; 10 4)
+?
+STk&gt; (* 7 6)
+?
+STk&gt; (/ 28 2)
+?
+STk&gt; (+ 1 2 3 4 5 6 7 8 9)  ;Arithmetic operators allow a variable number of arguments
+?
+STk&gt; (abs &#x2d;7)               ;Absolute Value
+?
+STk&gt; (quotient 29 5)
+?
+STk&gt; (remainder 29 5)
+?
+STk&gt; (= 1 3)
+?
+STk&gt; (&gt; 1 3)
+?
+STk&gt; (&lt; 1 3)
+?
+STk&gt; (or #t #f)
+?
+STk&gt; (and #t #t)
+?
+STk&gt; (and #t #f (/ 1 0))     ;Short&#x2d;Circuiting
+?
+STk&gt; (not #t)
+?
+STk&gt; (define x 3)            ;Defining Variables
+STk&gt; x
+?
+STk&gt; (define y (+ x 4))
+STk&gt; y
+?
+STk&gt; nil
+?</code></pre>
+
+
+<h3 id="defining-functions">Defining Functions</h3>
+
+<p>To write a program, we need to write functions, so let's define one.
+The syntax for defining a program in Scheme is:</p>
+
+<pre><code>(define ([name] [args])
+        [body]
+)</code></pre>
+
+<p>For example, let's define the <code>double</code> function:</p>
+
+<pre><code>(define (double x)
+        (+ x x)
+)</code></pre>
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>Try it yourself! Define a function which cubes an input. You can load
+your definitions into Scheme by entering <code>stk &#x2d;load filename.scm</code> in
+your terminal, or if you have the interpreter already opened up <code>(load
+&quot;filename.scm&quot;)</code>.</p>
+
+<pre><code>; Cubes the input x
+(define (cube x)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE
+)  
+
+; Doctests for cube
+
+; cube test 1
+(assert&#x2d;equal 1 &quot;cube&quot; (cube 2) 8)
+
+; cube test 2
+(assert&#x2d;equal 2 &quot;cube&quot; (cube 3) 27)
+
+; cube test 3
+(assert&#x2d;equal 3 &quot;cube&quot; (cube 1) 1)
+
+; cube test 4 
+(assert&#x2d;equal 4 &quot;cube&quot; (cube 45) 91125)</code></pre>
+
+
+    <button id='0' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 0">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x63;&#x75;&#x62;&#x65;&#x20;&#x78;&#x29;&#xa;&#x20;&#x20;&#x28;&#x2a;&#x20;&#x78;&#x20;&#x78;&#x20;&#x78;&#x29;&#xa;&#x29;</code></pre>
+
+</div>
+    
+
+
+<h2 id="control">Control</h2>
+
+<p>So far, we can't do much in our functions so let's introduce control
+statements to allow our functions to do more complex operations! The
+if-statement has the following format:</p>
+
+<pre><code>(if [condition]
+    [true_result]
+    [false_result]
+)</code></pre>
+
+<p>For example, the following code written in Scheme and Python are
+equivalent:</p>
+
+<pre><code>;Scheme
+(if (&gt; x 3)
+    1
+    2
+)
+
+#Python
+if x &gt; 3:
+    1
+else:
+    2</code></pre>
+
+<p>Notice that the if-statement has no <code>elif</code> case. If want to have
+multiple cases with the if-statement, you would need multiple branched
+if-statements:</p>
+
+<pre><code>;Scheme
+(if (&lt; x 0)
+    &#x27;Negative           ; returns the symbol Negative
+    (if (= x 0)
+        &#x27;Zero           ; returns the symbol Zero
+        &#x27;Positive       ; returns the symbol Positive
+    )      
+)     
+
+#Python Equivalent
+if x &lt; 0:
+    print(&#x27;Negative&#x27;)
+else:
+    if x == 0:
+        print(&#x27;Zero&#x27;)
+    else:
+        print(&#x27;Positive&#x27;)</code></pre>
+
+<h3 class="question" id="q2">Question 2</h3>
+Try defining a function <code>over_or_under</code> which takes in an <code>x</code> and a <code>y</code>
+and returns the symbols 'under', 'equals', or 'over' depending on whether x is 
+less than, greater than, or equal to y. 
+
+<pre><code>; Outputs a symbol for whether x is equals, over, or under y
+(define (over&#x2d;or&#x2d;under x y) 
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE
+)
+
+; Doctests for over&#x2d;or&#x2d;under
+
+; over&#x2d;or&#x2d;under test 1
+(assert&#x2d;equal 1 &quot;over&#x2d;or&#x2d;under&quot; (over&#x2d;or&#x2d;under 5 5) &#x27;equals)
+
+; over&#x2d;or&#x2d;under test 2
+(assert&#x2d;equal 2 &quot;over&#x2d;or&#x2d;under&quot; (over&#x2d;or&#x2d;under 4 5) &#x27;over)
+
+; over&#x2d;or&#x2d;under test 3
+(assert&#x2d;equal 3 &quot;over&#x2d;or&#x2d;under&quot; (over&#x2d;or&#x2d;under 5 3) &#x27;under)</code></pre>
+
+
+    <button id='1' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 1">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x6f;&#x76;&#x65;&#x72;&#x2d;&#x6f;&#x72;&#x2d;&#x75;&#x6e;&#x64;&#x65;&#x72;&#x20;&#x78;&#x20;&#x79;&#x29;&#x20;&#xa;&#x20;&#x20;&#x28;&#x69;&#x66;&#x20;&#x28;&#x3d;&#x20;&#x78;&#x20;&#x79;&#x29;&#x20;&#xa;&#x20;&#x20;&#x20;&#x20;&#x27;&#x65;&#x71;&#x75;&#x61;&#x6c;&#xa;&#x20;&#x20;&#x20;&#x20;&#x28;&#x69;&#x66;&#x20;&#x28;&#x3e;&#x20;&#x78;&#x20;&#x79;&#x29;&#x20;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x27;&#x67;&#x72;&#x65;&#x61;&#x74;&#x65;&#x72;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x27;&#x6c;&#x65;&#x73;&#x73;&#xa;&#x20;&#x20;&#x20;&#x20;&#x29;&#xa;&#x20;&#x20;&#x29;&#xa;&#x29;</code></pre>
+
+</div>
+    
+
+
+<h3 id="using-conditionals">Using Conditionals</h3>
+
+<p>These nested 'if' statements get messy as more cases are needed, 
+so alternatively, we also have the <code>cond</code> statement, which has a 
+different syntax:</p>
+
+<pre><code>(cond ([condition_1] [result_1])
+      ([condition_2] [result_2])
+        ...
+      ([condition_n] [result_n])
+      (else [result_else])          ;This else clause is optional
+)                </code></pre>
+
+<p>With this, we can write control statements with multiple cases neatly
+and without needing staggered if-statements.</p>
+
+<pre><code>(cond ((and (&gt; x 0) (= (modulo x 2) 0)) &#x27;Positive&#x2d;Even&#x2d;Integer)
+      ((and (&gt; x 0) (= (modulo x 2) 1)) &#x27;Positive&#x2d;Odd&#x2d;Integer)
+      ((= x 0) &#x27;Zero)
+      ((and (&lt; x 0) (= (modulo x 2) 0)) &#x27;Negative&#x2d;Even&#x2d;Integer)
+      ((and (&lt; x 0) (= (modulo x 2) 1)) &#x27;Negative&#x2d;Odd&#x2d;Integer)
+)</code></pre>
+
+<h3 class="question" id="q3">Question 3</h3>
+Remember your old friend fizz buzz from lab03? Write it now as a procedure 
+in Scheme! The procedure fizzbuzz takes a number and outputs the word fizz 
+if the number is divisible by 3, buzz if it's divisible by 5, fizzbuzz if it's divisible 
+by both 3 and 5, and otherwise, the number itself. You may find remainder useful. 
+Make sure to test your code in the interpreter.
+
+<pre><code>(define (fizzbuzz x)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE
+)
+
+; Doctests for fizzbuzz
+
+; fizzbuzz test 1
+; multiple of three and five
+(assert&#x2d;equal 1 &quot;fizzbuzz&quot; (fizzbuzz 15) &#x27;fizzbuzz) 
+
+; fizzbuzz test 2
+; multiple of three but not a multiple of five
+(assert&#x2d;equal 2 &quot;fizzbuzz&quot; (fizzbuzz 3) &#x27;fizz)
+
+; fizzbuzz test 3
+; multiple of three but not a multiple of five
+(assert&#x2d;equal 3 &quot;fizzbuzz&quot; (fizzbuzz 9) &#x27;fizz) 
+
+; fizzbuzz test 4
+; multiple of five but not a multiple of three
+(assert&#x2d;equal 4 &quot;fizzbuzz&quot; (fizzbuzz 5) &#x27;buzz) 
+
+; fizzbuzz test 5
+; not a multiple of three or five
+(assert&#x2d;equal 5 &quot;fizzbuzz&quot; (fizzbuzz 14) 14) </code></pre>
+
+
+    <button id='2' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 2">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x66;&#x69;&#x7a;&#x7a;&#x62;&#x75;&#x7a;&#x7a;&#x20;&#x78;&#x29;&#xa;&#x20;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x64;&#x20;&#x28;&#x28;&#x3d;&#x20;&#x28;&#x6d;&#x6f;&#x64;&#x75;&#x6c;&#x6f;&#x20;&#x78;&#x20;&#x31;&#x35;&#x29;&#x20;&#x30;&#x29;&#x20;&#x27;&#x66;&#x69;&#x7a;&#x7a;&#x62;&#x75;&#x7a;&#x7a;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x28;&#x28;&#x3d;&#x20;&#x28;&#x6d;&#x6f;&#x64;&#x75;&#x6c;&#x6f;&#x20;&#x78;&#x20;&#x33;&#x29;&#x20;&#x30;&#x29;&#x20;&#x27;&#x66;&#x69;&#x7a;&#x7a;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x28;&#x28;&#x3d;&#x20;&#x28;&#x6d;&#x6f;&#x64;&#x75;&#x6c;&#x6f;&#x20;&#x78;&#x20;&#x35;&#x29;&#x20;&#x30;&#x29;&#x20;&#x27;&#x62;&#x75;&#x7a;&#x7a;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x28;&#x65;&#x6c;&#x73;&#x65;&#x20;&#x78;&#x29;&#xa;&#x20;&#x20;&#x29;&#xa;&#x29;</code></pre>
+
+</div>
+    
+
+
+<h2 id="recursion">Recursion</h2>
+
+<p>Now that we have control statements in Scheme, let us revisit a
+familiar problem: turning the greatest common divisor algorithm
+into code. Let's try writing this problem recursively in Scheme!</p>
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Write the procedure <code>gcd</code>, which computes the gcd of numbers 
+<code>a</code> and <code>b</code>. Look to <code>lab03</code> if you need a reminder of how to 
+implement the algorithm.</p>
+
+<pre><code>(define (gcd a b)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE
+)
+
+; Doctests for gcd
+
+; gcd test 1
+(assert&#x2d;equal 1 &quot;gcd&quot; (gcd 0 4) 4) 
+
+; gcd test 2
+(assert&#x2d;equal 2 &quot;gcd&quot; (gcd 8 0) 8) 
+
+; gcd test 3
+(assert&#x2d;equal 3 &quot;gcd&quot; (gcd 34 19) 1) 
+
+; gcd test 4
+(assert&#x2d;equal 4 &quot;gcd&quot; (gcd 39 91) 13) 
+
+; gcd test 5
+(assert&#x2d;equal 5 &quot;gcd&quot; (gcd 20 30) 10) 
+
+; gcd test 6
+(assert&#x2d;equal 6 &quot;gcd&quot; (gcd 40 40) 40)</code></pre>
+
+
+    <button id='3' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 3">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x67;&#x63;&#x64;&#x20;&#x61;&#x20;&#x62;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x28;&#x69;&#x66;&#x20;&#x28;&#x6e;&#x6f;&#x74;&#x20;&#x28;&#x6f;&#x72;&#x20;&#x28;&#x3d;&#x20;&#x61;&#x20;&#x30;&#x29;&#x20;&#x28;&#x3d;&#x20;&#x62;&#x20;&#x30;&#x29;&#x29;&#x20;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x69;&#x66;&#x20;&#x28;&#x3d;&#x20;&#x28;&#x6d;&#x6f;&#x64;&#x75;&#x6c;&#x6f;&#x20;&#x28;&#x6d;&#x61;&#x78;&#x20;&#x61;&#x20;&#x62;&#x29;&#x20;&#x28;&#x6d;&#x69;&#x6e;&#x20;&#x61;&#x20;&#x62;&#x29;&#x29;&#x20;&#x30;&#x29;&#x20;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x6d;&#x69;&#x6e;&#x20;&#x61;&#x20;&#x62;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x67;&#x63;&#x64;&#x20;&#x28;&#x6d;&#x69;&#x6e;&#x20;&#x61;&#x20;&#x62;&#x29;&#x20;&#x28;&#x6d;&#x6f;&#x64;&#x75;&#x6c;&#x6f;&#x20;&#x28;&#x6d;&#x61;&#x78;&#x20;&#x61;&#x20;&#x62;&#x29;&#x20;&#x28;&#x6d;&#x69;&#x6e;&#x20;&#x61;&#x20;&#x62;&#x29;&#x29;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x6d;&#x61;&#x78;&#x20;&#x61;&#x20;&#x62;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x29;&#xa;&#x29;</code></pre>
+
+</div>
+    
+
+
+<h2 id="lambda">Lambda</h2>
+
+<p>Ah yes, you thought you were safe, but we can also write lambda
+functions in Scheme!</p>
+
+<p>As noted above, the syntax for defining a procedure in Scheme is:</p>
+
+<pre><code>(define ([name] [args])
+        [body]
+)</code></pre>
+
+<p>Defining a lambda has a slightly different syntax, as follows:</p>
+
+<pre><code>(lambda ([args]) 
+        [body]
+)</code></pre>
+
+<p>Notice how the only difference is the lack of function name.
+You can create and call a lambda procedure in Scheme as follows:</p>
+
+<pre><code>;; defining a lambda
+(lambda (x) (+ x 3))
+;; calling a lambda
+((lambda (x) (+ x 3)) 7)</code></pre>
+
+<h3 class="question" id="q5">Question 5</h3>
+Write the procedure <code>make&#x2d;adder</code> which takes in an initial number, <code>num</code>
+and then returns a procedure. This returned procedure takes in a number
+<code>x</code> and returns the result of <code>x + num</code>
+
+<pre><code>(define (make&#x2d;adder num) 
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE
+) 
+
+; Doctests for make&#x2d;adder
+
+(define add&#x2d;two (make&#x2d;adder 2))
+(define add&#x2d;three (make&#x2d;adder 3))
+
+; make&#x2d;adder test 1
+(assert&#x2d;equal 1 &quot;make&#x2d;adder&quot; (add&#x2d;two 2) 4)
+
+; make&#x2d;adder test 2
+(assert&#x2d;equal 2 &quot;make&#x2d;adder&quot; (add&#x2d;two 3) 5)
+
+; make&#x2d;adder test 3
+(assert&#x2d;equal 3 &quot;make&#x2d;adder&quot; (add&#x2d;three 3) 6)
+
+; make&#x2d;adder test 4
+(assert&#x2d;equal 4 &quot;make&#x2d;adder&quot; (add&#x2d;three 9) 12)</code></pre>
+
+
+    <button id='4' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 4">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x6d;&#x61;&#x6b;&#x65;&#x2d;&#x61;&#x64;&#x64;&#x65;&#x72;&#x20;&#x6e;&#x75;&#x6d;&#x29;&#x20;&#xa;&#x20;&#x20;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x28;&#x78;&#x29;&#x20;&#x28;&#x2b;&#x20;&#x78;&#x20;&#x6e;&#x75;&#x6d;&#x29;&#x29;&#xa;&#x29;&#x20;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q6">Question 6</h3>
+Write the procedure <code>composed</code>, which takes in procedures <code>f</code> and <code>g</code> and
+outputs a new procedure. This new procedure takes in a number <code>x</code> and outputs 
+the result of calling <code>f</code> on <code>g</code> of <code>x</code>.
+
+<pre><code>(define (composed f g)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE
+)
+
+; Doctests for composed
+
+; composed test 1
+; (+ (+ x 1) 1)
+(assert&#x2d;equal 1 &quot;composed&quot; ((composed add&#x2d;one add&#x2d;one) 2) 4)
+
+; composed test 2
+; (* (* x 2) 2)
+(assert&#x2d;equal 2 &quot;composed&quot; ((composed multiply&#x2d;by&#x2d;two multiply&#x2d;by&#x2d;two) 2) 8)
+
+; composed test 3
+; (+ (* x 2) 1)
+(assert&#x2d;equal 3 &quot;composed&quot; ((composed add&#x2d;one multiply&#x2d;by&#x2d;two) 2) 5)
+
+; composed test 4
+; (* (+ x 1) 2)
+(assert&#x2d;equal 4 &quot;composed&quot; ((composed multiply&#x2d;by&#x2d;two add&#x2d;one) 2)  6)
+
+; composed test 5
+; (+ (+ (+ x 1) 1) 1)
+(assert&#x2d;equal 5 &quot;composed&quot; ((composed (composed add&#x2d;one add&#x2d;one) add&#x2d;one) 2) 5)
+
+; composed test 6
+; (+ (+ (* x 2 ) 1) 1)
+(assert&#x2d;equal 6 &quot;composed&quot; ((composed (composed add&#x2d;one add&#x2d;one) multiply&#x2d;by&#x2d;two) 2) 6) 
+
+; composed test 7
+; (* (+ (+ x 1) 1) 2)
+(assert&#x2d;equal 7 &quot;composed&quot; ((composed multiply&#x2d;by&#x2d;two (composed add&#x2d;one add&#x2d;one)) 2) 8)</code></pre>
+
+
+    <button id='5' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 5">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x63;&#x6f;&#x6d;&#x70;&#x6f;&#x73;&#x65;&#x64;&#x20;&#x66;&#x20;&#x67;&#x29;&#xa;&#x20;&#x20;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x28;&#x78;&#x29;&#x20;&#x28;&#x66;&#x20;&#x28;&#x67;&#x20;&#x78;&#x29;&#x29;&#x29;&#xa;&#x29;</code></pre>
+
+</div>
+    
+
+
+<h2 id="lists">Lists</h2>
+
+<p>In Scheme, lists are composed similarly to how linked lists in Python 
+were implemented. Lists are made up pairs, which can point to two
+objects. To create a pair, we use the <code>cons</code> function,
+which takes two arguments:</p>
+
+<pre><code>STk&gt; (define a (cons 3 5))
+a
+STk&gt; a
+(3 . 5)</code></pre>
+
+<p>Note the dot between the <code>3</code> and <code>5</code>. The dot indicates that this is a
+pair, rather than a sequence (as you'll see in a bit).</p>
+
+<p>To retrive a value from a pair, we use the <code>car</code> and <code>cdr</code> functions
+to retrieve the first and second elements in the pair.</p>
+
+<pre><code>STk&gt; (car a)
+3
+STk&gt; (cdr a)
+5</code></pre>
+
+<p>Look familiar yet? Like how linked lists are formed, lists in Scheme are
+formed by having the first element of a pair be the first element of
+the list, and the second element of the pair point to another pair
+containing the rest of list, or to <code>nil</code> to signify the end of the
+list. For example, the sequence (1, 2, 3) can be represented in Scheme
+with the following line:</p>
+
+<pre><code>STk&gt; (define a (cons 1 (cons 2 (cons 3 nil))))</code></pre>
+
+<p>which creates the following object in Scheme:</p>
+
+<p><img src="assets/list1.png" alt="rlist"></p>
+
+<p>We can then of course retrieve values from our list with the <code>car</code> and
+<code>cdr</code> function.</p>
+
+<pre><code>STk&gt; a
+(1 2 3)
+STk&gt; (car a)
+1
+STk&gt; (cdr a)
+(2 3)
+STk&gt; (car (cdr (cdr a)))
+3</code></pre>
+
+<p>This is not the only way to create a list though. You can also use the
+<code>list</code> function, as well as the quote form to form a list as well:</p>
+
+<pre><code>STk&gt; (list 1 2 3)
+(1 2 3)
+STk&gt; &#x27;(1 2 3)
+(1 2 3)
+STk&gt; &#x27;(1 . (2 . (3)))
+(1 2 3)</code></pre>
+
+<p>There are a few other built-in functions in Scheme that are used for lists:</p>
+
+<pre><code>STk&gt; (define a &#x27;(1 2 3 4))
+a
+STk&gt; (define b &#x27;(4 5 6))
+b
+STk&gt; (define empty &#x27;())
+empty
+STk&gt; (append &#x27;(1 2 3) &#x27;(4 5 6))
+(1 2 3 4 5 6)
+STk&gt; (length &#x27;(1 2 3 4 5))
+5
+STk&gt; (null? &#x27;(1 2 3))             ;Checks whether list is empty.
+#f
+STk&gt; (null? &#x27;())
+#t
+STk&gt; (null? nil)
+#t</code></pre>
+
+<p>Try the following out in your interpreter!</p>
+
+<pre><code>STk&gt; (define a (cons 1 2))
+?
+STk&gt; (define b &#x27;(4 5 6))
+?
+STK&gt; (define c &#x27;(7 8))
+?
+STk&gt; (append b c)
+?
+STk&gt; (append a b)
+?
+STk&gt; (cons a b)
+?
+STk&gt; (length b)
+?
+STk&gt; (length a) 
+?</code></pre>
+
+<h3 class="question" id="q7">Question 7</h3>
+
+<p>Create the structure as defined in the picture below. Check to make
+sure that your solution is correct! You should be using <code>cons</code> and/or
+<code>append</code> to create this structure.</p>
+
+<p><img src="assets/list2.png" alt="rlist"></p>
+
+
+    <button id='6' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 6">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x73;&#x74;&#x72;&#x75;&#x63;&#x74;&#x75;&#x72;&#x65;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x20;&#x31;&#x20;&#x27;&#x28;&#x29;&#x29;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x20;&#x32;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x20;&#x33;&#x20;&#x34;&#x29;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x20;&#x35;&#x20;&#x27;&#x28;&#x29;&#x29;&#x29;&#x29;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q8">Question 8</h3>
+
+<p>Create a function <code>(filter f lst)</code>, which takes a predicate function
+and a list, and returns a new list containing only elements of the
+list that satisfy the predicate.</p>
+
+<pre><code>(define (filter f lst)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE
+)
+
+; Doctest for filter
+
+; filter test 1
+(assert&#x2d;equal 1 &quot;filter&quot; (filter greater&#x2d;than&#x2d;zero? &#x27;(1 2 3)) &#x27;(1 2 3))
+
+; filter test 2
+(assert&#x2d;equal 2 &quot;filter&quot; (filter greater&#x2d;than&#x2d;zero? &#x27;()) &#x27;())
+
+; filter test 3
+(assert&#x2d;equal 3 &quot;filter&quot; (filter greater&#x2d;than&#x2d;zero? &#x27;(&#x2d;2 &#x2d;2 4 &#x2d;8)) &#x27;(4))
+
+; filter test 4
+(assert&#x2d;equal 4 &quot;filter&quot; (filter even? &#x27;(2 3 5 1 6)) &#x27;(2 6))</code></pre>
+
+
+    <button id='7' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 7">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x66;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x20;&#x66;&#x20;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x64;&#x20;&#x28;&#x28;&#x6e;&#x75;&#x6c;&#x6c;&#x3f;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x27;&#x28;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x28;&#x66;&#x20;&#x28;&#x63;&#x61;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x20;&#x28;&#x63;&#x61;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x28;&#x66;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x20;&#x66;&#x20;&#x28;&#x63;&#x64;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x65;&#x6c;&#x73;&#x65;&#x20;&#x28;&#x66;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x20;&#x66;&#x20;&#x28;&#x63;&#x64;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x29;&#xa;&#x29;</code></pre>
+
+</div>
+    
+
+
+<h2 id="optional-section----more-lists">Optional Section &mdash; More Lists</h2>
+
+
+<h3 class="question" id="q9">Question 9</h3>
+
+<p>Implement a function <code>(remove item lst)</code> that takes in a list and
+returns a new list with <code>item</code> removed from lst.</p>
+
+<pre><code>(define (remove item lst)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE
+)
+
+; Doctests for remove
+
+; remove test 1
+(assert&#x2d;equal 1 &quot;remove&quot; (remove 1 &#x27;(2 5 1 3)) &#x27;(2 5 3))
+
+; remove test 2
+(assert&#x2d;equal 2 &quot;remove&quot; (remove 1 &#x27;()) &#x27;())
+
+; remove test 3
+; remove removes all occurences of the element
+(assert&#x2d;equal 3 &quot;remove&quot; (remove 1 &#x27;(1 1 1 1)) &#x27;())
+
+; remove test 4
+(assert&#x2d;equal 4 &quot;remove&quot; (remove 1 &#x27;(2 5 1 6 1 2)) &#x27;(2 5 6 2))</code></pre>
+
+
+    <button id='8' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 8">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x72;&#x65;&#x6d;&#x6f;&#x76;&#x65;&#x20;&#x69;&#x74;&#x65;&#x6d;&#x20;&#x6c;&#x73;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x64;&#x20;&#x28;&#x28;&#x6e;&#x75;&#x6c;&#x6c;&#x3f;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x27;&#x28;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x28;&#x65;&#x71;&#x75;&#x61;&#x6c;&#x3f;&#x20;&#x69;&#x74;&#x65;&#x6d;&#x20;&#x28;&#x63;&#x61;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x20;&#x28;&#x72;&#x65;&#x6d;&#x6f;&#x76;&#x65;&#x20;&#x69;&#x74;&#x65;&#x6d;&#x20;&#x28;&#x63;&#x64;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x65;&#x6c;&#x73;&#x65;&#x20;&#x28;&#x63;&#x6f;&#x6e;&#x73;&#x20;&#x28;&#x63;&#x61;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x28;&#x72;&#x65;&#x6d;&#x6f;&#x76;&#x65;&#x20;&#x69;&#x74;&#x65;&#x6d;&#x20;&#x28;&#x63;&#x64;&#x72;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x29;&#xa;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q10">Question 10</h3>
+
+<p>Implement a function <code>(all_satisfies lst pred)</code> that returns #t if all
+of the elements in the list satisfy pred.</p>
+
+<pre><code>(define (all&#x2d;satisfies lst pred)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE
+)
+
+; Doctests for all&#x2d;satisfies
+
+; all_satisfies test 1
+(assert&#x2d;equal 1 &quot;all&#x2d;satisfies&quot; (all&#x2d;satisfies &#x27;(1 2 3 4) greater&#x2d;than&#x2d;zero?) #t)
+
+; all_satisfies test 2
+(assert&#x2d;equal 2 &quot;all&#x2d;satisfies&quot; (all&#x2d;satisfies &#x27;(1 2 &#x2d;1 4) greater&#x2d;than&#x2d;zero?) #f)
+
+; all_satisfies test 3
+(assert&#x2d;equal 3 &quot;all&#x2d;satisfies&quot; (all&#x2d;satisfies &#x27;(1 2 &#x2d;1 4) even?) #f)
+
+; all_satisfies test 4
+(assert&#x2d;equal 4 &quot;all&#x2d;satisfies&quot; (all&#x2d;satisfies &#x27;( 2 &#x2d;2 4) even?) #t)</code></pre>
+
+
+    <button id='9' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 9">
+
+<pre><code>&#x28;&#x64;&#x65;&#x66;&#x69;&#x6e;&#x65;&#x20;&#x28;&#x61;&#x6c;&#x6c;&#x2d;&#x73;&#x61;&#x74;&#x69;&#x73;&#x66;&#x69;&#x65;&#x73;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x70;&#x72;&#x65;&#x64;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x28;&#x3d;&#x20;&#x28;&#x6c;&#x65;&#x6e;&#x67;&#x74;&#x68;&#x20;&#x28;&#x66;&#x69;&#x6c;&#x74;&#x65;&#x72;&#x20;&#x70;&#x72;&#x65;&#x64;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x20;&#x28;&#x6c;&#x65;&#x6e;&#x67;&#x74;&#x68;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x29;</code></pre>
+
+</div>
+    
+  </body>
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<!-- Interactive interpreter -->
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/mode/scheme/scheme.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/jquery.min.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/lib-xj.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.js"> </script>
+<script>
+  $(function() {
+    set_interpreter_path("../../interpreter/");
+    set_language("");
+    
+  });
+</script>
+</html>

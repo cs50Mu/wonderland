@@ -1,0 +1,403 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/lab.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.css" />
+
+    <title>Lab 03: Recursion | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Lab 03: Recursion</h1>
+
+    
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="lab03.html#recursion">Recursion</a></li>
+  <ul>
+  <li><a href="lab03.html#warm-up-recursion-basics">Warm Up: Recursion Basics</a></li>
+  <li><a href="lab03.html#q1">Question 1: Misconceptions</a></li>
+  <li><a href="lab03.html#q2">Question 2</a></li>
+  <li><a href="lab03.html#q3">Question 3</a></li>
+  <li><a href="lab03.html#q4">Question 4: Hailstone</a></li>
+  <li><a href="lab03.html#q5">Question 5: Insect Combinatorics</a></li>
+</ul>
+
+</ul>
+
+
+    
+<h2 id="submission">Deadline</h2>
+
+<p>By the end of this lab, you should have submitted the <code>lab03</code>
+assignment using the command <code>submit lab03</code>.</p>
+
+<p><strong>This lab is due by 11:59pm on 07/03/2014.</strong></p>
+
+<p>Here is a <a href="lab03.py">lab03.py</a> starter file for this lab.</p>
+
+<h2 id="recursion">Recursion</h2>
+
+
+
+<h3 id="warm-up-recursion-basics">Warm Up: Recursion Basics</h3>
+
+<p>A recursive function is a function that calls itself in its body,
+either directly or indirectly. Recursive functions have two important
+components:</p>
+
+<ol>
+  <li>Base case(s), where the function directly computes an answer
+  without calling itself. Usually the base case deals with the
+  simplest possible form of the problem you're trying to solve.</li>
+  <li>Recursive case(s), where the function calls itself with a simpler
+  argument as part of the computation.</li>
+</ol>
+
+<p>Let's look at the canonical example, <code>factorial</code>:</p>
+
+<pre><code>def factorial(n):
+    if n == 0:
+        return 1
+    return n * factorial(n &#x2d; 1)</code></pre>
+
+<p>We know by its definition that <code>0!</code> is <code>1</code>. So we choose <code>n = 0</code> as our
+base case. The recursive step also follows from the definition of
+factorial, i.e.  <code>n! = n * (n&#x2d;1)!</code>.</p>
+
+<p>The next few questions in lab will have you writing recursive
+functions.  Here are some general tips:</p>
+
+<ul>
+  <li>Consider how you can solve the current problem using the solution to a simpler version of the problem. Remember to <em>trust the recursion</em>: assume that your solution to the simpler problem works correctly without worrying about how.</li>
+  <li>Think about what the answer would be in the simplest possible case(s). These will be your base cases - the stopping points for your recursive calls. Make sure to consider the possibility that you're missing base cases (this is a common way recurisve solutions fail).</li>
+</ul>
+
+<h3 class="question" id="q1">Question 1: Misconceptions</h3>
+
+<p>The following examples of recursive functions show some examples of
+common recursion mistakes. Fix them so that they work as intended.</p>
+
+<pre><code>def sum_every_number(n):
+    &quot;&quot;&quot;Return the sum of every natural number up to n, inclusive.
+
+    &gt;&gt;&gt; sum_every_number(5)
+    15
+    &quot;&quot;&quot;
+    if n == 1:
+        return 0
+    else:
+        return n + sum_every_number(n &#x2d; 1)</code></pre>
+
+
+    <button id='0' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 0">
+
+<p>The base case is incorrect.  If we call <code>sum_every_number(1)</code>, the
+answer should be 1, not 0.</p>
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x73;&#x75;&#x6d;&#x5f;&#x65;&#x76;&#x65;&#x72;&#x79;&#x5f;&#x6e;&#x75;&#x6d;&#x62;&#x65;&#x72;&#x28;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6e;&#x20;&#x3d;&#x3d;&#x20;&#x31;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6e;&#x20;&#x2b;&#x20;&#x73;&#x75;&#x6d;&#x5f;&#x65;&#x76;&#x65;&#x72;&#x79;&#x5f;&#x6e;&#x75;&#x6d;&#x62;&#x65;&#x72;&#x28;&#x6e;&#x20;&#x2d;&#x20;&#x31;&#x29;</code></pre>
+
+<p>We could also change our base case to be when <code>n</code> is 0:</p>
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x73;&#x75;&#x6d;&#x5f;&#x65;&#x76;&#x65;&#x72;&#x79;&#x5f;&#x6e;&#x75;&#x6d;&#x62;&#x65;&#x72;&#x28;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6e;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6e;&#x20;&#x2b;&#x20;&#x73;&#x75;&#x6d;&#x5f;&#x65;&#x76;&#x65;&#x72;&#x79;&#x5f;&#x6e;&#x75;&#x6d;&#x62;&#x65;&#x72;&#x28;&#x6e;&#x20;&#x2d;&#x20;&#x31;&#x29;</code></pre>
+
+</div>
+    
+
+<pre><code>def sum_every_other_number(n):
+    &quot;&quot;&quot;Return the sum of every other natural number 
+    up to n, inclusive.
+
+    &gt;&gt;&gt; sum_every_other_number(8)
+    20
+    &gt;&gt;&gt; sum_every_other_number(9)
+    25
+    &quot;&quot;&quot;
+    if n == 0:
+        return 0
+    else:
+        return n + sum_every_other_number(n &#x2d; 2)</code></pre>
+
+
+    <button id='1' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 1">
+
+<p>Consider what happens when we choose an odd number for <code>n</code>.
+<code>sum_every_other_number(3)</code> will return <code>3 + sum_every_other_number(1)</code>.
+<code>sum_every_other_number(1)</code> will return <code>1 + sum_every_other_number(&#x2d;1)</code>.
+You may see the problem now. Since we are decreasing <code>n</code> by two at a
+time, we've completed missed our base case of <code>n == 0</code>, and we will end
+up recursing indefinitely. We need to add another base case to make sure
+this doesn't happen.</p>
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x73;&#x75;&#x6d;&#x5f;&#x65;&#x76;&#x65;&#x72;&#x79;&#x5f;&#x6f;&#x74;&#x68;&#x65;&#x72;&#x5f;&#x6e;&#x75;&#x6d;&#x62;&#x65;&#x72;&#x28;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6e;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x69;&#x66;&#x20;&#x6e;&#x20;&#x3d;&#x3d;&#x20;&#x31;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6e;&#x20;&#x2b;&#x20;&#x73;&#x75;&#x6d;&#x5f;&#x65;&#x76;&#x65;&#x72;&#x79;&#x5f;&#x6f;&#x74;&#x68;&#x65;&#x72;&#x5f;&#x6e;&#x75;&#x6d;&#x62;&#x65;&#x72;&#x28;&#x6e;&#x20;&#x2d;&#x20;&#x32;&#x29;</code></pre>
+
+</div>
+    
+
+<pre><code>def fibonacci(n):
+    &quot;&quot;&quot;Return the nth fibonacci number.
+
+    &gt;&gt;&gt; fibonacci(11)
+    89
+    &quot;&quot;&quot;
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        fibonacci(n &#x2d; 1) + fibonacci(n &#x2d; 2)</code></pre>
+
+
+    <button id='2' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 2">
+
+<p>The result of the recursive calls is not returned.</p>
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x66;&#x69;&#x62;&#x6f;&#x6e;&#x61;&#x63;&#x63;&#x69;&#x28;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6e;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x69;&#x66;&#x20;&#x6e;&#x20;&#x3d;&#x3d;&#x20;&#x31;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x66;&#x69;&#x62;&#x6f;&#x6e;&#x61;&#x63;&#x63;&#x69;&#x28;&#x6e;&#x20;&#x2d;&#x20;&#x31;&#x29;&#x20;&#x2b;&#x20;&#x66;&#x69;&#x62;&#x6f;&#x6e;&#x61;&#x63;&#x63;&#x69;&#x28;&#x6e;&#x20;&#x2d;&#x20;&#x32;&#x29;</code></pre>
+
+</div>
+    
+
+<pre><code>def print_up_to(n):
+    &quot;&quot;&quot;Print every natural number up to n, inclusive.
+
+    &gt;&gt;&gt; print_up_to(5)
+    1
+    2
+    3
+    4
+    5
+    &quot;&quot;&quot;
+    i = 1
+    if i &gt; n:
+        return
+    else:
+        print(i)
+        i += 1 
+        print_up_to(n)</code></pre>
+
+
+    <button id='3' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 3">
+
+<p>When we first call <code>print_up_to</code>, we set a counter variable <code>i</code> to <code>1</code>. After we
+increment the counter, when we recurse and call <code>print_up_to</code> again, in the
+frame of the recursive call we actually create a new counter variable set to <code>1</code>. 
+We are therefore not actually reducing toward the base case <code>i == n</code>. In
+order to keep track of information between recursive calls we need to pass the information as arguments to functions. Therefore, to solve this problem, we will use a helper function that we define so that we can choose which arguments to use.</p>
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x70;&#x72;&#x69;&#x6e;&#x74;&#x5f;&#x75;&#x70;&#x5f;&#x74;&#x6f;&#x28;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x69;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x70;&#x72;&#x69;&#x6e;&#x74;&#x28;&#x69;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x69;&#x20;&#x3c;&#x20;&#x6e;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x69;&#x20;&#x2b;&#x20;&#x31;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x31;&#x29;</code></pre>
+
+<p>Note that in our helper function, we don't have a condition laid out as the base case as we normally do. The base case is implicit because we have the condition <code>i &lt; n</code> under which we execute the recursive call, and we will stop recursing once <code>i == n</code> and we violate this condition.</p>
+
+</div>
+    
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>Write <code>map</code>, which takes a one argument function and a list as
+arguments, and returns a list of the results produced by applying the
+procedure to each element in the list.</p>
+
+<pre><code>def map(f, lst):
+    &quot;&quot;&quot;Returns a list of the results produced by applying f to each
+    element in lst.
+
+    &gt;&gt;&gt; my_list = link(1, link(2, link(3, link(4, empty))))
+    &gt;&gt;&gt; print_linked_list(map(lambda x: x * x, my_list))
+    &lt;&nbsp;1 4 9 16&nbsp;&gt;
+    &gt;&gt;&gt; pokemon = link(&#x27;bulbasaur&#x27;, link(&#x27;charmander&#x27;, link(&#x27;squirtle&#x27;, empty)))
+    &gt;&gt;&gt; print_linked_list(map(print, pokemon))
+    bulbasaur
+    charmander
+    squirtle
+    &lt;&nbsp;None None None&nbsp;&gt;
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='4' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 4">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x6d;&#x61;&#x70;&#x28;&#x66;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x3d;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x28;&#x66;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x2c;&#x20;&#x6d;&#x61;&#x70;&#x28;&#x66;&#x2c;&#x20;&#x72;&#x65;&#x73;&#x74;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>The greatest common divisor of two positive integers <code>a</code> and <code>b</code> is the
+largest integer which evenly divides both numbers (with no remainder).
+Euclid, a Greek mathematician in 300 B.C., realized that the greatest
+common divisor of <code>a</code> and <code>b</code> is one of the following:</p>
+
+<ul>
+  <li>the smaller value if it evenly divides the larger value, OR</li>
+  <li>the greatest common divisor of the smaller value and the remainder of
+  the larger value divided by the smaller value</li>
+</ul>
+
+<p>In other words, if <code>a</code> is greater than <code>b</code> and <code>a</code> is not divisible by
+<code>b</code>, then</p>
+
+<pre><code>gcd(a, b) == gcd(b, a % b)</code></pre>
+
+<p>Write the <code>gcd</code> function recursively using Euclid's algorithm.</p>
+
+<pre><code>def gcd(a, b):
+    &quot;&quot;&quot;Returns the greatest common divisor of a and b.
+    Should be implemented using recursion.
+
+    &gt;&gt;&gt; gcd(0, 4)
+    4
+    &gt;&gt;&gt; gcd(8, 0)
+    8
+    &gt;&gt;&gt; gcd(34, 19)
+    1
+    &gt;&gt;&gt; gcd(39, 91)
+    13
+    &gt;&gt;&gt; gcd(20, 30)
+    10
+    &gt;&gt;&gt; gcd(40, 40)
+    40
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='5' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 5">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x67;&#x63;&#x64;&#x28;&#x61;&#x2c;&#x20;&#x62;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x61;&#x2c;&#x20;&#x62;&#x20;&#x3d;&#x20;&#x6d;&#x61;&#x78;&#x28;&#x61;&#x2c;&#x20;&#x62;&#x29;&#x2c;&#x20;&#x6d;&#x69;&#x6e;&#x28;&#x61;&#x2c;&#x20;&#x62;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x61;&#x20;&#x25;&#x20;&#x62;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x62;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x67;&#x63;&#x64;&#x28;&#x62;&#x2c;&#x20;&#x61;&#x20;&#x25;&#x20;&#x62;&#x29;</code></pre>
+
+<p>If you are curious, here is the iterative solution:</p>
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x67;&#x63;&#x64;&#x5f;&#x69;&#x74;&#x65;&#x72;&#x28;&#x61;&#x2c;&#x20;&#x62;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x61;&#x20;&#x3c;&#x20;&#x62;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x67;&#x63;&#x64;&#x5f;&#x69;&#x74;&#x65;&#x72;&#x28;&#x62;&#x2c;&#x20;&#x61;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x77;&#x68;&#x69;&#x6c;&#x65;&#x20;&#x61;&#x20;&#x3e;&#x20;&#x62;&#x20;&#x61;&#x6e;&#x64;&#x20;&#x6e;&#x6f;&#x74;&#x20;&#x61;&#x20;&#x25;&#x20;&#x62;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x61;&#x2c;&#x20;&#x62;&#x20;&#x3d;&#x20;&#x62;&#x2c;&#x20;&#x61;&#x20;&#x25;&#x20;&#x62;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x62;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q4">Question 4: Hailstone</h3>
+
+<p>For the <code>hailstone</code> function from homework 1,  you
+pick a positive integer <code>n</code> as the start. If <code>n</code> is even, divide it
+by 2. If <code>n</code> is odd, multiply it by 3 and add 1. Repeat this process
+until <code>n</code> is 1. Write a recursive version of hailstone that prints out
+the values of the sequence and returns the number of steps.</p>
+
+<pre><code>def hailstone(n):
+    &quot;&quot;&quot;Print out the hailstone sequence starting at n, and return the
+    number of elements in the sequence.
+
+    &gt;&gt;&gt; a = hailstone(10)
+    10
+    5
+    16
+    8
+    4
+    2
+    1
+    &gt;&gt;&gt; a
+    7
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='6' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 6">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x68;&#x61;&#x69;&#x6c;&#x73;&#x74;&#x6f;&#x6e;&#x65;&#x28;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x70;&#x72;&#x69;&#x6e;&#x74;&#x28;&#x6e;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6e;&#x20;&#x3d;&#x3d;&#x20;&#x31;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x69;&#x66;&#x20;&#x6e;&#x20;&#x25;&#x20;&#x32;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x31;&#x20;&#x2b;&#x20;&#x68;&#x61;&#x69;&#x6c;&#x73;&#x74;&#x6f;&#x6e;&#x65;&#x28;&#x6e;&#x20;&#x2f;&#x2f;&#x20;&#x32;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x31;&#x20;&#x2b;&#x20;&#x68;&#x61;&#x69;&#x6c;&#x73;&#x74;&#x6f;&#x6e;&#x65;&#x28;&#x33;&#x20;&#x2a;&#x20;&#x6e;&#x20;&#x2b;&#x20;&#x31;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q5">Question 5: Insect Combinatorics</h3>
+
+<p>Consider an insect in an <em>M</em> by <em>N</em> grid. The insect starts at the
+bottom left corner, <em>(0, 0)</em>, and wants to end up at the top right 
+corner, <em>(M-1, N-1)</em>. The insect is only capable of moving right or 
+up. Write a function <code>paths</code> that takes a grid length and width 
+and returns the number of different paths the insect can take from the 
+start to the goal. (There is a closed-form solution to this problem, 
+but try to answer it procedurally using recursion.)</p>
+
+<p><img src="assets/grid.jpg" alt="grid"></p>
+
+<p>For example, the 2 by 2 grid has a total of two ways for the insect to
+move from the start to the goal. For the 3 by 3 grid, the insect has 6
+diferent paths (only 3 are shown above).</p>
+
+<pre><code>def paths(m, n):
+    &quot;&quot;&quot;Return the number of paths from one corner to the opposite
+    corner of an M by N grid.
+
+    &gt;&gt;&gt; paths(2, 2)
+    2
+    &gt;&gt;&gt; paths(5, 7)
+    210
+    &gt;&gt;&gt; paths(117, 1)
+    1
+    &gt;&gt;&gt; paths(1, 157)
+    1
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='7' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 7">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x70;&#x61;&#x74;&#x68;&#x73;&#x28;&#x6d;&#x2c;&#x20;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6d;&#x20;&#x3d;&#x3d;&#x20;&#x31;&#x20;&#x6f;&#x72;&#x20;&#x6e;&#x20;&#x3d;&#x3d;&#x20;&#x31;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x70;&#x61;&#x74;&#x68;&#x73;&#x28;&#x6d;&#x20;&#x2d;&#x20;&#x31;&#x2c;&#x20;&#x6e;&#x29;&#x20;&#x2b;&#x20;&#x70;&#x61;&#x74;&#x68;&#x73;&#x28;&#x6d;&#x2c;&#x20;&#x6e;&#x20;&#x2d;&#x20;&#x31;&#x29;</code></pre>
+
+</div>
+    
+  </body>
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<!-- Interactive interpreter -->
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/mode/scheme/scheme.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/jquery.min.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/lib-xj.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.js"> </script>
+<script>
+  $(function() {
+    set_interpreter_path("../../interpreter/");
+    set_language("");
+    
+  });
+</script>
+</html>

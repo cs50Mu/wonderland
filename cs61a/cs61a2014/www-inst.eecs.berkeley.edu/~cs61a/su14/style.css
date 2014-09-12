@@ -1,0 +1,218 @@
+body {
+  font-family: sans-serif;
+  font-size: 10pt;
+  min-width: 800px;
+}
+
+a {
+  color: #0b5394;
+}
+
+header {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 30pt;
+  color: #0b5394;
+  vertical-align: top;
+  display: inline;
+  text-align: center;
+}
+
+header h2 {
+  font-size: 15pt;
+  color: #0b5394;
+  font-variant: small-caps;
+  display: inline;
+}
+
+h2.header {
+  font-size: 25pt;
+  font-variant: small-caps;
+  color: #0b5394;
+  margin-bottom: 20pt;
+  margin-top: 20pt;
+}
+
+
+header h3 {
+}
+
+
+h3.section{
+  font-size: 20pt;
+  margin-top: 20pt;
+  margin-bottom: 20pt;
+}
+
+section {
+  margin-left: 100pt;
+  margin-right: 100pt;
+  font-size: 10.5pt;
+}
+
+section p {
+  margin-top: 10pt;
+  margin-bottom: 10pt;
+}
+
+section h3 {
+  font-size:12pt;
+  color: #0b5394;
+
+}
+
+section ul {
+  list-style-type: circle;
+  color: #000;
+  margin-left: 10pt;
+}
+
+
+section li {
+  margin: 5pt;
+}
+
+
+hr {
+  width:100%;
+  height: 0.5px;
+  background: #0b5394;
+}
+
+
+main {
+  display: block;
+  margin-top: 25px;
+}
+
+main h2 {
+  width: 1000px;
+  margin: 0 auto;
+
+}
+
+footer {
+  padding: 20px;
+  clear: both;
+}
+
+#glider {
+  text-align: center;
+}
+
+nav.top {
+  position: fixed;
+  top: 0px;
+  font-size: 15pt;
+  width: 100%;
+  background: #0b5394;
+  display: table;
+  table-layout: fixed; /* magic dust via http://stackoverflow.com/questions/6310632/html-list-element-sharing-the-parent-width-into-equal-parts */
+}
+
+nav.top a {
+  display: table-cell;
+  text-align: center;
+  color: #fff;
+  text-decoration: none;
+  font-variant: small-caps;
+  padding-bottom: 3pt;
+}
+
+nav.top a:hover{
+  background: #fff;
+  color: #0b5394;
+}
+
+
+strong {
+  font-weight: bold;
+}
+
+em {
+  font-style: italic;
+}
+
+
+
+/*CSS from previous style.css*/
+
+h1, h2 {
+    font-family: 'Lato', sans-serif;
+    line-height: 100%;
+}
+
+
+h2 {
+    color: #0072c1;
+    clear: both;
+}
+
+h3 {
+    clear: both;
+}
+
+hr {
+    width: 80%;
+    border: 0;
+    color: #0072c1;
+    background-color: #0072c1;
+    height: 1px;
+}
+
+
+
+table.announcements {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table.announcements td.date {
+    vertical-align: top;
+    color: #0072c1;
+    width: 5em;
+}
+
+
+div.footer {
+    width: 100%;
+    text-align: center;
+    font-size: .8em;
+    margin: 1em;
+}
+
+div.staffer {
+    float: left;
+    text-align: center;
+    width: 200px;
+    margin: 1em;
+}
+
+div.staffer img {
+    border: 1px solid #888;
+}
+
+table.staff_table {
+    border-collapse: collapse;
+}
+
+table.staff_table td {
+    text-align: center;
+    padding: 10px;
+}
+
+.staffer img {
+    border: 1px solid #888;
+}
+
+.staffer p {
+    font-family: Verdana, Tahoma, Sans-Serif;
+    font-size: 1.0em;
+}
+
+

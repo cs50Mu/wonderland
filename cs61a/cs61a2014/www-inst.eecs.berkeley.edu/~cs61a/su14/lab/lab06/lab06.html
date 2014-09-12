@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/lab.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.css" />
+
+    <title>Lab 06: Midterm 1 Redo | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Lab 06: Midterm 1 Redo</h1>
+
+    
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="lab06.html#what-would-python-output">What Would Python Output?</a></li>
+  <ul>
+  <li><a href="lab06.html#q1">Question 1</a></li>
+</ul>
+
+  <li><a href="lab06.html#here-we-go-again">Here We Go Again</a></li>
+  <ul>
+  <li><a href="lab06.html#q2">Question 2</a></li>
+</ul>
+
+  <li><a href="lab06.html#piled-higher-and-deeper">Piled Higher and Deeper</a></li>
+  <ul>
+  <li><a href="lab06.html#q3">Question 3</a></li>
+  <li><a href="lab06.html#q4">Question 4</a></li>
+</ul>
+
+  <li><a href="lab06.html#recursion-on-trees">Recursion on Trees</a></li>
+  <ul>
+  <li><a href="lab06.html#q5">Question 5</a></li>
+</ul>
+
+  <li><a href="lab06.html#newton-s-method">Newton's Method</a></li>
+  <ul>
+  <li><a href="lab06.html#q6">Question 6</a></li>
+</ul>
+
+</ul>
+
+
+    
+<h2 id="submission">Deadline</h2>
+
+<p>By the end of this lab, you should have submitted the
+<code>lab06</code>
+assignment using the command <code>submit lab06</code>.</p>
+
+<p><strong>This lab is due by 11:59pm on 07/15/2014.</strong></p>
+
+<p>Here is a <a href="lab06.py">lab06.py</a> starter file for this lab.</p>
+
+<p>For lab today, we'll be redoing the coding problems on Midterm 1. This
+time, you'll be working together and have an interpreter to check your
+answers. In the starter file, replace all capitalized strings (such as
+<code>&quot;CONDITION&quot;</code> or <code>&quot;RESULT&quot;</code>) with the code you need to fill in.</p>
+
+
+<h2 id="what-would-python-output">What Would Python Output?</h2>
+
+
+<h3 class="question" id="q1">Question 1</h3>
+<em>Note: You do not have to submit anything for this part.</em>
+
+<p>Include all lines that the interpreter would display. If it would
+display a function, then write Function. If it would cause an error,
+write Error. Assume that you have started Python 3 and executed the
+following:</p>
+
+<pre><code>def welcome():
+    if a == 0:
+        return &#x27;hello, welcome to your exam&#x27;
+    return &#x27;prepare for tricks&#x27;
+
+def last_night(n):
+    for i in range(n):
+        return &#x27;exams&#x27;
+
+pi = [3, 1, 4, 1, 5, 9, 2, 6, 5, 4]
+cut = lambda thing: thing[2:]
+slice_of = lambda thing: thing[2:8:2]
+
+def mystery(x):
+    if x and (x + 1):
+        return &#x27;mystery&#x27;
+    return mystery</code></pre>
+
+<p>Assume these commands are entered exactly as written into the
+interpreter. We have provided this code in the starter file, so you
+can interactively load it using</p>
+
+<pre><code>python3 &#x2d;i lab06.py </code></pre>
+
+<p>to test your work.</p>
+
+
+    <pre><code>&gt;&gt;&gt; welcome()
+<span class="blank5">______</span><span class="hidden solution 5">&#x4e;&#x61;&#x6d;&#x65;&#x45;&#x72;&#x72;&#x6f;&#x72;</span>
+&gt;&gt;&gt; last_night(308)
+<span class="blank5">______</span><span class="hidden solution 5">&#x27;&#x65;&#x78;&#x61;&#x6d;&#x73;&#x27;</span>
+&gt;&gt;&gt; (lambda x, y: x + y(x))(4, lambda y: 5)
+<span class="blank5">______</span><span class="hidden solution 5">&#x39;</span>
+&gt;&gt;&gt; [3 for x in range(30) if x &gt; 26]
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x33;&#x2c;&#x20;&#x33;&#x2c;&#x20;&#x33;&#x5d;</span>
+&gt;&gt;&gt; cut(slice_of(pi))
+<span class="blank5">______</span><span class="hidden solution 5">&#x5b;&#x32;&#x5d;</span>
+&gt;&gt;&gt; cut(mystery(&#x2d;1)(20))
+<span class="blank5">______</span><span class="hidden solution 5">&#x27;&#x73;&#x74;&#x65;&#x72;&#x79;&#x27;</span>
+&gt;&gt;&gt; cut(mystery(20)(&#x2d;1))
+<span class="blank5">______</span><span class="hidden solution 5">&#x54;&#x79;&#x70;&#x65;&#x45;&#x72;&#x72;&#x6f;&#x72;</span>
+&gt;&gt;&gt; print(mystery(print(20)))
+<span class="blank5">______</span><span class="hidden solution 5">&#x32;&#x30;&#xa;&#x3c;&#x66;&#x75;&#x6e;&#x63;&#x74;&#x69;&#x6f;&#x6e;&#x20;&#x6d;&#x79;&#x73;&#x74;&#x65;&#x72;&#x79;&#x3e;</span></code></pre>
+
+    <button id='5' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+<h2 id="here-we-go-again">Here We Go Again</h2>
+
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>Define a function <code>wheres_waldo</code>, which takes in a <code>linked_list</code> which
+may or may not contain the string <code>&quot;Waldo&quot;</code> as an element, and returns
+the index of <code>&quot;Waldo&quot;</code> if it exists, or <code>&quot;Nowhere&quot;</code> if it does not. Do
+<em>not</em> assume we have <code>get_item</code> defined! Note that <code>linked_list</code> is
+<em>not</em> a deep <code>linked_list</code>.</p>
+
+<pre><code>def wheres_waldo(linked_list):
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; lst = link(&quot;Moe&quot;, link(&quot;Larry&quot;, link(&quot;Waldo&quot;, link(&quot;Curly&quot;, empty))))
+    &gt;&gt;&gt; wheres_waldo(lst)
+    2
+    &gt;&gt;&gt; wheres_waldo(link(1, link(2, empty)))
+    &#x27;Nowhere&#x27;
+    &quot;&quot;&quot;
+    if &quot;CONDITION&quot;:
+        return &quot;RESULT&quot;
+    elif &quot;CONDITION&quot;:
+        return &quot;RESULT&quot;
+    found_him = wheres_waldo(rest(linked_list))
+    if &quot;CONDITION&quot;:
+        return &quot;RESULT&quot;
+    return &quot;RESULT&quot;</code></pre>
+
+
+    <button id='0' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 0">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x77;&#x68;&#x65;&#x72;&#x65;&#x73;&#x5f;&#x77;&#x61;&#x6c;&#x64;&#x6f;&#x28;&#x6c;&#x69;&#x6e;&#x6b;&#x65;&#x64;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6c;&#x69;&#x6e;&#x6b;&#x65;&#x64;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x20;&#x3d;&#x3d;&#x20;&#x65;&#x6d;&#x70;&#x74;&#x79;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x27;&#x4e;&#x6f;&#x77;&#x68;&#x65;&#x72;&#x65;&#x27;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x69;&#x66;&#x20;&#x66;&#x69;&#x72;&#x73;&#x74;&#x28;&#x6c;&#x69;&#x6e;&#x6b;&#x65;&#x64;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x29;&#x20;&#x3d;&#x3d;&#x20;&#x27;&#x57;&#x61;&#x6c;&#x64;&#x6f;&#x27;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x66;&#x6f;&#x75;&#x6e;&#x64;&#x5f;&#x68;&#x69;&#x6d;&#x20;&#x3d;&#x20;&#x77;&#x68;&#x65;&#x72;&#x65;&#x73;&#x5f;&#x77;&#x61;&#x6c;&#x64;&#x6f;&#x28;&#x72;&#x65;&#x73;&#x74;&#x28;&#x6c;&#x69;&#x6e;&#x6b;&#x65;&#x64;&#x5f;&#x6c;&#x69;&#x73;&#x74;&#x29;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x66;&#x6f;&#x75;&#x6e;&#x64;&#x5f;&#x68;&#x69;&#x6d;&#x20;&#x3d;&#x3d;&#x20;&#x27;&#x4e;&#x6f;&#x77;&#x68;&#x65;&#x72;&#x65;&#x27;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x66;&#x6f;&#x75;&#x6e;&#x64;&#x5f;&#x68;&#x69;&#x6d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x31;&#x20;&#x2b;&#x20;&#x66;&#x6f;&#x75;&#x6e;&#x64;&#x5f;&#x68;&#x69;&#x6d;</code></pre>
+
+</div>
+    
+
+
+<h2 id="piled-higher-and-deeper">Piled Higher and Deeper</h2>
+
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Write the function <code>inhexing</code>, which takes in a Python list of numbers <code>lst</code>, a function <code>hex</code>, and an integer <code>n</code>, and returns a new list where every n<sup>th</sup> element is replaced by the result of calling <code>hex</code> on that element.</p>
+
+<pre><code>def inhexing(lst, hex, n):
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; inhexing([1, 2, 3, 4, 5], lambda x: &#x27;Poof!&#x27;, 2)
+    [1, &#x27;Poof!&#x27;, 3, &#x27;Poof!&#x27;, 5]
+    &gt;&gt;&gt; inhexing([2, 3, 4, 5, 6, 7, 8], lambda x: x + 10, 3)
+    [2, 3, 14, 5, 6, 17, 8]
+    &quot;&quot;&quot;
+    result = &quot;INITIAL&quot;
+    for i in range(len(lst)):
+        if &quot;CONDITION&quot;:
+            &quot;ACTION&quot;
+        else:
+            &quot;ACTION&quot;
+    return &quot;RESULT&quot;</code></pre>
+
+
+    <button id='1' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 1">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x69;&#x6e;&#x68;&#x65;&#x78;&#x69;&#x6e;&#x67;&#x28;&#x6c;&#x73;&#x74;&#x2c;&#x20;&#x68;&#x65;&#x78;&#x2c;&#x20;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x73;&#x75;&#x6c;&#x74;&#x20;&#x3d;&#x20;&#x5b;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x66;&#x6f;&#x72;&#x20;&#x69;&#x20;&#x69;&#x6e;&#x20;&#x72;&#x61;&#x6e;&#x67;&#x65;&#x28;&#x6c;&#x65;&#x6e;&#x28;&#x6c;&#x73;&#x74;&#x29;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x28;&#x69;&#x20;&#x2b;&#x20;&#x31;&#x29;&#x20;&#x25;&#x20;&#x6e;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x73;&#x75;&#x6c;&#x74;&#x20;&#x2b;&#x3d;&#x20;&#x5b;&#x20;&#x68;&#x65;&#x78;&#x28;&#x6c;&#x73;&#x74;&#x5b;&#x69;&#x5d;&#x29;&#x20;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x73;&#x75;&#x6c;&#x74;&#x20;&#x2b;&#x3d;&#x20;&#x5b;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x69;&#x5d;&#x20;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x72;&#x65;&#x73;&#x75;&#x6c;&#x74;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Now write <code>deep_inhexing</code>, for deep <em>Python</em> lists. It takes
+in a <strong>deep Python list</strong>, a function, and a number.  It returns a new
+list where every n<sup>th</sup> element is replaced by the function applied
+to that element.  If it encounters a list as an element, it recurses
+on the sublist, resetting the counter, even if the sublist was an n<sup>th</sup> element.  Recall you can use the expression <code>type(x) ==
+type([])</code> to test if <code>x</code> is a Python list. <strong>Make sure you read
+and understand all the doctests!</strong></p>
+
+<pre><code>def deep_inhexing(lst, hex, n):
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; deep_inhexing([1, 2, 3, 4, 5, 6], lambda x: x + 10, 3)
+    [1, 2, 13, 4, 5, 16]
+    &gt;&gt;&gt; deep_inhexing([1, [[2]], [3, 4, [5]]], lambda x: &#x27;Poof!&#x27;, 1)
+    [&#x27;Poof!&#x27;, [[&#x27;Poof!&#x27;]], [&#x27;Poof!&#x27;, &#x27;Poof!&#x27;, [&#x27;Poof!&#x27;]]]
+    &gt;&gt;&gt; deep_inhexing([1, [2], 3], lambda x: &#x27;Poof!&#x27;, 2)
+    [1, [2], 3]
+    &gt;&gt;&gt; deep_inhexing([1, [2, 3], 4, [5, 6]], lambda x: &#x27;Poof!&#x27;, 2)
+    [1, [2, &#x27;Poof!&#x27;], 4, [5, &#x27;Poof!&#x27;]]
+    &gt;&gt;&gt; deep_inhexing([[2, 3], 4, [5, 6], [7]], lambda x: &#x27;Poof!&#x27;, 2)
+    [[2, &#x27;Poof!&#x27;], &#x27;Poof!&#x27;, [5, &#x27;Poof!&#x27;], [7]]
+    &gt;&gt;&gt; deep_inhexing([2, [4, [6, [8, 10]]]], lambda x: &#x27;Poof!&#x27;, 2)
+    [2, [4, [6, [8, &#x27;Poof!&#x27;]]]]
+    &quot;&quot;&quot;    
+    def helper(lst, counter):
+        if &quot;CONDITION&quot;:
+            return &quot;RESULT&quot;
+        first, rest = lst[0], lst[1:]
+        if &quot;CONDITION&quot;:
+            return &quot;RESULT&quot;
+        elif counter % n == 0:
+            return &quot;RESULT&quot;
+        else:
+            return &quot;RESULT&quot;
+    return helper(&quot;ARGUMENT&quot;, &quot;ARGUMENT&quot;)</code></pre>
+
+
+    <button id='2' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 2">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x6c;&#x73;&#x74;&#x2c;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x65;&#x72;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6c;&#x73;&#x74;&#x20;&#x3d;&#x3d;&#x20;&#x5b;&#x5d;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x5b;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x66;&#x69;&#x72;&#x73;&#x74;&#x2c;&#x20;&#x72;&#x65;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x30;&#x5d;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x5b;&#x31;&#x3a;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x74;&#x79;&#x70;&#x65;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x29;&#x20;&#x3d;&#x3d;&#x20;&#x74;&#x79;&#x70;&#x65;&#x28;&#x5b;&#x5d;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x5b;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x2c;&#x20;&#x31;&#x29;&#x5d;&#x20;&#x2b;&#x20;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x72;&#x65;&#x73;&#x74;&#x2c;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x65;&#x72;&#x20;&#x2b;&#x20;&#x31;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x69;&#x66;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x65;&#x72;&#x20;&#x25;&#x20;&#x6e;&#x20;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x5b;&#x68;&#x65;&#x78;&#x28;&#x66;&#x69;&#x72;&#x73;&#x74;&#x29;&#x5d;&#x20;&#x2b;&#x20;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x72;&#x65;&#x73;&#x74;&#x2c;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x65;&#x72;&#x20;&#x2b;&#x20;&#x31;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x5b;&#x66;&#x69;&#x72;&#x73;&#x74;&#x5d;&#x20;&#x2b;&#x20;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x72;&#x65;&#x73;&#x74;&#x2c;&#x20;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x65;&#x72;&#x20;&#x2b;&#x20;&#x31;&#x29;&#xa;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x68;&#x65;&#x6c;&#x70;&#x65;&#x72;&#x28;&#x6c;&#x73;&#x74;&#x2c;&#x20;&#x31;&#x29;</code></pre>
+
+</div>
+    
+
+
+<h2 id="recursion-on-trees">Recursion on Trees</h2>
+
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p>Define a function <code>dejavu</code>, which takes in a tree of numbers
+<code>t</code> and a number <code>n</code>.  It returns <code>True</code> if there is a path
+from the root to a leaf such that the sum of the numbers along that
+path is <code>n</code> and <code>False</code> otherwise.  Reminder: The constructor
+and selectors are <code>tree</code>, <code>datum</code> and <code>children</code>.</p>
+
+<pre><code>def dejavu(t, n):
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; my_tree = tree(2, [tree(3, [tree(5), tree(7)]), tree(4)])
+    &gt;&gt;&gt; dejavu(my_tree, 12) # 2 &#x2d;&gt; 3 &#x2d;&gt; 7
+    True
+    &gt;&gt;&gt; dejavu(my_tree, 5)  # Sums of partial paths like 2 &#x2d;&gt; 3 don&#x27;t count
+    False
+    &quot;&quot;&quot;
+    if children(t) == []:
+        return &quot;RESULT&quot;
+    for VARIABLENAME in &quot;SEQUENCE&quot;:
+        if &quot;CONDITION&quot;:
+            return &quot;RESULT&quot;
+    return False</code></pre>
+
+
+    <button id='3' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 3">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x64;&#x65;&#x6a;&#x61;&#x76;&#x75;&#x28;&#x74;&#x2c;&#x20;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x63;&#x68;&#x69;&#x6c;&#x64;&#x72;&#x65;&#x6e;&#x28;&#x74;&#x29;&#x20;&#x3d;&#x3d;&#x20;&#x5b;&#x5d;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x6e;&#x20;&#x3d;&#x3d;&#x20;&#x64;&#x61;&#x74;&#x75;&#x6d;&#x28;&#x74;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x66;&#x6f;&#x72;&#x20;&#x63;&#x68;&#x69;&#x6c;&#x64;&#x20;&#x69;&#x6e;&#x20;&#x63;&#x68;&#x69;&#x6c;&#x64;&#x72;&#x65;&#x6e;&#x28;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x64;&#x65;&#x6a;&#x61;&#x76;&#x75;&#x28;&#x63;&#x68;&#x69;&#x6c;&#x64;&#x2c;&#x20;&#x6e;&#x20;&#x2d;&#x20;&#x64;&#x61;&#x74;&#x75;&#x6d;&#x28;&#x74;&#x29;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x54;&#x72;&#x75;&#x65;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x46;&#x61;&#x6c;&#x73;&#x65;</code></pre>
+
+</div>
+    
+
+
+<h2 id="newton-s-method">Newton's Method</h2>
+
+
+<h3 class="question" id="q6">Question 6</h3>
+
+<p>Show how you would use Newton's method to find the golden ratio by defining the function <code>phi_approx()</code>. The golden ratio is defined as the positive solution to the equation: x<sup>2</sup> = x + 1</p>
+
+<pre><code>def phi_approx():
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; guess = phi_approx()
+    &gt;&gt;&gt; close_to_phi(guess)
+    True
+    &quot;&quot;&quot;
+    return &quot;FUNCTION&quot;(&quot;ARGUMENTS&quot;)</code></pre>
+
+<p>Here are the functions available to you, as defined in lecture:</p>
+
+<pre><code>find_zero(f, dx, x=1) 
+deriv(f) 
+easy_find_zero(f, x=1) </code></pre>
+
+<p>Check your starter file for reminders on their inputs and outputs.</p>
+
+
+    <button id='4' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 4">
+
+<pre><code>&#x66;&#x69;&#x6e;&#x64;&#x5f;&#x7a;&#x65;&#x72;&#x6f;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x78;&#x2a;&#x78;&#x20;&#x2d;&#x20;&#x78;&#x20;&#x2d;&#x20;&#x31;&#x2c;&#x20;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x32;&#x2a;&#x78;&#x20;&#x2d;&#x20;&#x31;&#x29;</code></pre>
+
+<p>or</p>
+
+<pre><code>&#x66;&#x69;&#x6e;&#x64;&#x5f;&#x7a;&#x65;&#x72;&#x6f;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x78;&#x2a;&#x78;&#x20;&#x2d;&#x20;&#x78;&#x20;&#x2d;&#x20;&#x31;&#x2c;&#x20;&#x64;&#x65;&#x72;&#x69;&#x76;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x78;&#x2a;&#x78;&#x20;&#x2d;&#x20;&#x78;&#x20;&#x2d;&#x20;&#x31;&#x29;&#x29;</code></pre>
+
+<p>or</p>
+
+<pre><code>&#x65;&#x61;&#x73;&#x79;&#x5f;&#x66;&#x69;&#x6e;&#x64;&#x5f;&#x7a;&#x65;&#x72;&#x6f;&#x28;&#x6c;&#x61;&#x6d;&#x62;&#x64;&#x61;&#x20;&#x78;&#x3a;&#x20;&#x78;&#x2a;&#x78;&#x20;&#x2d;&#x20;&#x78;&#x20;&#x2d;&#x20;&#x31;&#x29;</code></pre>
+
+</div>
+    
+  </body>
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<!-- Interactive interpreter -->
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/mode/scheme/scheme.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/jquery.min.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/lib-xj.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.js"> </script>
+<script>
+  $(function() {
+    set_interpreter_path("../../interpreter/");
+    set_language("");
+    
+  });
+</script>
+</html>

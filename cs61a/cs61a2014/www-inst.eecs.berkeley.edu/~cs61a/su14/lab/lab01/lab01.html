@@ -1,0 +1,587 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/lab.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.css" />
+
+    <title>Lab 01: Control Flow | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Lab 01: Control Flow</h1>
+
+    
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="lab01.html#python-flags">Python flags</a></li>
+  <li><a href="lab01.html#division">Division</a></li>
+  <li><a href="lab01.html#boolean-operators">Boolean operators</a></li>
+  <ul>
+  <li><a href="lab01.html#q1">Question 1</a></li>
+  <li><a href="lab01.html#boolean-order-of-operations">Boolean order of operations</a></li>
+  <li><a href="lab01.html#short-circuit-operators">Short-circuit operators</a></li>
+  <li><a href="lab01.html#q2">Question 2: What would Python print?</a></li>
+  <li><a href="lab01.html#q3">Question 3</a></li>
+  <li><a href="lab01.html#q4">Question 4</a></li>
+  <li><a href="lab01.html#q5">Question 5</a></li>
+</ul>
+
+  <li><a href="lab01.html#print-vs-return">Print vs. Return</a></li>
+  <ul>
+  <li><a href="lab01.html#q6">Question 6: What would Python print?</a></li>
+</ul>
+
+  <li><a href="lab01.html#if-statements">if statements</a></li>
+  <ul>
+  <li><a href="lab01.html#q7">Question 7: What would Python print?</a></li>
+  <li><a href="lab01.html#omitting-the-else">Omitting the <code>else</code></a></li>
+  <li><a href="lab01.html#q8">Question 8</a></li>
+</ul>
+
+  <li><a href="lab01.html#while-loops">while loops</a></li>
+  <ul>
+  <li><a href="lab01.html#q9">Question 9: What would Python print?</a></li>
+  <li><a href="lab01.html#q10">Question 10</a></li>
+</ul>
+
+</ul>
+
+
+    
+<h2 id="submission">Deadline</h2>
+
+<p>By the end of this lab, you should have submitted the <code>lab01</code>
+assignment using the command <code>submit lab01</code>.</p>
+
+<p><strong>This lab is due by 11:59pm on 06/26/2014.</strong></p>
+
+<p>Here is a <a href="lab01.py">lab01.py</a> starter file for this lab.</p>
+
+<h2 id="python-flags">Python flags</h2>
+
+
+<p>Sometimes, you can append certain "flags" on the command line to
+inspect your code further. Here are a few useful ones that'll come in
+handy this semester. If you want to learn more about other python
+flags, you can look at the <a href="https://docs.python.org/3.4/using/cmdline.html">documentation</a>.</p>
+
+<ul>
+  <li><strong>no flags</strong>: Adding no flags will directly run your Python script, meaning that Python will run the code in the file you provide and return you to the command line.
+  <code>
+  python3 FILE_NAME
+  </code></li>
+  <li><strong><code>&#x2d;i</code></strong>: The <code>&#x2d;i</code> option runs your Python script, and throws you into an interactive session. If you omit the <code>&#x2d;i</code> option, Python will only run your script. See the next section regarding interactive sessions to learn more!
+  <code>
+  python3 &#x2d;i FILE_NAME
+  </code></li>
+  <li><strong><code>&#x2d;m doctest</code></strong>: Using <code>&#x2d;m doctest</code> option will be useful on your homeworks and projects to help you test your code by showing you whether your code is working as you intend it to. Doctests are marked by triple quotations (""") and are usually located within the function.
+  <code>
+  python3 &#x2d;m doctest FILE_NAME
+  </code></li>
+  <li><strong><code>&#x2d;v</code></strong>: The <code>&#x2d;v</code> flag signifies a verbose option. You can append this flag to the <code>&#x2d;m doctest</code> flag to be notified of all results (both failing and passing tests).
+  <code>
+  python3 &#x2d;m doctest &#x2d;v FILE_NAME
+  </code></li>
+</ul>
+
+
+<h2 id="division">Division</h2>
+
+
+<p>Let's compare the ideas of true division (single slash <code>/</code> in Python;
+does decimal division), floor division (double slash <code>//</code> in Python;
+rounds down to the nearest integer), and modulo (percent sign <code>%</code> in
+Python; similar to a remainder):</p>
+
+<ul>
+  <li><p>True Division (decimal division):</p>
+
+<pre><code>&gt;&gt;&gt; 1 / 4
+0.25
+&gt;&gt;&gt; 4 / 2
+2.0
+&gt;&gt;&gt; 11 / 3
+3.6666666666666665</code></pre></li>
+  <li><p>Floor Division (integer division):</p>
+
+<pre><code>&gt;&gt;&gt; 1 // 4
+0
+&gt;&gt;&gt; 4 // 2
+2
+&gt;&gt;&gt; 11 // 3
+3</code></pre></li>
+  <li><p>Modulo (similar to a remainder):</p>
+
+<pre><code>&gt;&gt;&gt; 1 % 4
+1
+&gt;&gt;&gt; 4 % 2
+0
+&gt;&gt;&gt; 11 % 3
+2</code></pre></li>
+</ul>
+
+<p>Notice that we can check whether <code>x</code> is divisible by <code>y</code> by checking
+if <code>x % y == 0</code>.</p>
+
+
+<h2 id="boolean-operators">Boolean operators</h2>
+
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>What would Python print? Try to figure it out before
+you type it into the interpreter!</p>
+
+
+    <pre><code>&gt;&gt;&gt; a, b = 10, 6
+&gt;&gt;&gt; a != 0 and b &gt; 5
+<span class="blank5">______</span><span class="hidden solution 5">&#x54;&#x72;&#x75;&#x65;</span>
+&gt;&gt;&gt; a &lt; b or not a
+<span class="blank5">______</span><span class="hidden solution 5">&#x46;&#x61;&#x6c;&#x73;&#x65;</span>
+&gt;&gt;&gt; not not a
+<span class="blank5">______</span><span class="hidden solution 5">&#x54;&#x72;&#x75;&#x65;</span>
+&gt;&gt;&gt; not (not a or not not b)
+<span class="blank5">______</span><span class="hidden solution 5">&#x46;&#x61;&#x6c;&#x73;&#x65;</span></code></pre>
+
+    <button id='5' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+<h3 id="boolean-order-of-operations">Boolean order of operations</h3>
+
+<p>What do you think the following expression evaluates to?</p>
+
+<pre><code>True and not False or not True and False</code></pre>
+
+<p>It turns out that Python interprets that expression in the following
+way:</p>
+
+<pre><code>(True and (not False)) or ((not True) and False)</code></pre>
+
+<p>Failing to use parentheses is one of the easiest ways for you to break
+your program - it is very easy to misunderstand how Python will
+understand your expression if you don't have parentheses.</p>
+
+<p>Boolean operators, like arithmetic operators, have an order of operation:</p>
+
+<ul>
+  <li><code>not</code> has the highest priority</li>
+  <li><code>and</code></li>
+  <li><code>or</code> has the lowest priority</li>
+</ul>
+
+
+<h3 id="short-circuit-operators">Short-circuit operators</h3>
+
+<p>In Python, <code>and</code> and <code>or</code> are examples of <em>short-circuiting operators</em>.
+Consider the following code:</p>
+
+<pre><code>10 or 1 / 0 != 1</code></pre>
+
+<p>Notice that if we just evaluate <code>1 / 0</code>, Python will raise an error,
+stopping evaluation altogether!</p>
+
+<p>However, the original line of code will not cause any errors &mdash; in
+fact, it will evaluate to <code>10</code>. This is made possible due to
+short-circuiting, which works as follows:</p>
+
+<ul>
+  <li>For <strong><code>and</code></strong> statements, Python will go left to right until it runs
+  into the first value that is false-y &mdash; then it will immediately
+  evaluate to that value.  If all of the values are truth-y, it
+  returns the last value.</li>
+  <li>For <strong><code>or</code></strong> statements, Python will go left to right until it runs
+  into the first value that is truth-y &mdash; then it will immediately
+  evaluate to that value.  If all of the values are false-y, it
+  returns the last value.</li>
+  <li>Informally, false-y values are things that are "empty". The false-y
+  values we have learned about so far are False, 0, None, and "" (the
+  empty string).</li>
+</ul>
+
+<h3 class="question" id="q2">Question 2: What would Python print?</h3>
+
+
+    <pre><code>&gt;&gt;&gt; True and 1 / 0 == 1 and False
+<span class="blank6">______</span><span class="hidden solution 6">&#x5a;&#x65;&#x72;&#x6f;&#x44;&#x69;&#x76;&#x69;&#x73;&#x69;&#x6f;&#x6e;&#x45;&#x72;&#x72;&#x6f;&#x72;</span>
+&gt;&gt;&gt; True or 1 / 0 == 1 or False
+<span class="blank6">______</span><span class="hidden solution 6">&#x54;&#x72;&#x75;&#x65;</span>
+&gt;&gt;&gt; True and &quot;Anything&quot;
+<span class="blank6">______</span><span class="hidden solution 6">&#x27;&#x41;&#x6e;&#x79;&#x74;&#x68;&#x69;&#x6e;&#x67;&#x27;</span>
+&gt;&gt;&gt; False or &quot;Something&quot;
+<span class="blank6">______</span><span class="hidden solution 6">&#x27;&#x53;&#x6f;&#x6d;&#x65;&#x74;&#x68;&#x69;&#x6e;&#x67;&#x27;</span>
+&gt;&gt;&gt; 1 and 3 and 6 and 10 and 15
+<span class="blank6">______</span><span class="hidden solution 6">&#x31;&#x35;</span>
+&gt;&gt;&gt; &quot;&quot; or 0 or False or &quot;Andrew and Rohin&quot; or &quot;The TA&#x27;s&quot; or 1 / 0
+<span class="blank6">______</span><span class="hidden solution 6">&#x27;&#x41;&#x6e;&#x64;&#x72;&#x65;&#x77;&#x20;&#x61;&#x6e;&#x64;&#x20;&#x52;&#x6f;&#x68;&#x69;&#x6e;&#x27;</span></code></pre>
+
+    <button id='6' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>The following snippet of code doesn't work! Figure out what is wrong
+and fix the bugs.</p>
+
+<pre><code>def both_positive(x, y):
+    &quot;&quot;&quot; Returns True if both x and y are positive and False
+    otherwise.
+
+    &gt;&gt;&gt; both_positive(&#x2d;1, 1)
+    False
+    &gt;&gt;&gt; both_positive(1, 1)
+    True
+    &gt;&gt;&gt; both_positive(0, 0)
+    False
+    &quot;&quot;&quot;
+    return x and y &gt; 0</code></pre>
+
+
+    <button id='0' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 0">
+
+<p>The line <code>x and y &gt; 0</code> is incorrect. It should be</p>
+
+<pre><code>&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x78;&#x20;&#x3e;&#x20;&#x30;&#x20;&#x61;&#x6e;&#x64;&#x20;&#x79;&#x20;&#x3e;&#x20;&#x30;&#x3a;</code></pre>
+
+<p>The original line will check that two things are true:</p>
+
+<ol>
+  <li><code>x</code></li>
+  <li><code>y &gt; 0</code></li>
+</ol>
+
+<p>When will <code>x</code> be considered True? In Python, any number that is not 0
+is considered True. Thus, the first doctest will fail: <code>x = &#x2d;1</code>
+and <code>&#x2d;1 != 0</code>, and <code>y = 1 &gt; 0</code>, so both clauses are True.</p>
+
+</div>
+    
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Disneyland is having a special where they give discounts for
+grandparents accompanying their grandchildren.  Help Disneyland figure
+out when the discount should be given.  Define a function
+<code>gets_discount</code> that takes two numbers as input (representing the two
+ages) and returns <code>True</code> if one of them is a senior citizen (age at
+least 65) and the other is a child (age no more than 12).  You should
+not use <code>if</code> in your solution.</p>
+
+<pre><code>def gets_discount(x, y):
+    &quot;&quot;&quot;Returns True if this is a combination of a senior citizen
+    and a child, False otherwise.
+
+    &gt;&gt;&gt; gets_discount(65, 12)
+    True
+    &gt;&gt;&gt; gets_discount(9, 70)
+    True
+    &gt;&gt;&gt; gets_discount(40, 45)
+    False
+    &gt;&gt;&gt; gets_discount(40, 75)
+    False
+    &gt;&gt;&gt; gets_discount(65, 13)
+    False
+    &gt;&gt;&gt; gets_discount(7, 9)
+    False
+    &gt;&gt;&gt; gets_discount(73, 77)
+    False
+    &gt;&gt;&gt; gets_discount(80, 13)
+    False
+    &gt;&gt;&gt; gets_discount(10, 25)
+    False
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='1' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 1">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x67;&#x65;&#x74;&#x73;&#x5f;&#x64;&#x69;&#x73;&#x63;&#x6f;&#x75;&#x6e;&#x74;&#x28;&#x78;&#x2c;&#x20;&#x79;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x28;&#x78;&#x20;&#x3c;&#x3d;&#x20;&#x31;&#x32;&#x20;&#x61;&#x6e;&#x64;&#x20;&#x79;&#x20;&#x3e;&#x3d;&#x20;&#x36;&#x35;&#x29;&#x20;&#x6f;&#x72;&#x20;&#x28;&#x78;&#x20;&#x3e;&#x3d;&#x20;&#x36;&#x35;&#x20;&#x61;&#x6e;&#x64;&#x20;&#x79;&#x20;&#x3c;&#x3d;&#x20;&#x31;&#x32;&#x29;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p>Define a function <code>is_factor</code> that checks whether its first argument
+is a factor of its second argument.  We will assume that <code>0</code> is not a
+factor of any number but any non-zero number is a factor of <code>0</code>.
+You should not use <code>if</code> in your solution.</p>
+
+<pre><code>def is_factor(x, y):
+    &quot;&quot;&quot;Returns True if x is a factor of y, False otherwise.
+
+    &gt;&gt;&gt; is_factor(3, 6)
+    True
+    &gt;&gt;&gt; is_factor(4, 10)
+    False
+    &gt;&gt;&gt; is_factor(0, 5)
+    False
+    &gt;&gt;&gt; is_factor(0, 0)
+    False
+    &gt;&gt;&gt; is_factor(10, 2)
+    False
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='2' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 2">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x69;&#x73;&#x5f;&#x66;&#x61;&#x63;&#x74;&#x6f;&#x72;&#x28;&#x78;&#x2c;&#x20;&#x79;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x78;&#x20;&#x21;&#x3d;&#x20;&#x30;&#x20;&#x61;&#x6e;&#x64;&#x20;&#x79;&#x20;&#x25;&#x20;&#x78;&#x20;&#x3d;&#x3d;&#x20;&#x30;</code></pre>
+
+</div>
+    
+
+
+<h2 id="print-vs-return">Print vs. Return</h2>
+
+
+<h3 class="question" id="q6">Question 6: What would Python print?</h3>
+
+<p>Predict what Python will print in response to each of these
+expressions.  Then try it and make sure your answer was correct, or if
+not, that you understand why!</p>
+
+
+    <pre><code>&gt;&gt;&gt; z, y = 1, 2
+&gt;&gt;&gt; print(z)
+<span class="blank7">______</span><span class="hidden solution 7">&#x31;</span>
+&gt;&gt;&gt; def square(x):
+...     print(x * x)        # Hit enter twice
+...
+&gt;&gt;&gt; a = square(2)
+<span class="blank7">______</span><span class="hidden solution 7">&#x34;</span>
+&gt;&gt;&gt; print(a)
+<span class="blank7">______</span><span class="hidden solution 7">&#x4e;&#x6f;&#x6e;&#x65;</span>
+&gt;&gt;&gt; def square(y):
+...     return y * y        # Hit enter twice
+...
+&gt;&gt;&gt; a = square(2)
+&gt;&gt;&gt; print(a)
+<span class="blank7">______</span><span class="hidden solution 7">&#x34;</span></code></pre>
+
+    <button id='7' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+<h2 id="if-statements">if statements</h2>
+
+
+<h3 class="question" id="q7">Question 7: What would Python print?</h3>
+
+
+    <pre><code>&gt;&gt;&gt; a, b = 10, 6
+&gt;&gt;&gt; if a == 4:
+...     6
+... elif b &gt;= 4:
+...     6 + 7 + a
+... else: 
+...     25
+...
+<span class="blank8">______</span><span class="hidden solution 8">&#x32;&#x33;</span></code></pre>
+
+    <button id='8' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+
+<h3 id="omitting-the-else">Omitting the <code>else</code></h3>
+
+<p>Consider the following function:</p>
+
+<pre><code>&gt;&gt;&gt; def abs(x):
+...     if x &gt;= 0:
+...         return x
+...     else:
+...         return &#x2d;x
+...</code></pre>
+
+<p>It is correct to rewrite <code>abs</code> in the following way:</p>
+
+<pre><code>&gt;&gt;&gt; def abs(x):
+...     if x &gt;= 0:
+...         return x
+...     return &#x2d;x       # missing else statement!
+...</code></pre>
+
+<p>This is a direct consequence of how <code>return</code> works &mdash; when
+Python sees a <code>return</code> statement, it will <em>immediately terminate</em> the
+function, and the rest of the function will not be evaluated.  In the
+above example, if <code>x &gt;= 0</code>, Python will never reach the final line.
+Try to convince yourself that this is indeed the case before moving on.</p>
+
+<p>Keep in mind that <strong>omitting the <code>else</code> only works if the function is
+terminated</strong>!  For example, the following function will <em>always</em> print
+"less than zero", because the function is not terminated in the body
+of the <code>if</code> suite:</p>
+
+<pre><code>&gt;&gt;&gt; def foo(x):
+...     if x &gt; 0:
+...         print(&quot;greater than zero&quot;)
+...     print(&quot;less than zero&quot;)
+...
+&gt;&gt;&gt; foo(&#x2d;3)
+less than zero
+&gt;&gt;&gt; foo(4)
+greater than zero
+less than zero</code></pre>
+
+<p>In general, omitting the <code>else</code> will make your code more concise &mdash;
+however, if you find that it makes your code harder to read, by all
+means use an <code>else</code> statement.</p>
+
+<h3 class="question" id="q8">Question 8</h3>
+
+<p>The following snippet of code doesn't work! Figure out what is wrong
+and fix the bugs.</p>
+
+<pre><code>def compare(a, b):
+    &quot;&quot;&quot; Compares if a and b are equal.
+
+    &gt;&gt;&gt; compare(4, 2)
+    &#x27;not equal&#x27;
+    &gt;&gt;&gt; compare(4, 4)
+    &#x27;equal&#x27;
+    &quot;&quot;&quot;
+    if a = b:
+        return &#x27;equal&#x27;
+    return &#x27;not equal&#x27;</code></pre>
+
+
+    <button id='3' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 3">
+
+<p>The line <code>a = b</code> will cause a <code>SyntaxError</code>. Instead, it should be</p>
+
+<pre><code>&#x69;&#x66;&#x20;&#x61;&#x20;&#x3d;&#x3d;&#x20;&#x62;&#x3a;</code></pre>
+
+</div>
+    
+
+
+<h2 id="while-loops">while loops</h2>
+
+
+<h3 class="question" id="q9">Question 9: What would Python print?</h3>
+
+
+    <pre><code>&gt;&gt;&gt; n = 3
+&gt;&gt;&gt; while n &gt;= 0:
+...     n &#x2d;= 1
+...     print(n)
+...
+<span class="blank9">______</span><span class="hidden solution 9">&#x32;&#xa;&#x31;&#xa;&#x30;&#xa;&#x2d;&#x31;</span>
+&gt;&gt;&gt; n, i = 7, 0
+&gt;&gt;&gt; while i &lt; n:
+...     i += 2
+...     print(i)
+...
+<span class="blank9">______</span><span class="hidden solution 9">&#x32;&#xa;&#x34;&#xa;&#x36;&#xa;&#x38;</span>
+&gt;&gt;&gt; # typing Ctrl&#x2d;C will stop infinite loops
+&gt;&gt;&gt; n = 4
+&gt;&gt;&gt; while True:
+...     n &#x2d;= 1
+...     print(n)
+...
+<span class="blank9">______</span><span class="hidden solution 9">&#x33;&#xa;&#x32;&#xa;&#x31;&#xa;&#x30;&#xa;&#x2d;&#x31;&#xa;&#x2d;&#x32;</span>
+... # continues forever
+<span class="blank9">______</span><span class="hidden solution 9">&#xa;&#x23;&#x20;&#x51;&#x34;</span>
+&gt;&gt;&gt; n = 2
+&gt;&gt;&gt; def exp_decay(n):
+...     if n % 2 != 0:
+...         return
+...     while n &gt; 0:
+...         print(n)
+...         n = n // 2
+...
+&gt;&gt;&gt; exp_decay(64)
+<span class="blank9">______</span><span class="hidden solution 9">&#x36;&#x34;&#xa;&#x33;&#x32;&#xa;&#x31;&#x36;&#xa;&#x38;&#xa;&#x34;&#xa;&#x32;&#xa;&#x31;</span>
+&gt;&gt;&gt; exp_decay(5)
+<span class="blank9">______</span><span class="hidden solution 9">&#x23;&#x20;&#x4e;&#x6f;&#x20;&#x6f;&#x75;&#x74;&#x70;&#x75;&#x74;</span></code></pre>
+
+    <button id='9' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+    
+
+<h3 class="question" id="q10">Question 10</h3>
+
+<p>Define a function <code>factors(n)</code> which takes in a number, <code>n</code>, and
+prints out all of the numbers that divide <code>n</code> evenly. For example, a
+call with <code>n = 20</code> should result as follows:</p>
+
+<pre><code>def factors(n):
+    &quot;&quot;&quot;
+    Prints out all of the numbers that divide `n` evenly.
+
+    &gt;&gt;&gt; factors(20)
+    20
+    10
+    5
+    4
+    2
+    1
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='4' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 4">
+
+<pre><code>&#x64;&#x65;&#x66;&#x20;&#x66;&#x61;&#x63;&#x74;&#x6f;&#x72;&#x73;&#x28;&#x6e;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x78;&#x20;&#x3d;&#x20;&#x6e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x77;&#x68;&#x69;&#x6c;&#x65;&#x20;&#x78;&#x20;&#x3e;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x6e;&#x20;&#x25;&#x20;&#x78;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x70;&#x72;&#x69;&#x6e;&#x74;&#x28;&#x78;&#x29;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x78;&#x20;&#x2d;&#x3d;&#x20;&#x31;</code></pre>
+
+</div>
+    
+  </body>
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+</script>
+
+<!-- Interactive interpreter -->
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/mode/scheme/scheme.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/jquery.min.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/lib-xj.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.js"> </script>
+<script>
+  $(function() {
+    set_interpreter_path("../../interpreter/");
+    set_language("");
+    
+  });
+</script>
+</html>

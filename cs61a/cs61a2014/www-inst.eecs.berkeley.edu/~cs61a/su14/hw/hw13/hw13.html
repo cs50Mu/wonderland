@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/hw.css" />
+
+    <title>61A Homework 13 | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">61A Homework 13</h1>
+
+    <p><em>Due by 11:59pm on Monday, 8/11</em></p>
+
+<p><strong>Readings:</strong> You might find the following references
+useful:</p>
+
+
+<p><strong>Submission:</strong> See the online <a
+  href="../../submit_tutorial_solo.html">submission
+  instructions</a>.  We have provided the following starter files:
+  <a href="hw13.py">hw13.py</a>, <a href="hw13.scm">hw13.scm</a></p>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hw13.html#introduction">Introduction</a></li>
+  <ul>
+  <li><a href="hw13.html#q1">Question 1</a></li>
+  <li><a href="hw13.html#q2">Question 2</a></li>
+  <li><a href="hw13.html#q3">Question 3</a></li>
+  <li><a href="hw13.html#q4">Question 4</a></li>
+</ul>
+
+  <li><a href="hw13.html#streams">Streams</a></li>
+  <ul>
+  <li><a href="hw13.html#q5">Question 5</a></li>
+  <li><a href="hw13.html#q6">Question 6</a></li>
+  <li><a href="hw13.html#q7">Question 7: Challenge Problem (optional)</a></li>
+</ul>
+
+</ul>
+
+
+    
+
+<h2 id="introduction">Introduction</h2>
+
+
+<p>For homework this week, we'll be redoing the coding problems on
+Midterm 2 and a couple of stream questions. This time, you'll have an
+interpreter to check your answers. In the starter file, replace all
+capitalized strings (such as <code>&quot;CONDITION&quot;</code> or <code>&quot;RESULT&quot;</code>) with the
+code you need to fill in.</p>
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>We all know the higher order functions <code>map</code>, <code>filter</code>, and <code>reduce</code>. Today we're 
+going to talk about their not-quite-so famous fourth sibling, <code>scan</code>. <code>Scan</code> is 
+like <code>reduce</code>, only instead of accumulating the result into a single value, <code>scan</code>
+returns a list that contains all the intermediate values in reducing the list.</p>
+
+<pre><code>def scan(f, lst, start):
+    &quot;&quot;&quot;Returns a list containing the intermediate values of reducing the list.
+
+    &gt;&gt;&gt; from operator import add, mul
+    &gt;&gt;&gt; scan(add, [1, 2, 3, 4], 0)
+    [1, 3, 6, 10]
+    &gt;&gt;&gt; scan(mul, [3, 2, 1, 0], 10)
+    [30, 60, 60, 0]
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>Write <code>wheres&#x2d;waldo</code>, a Scheme procedure which takes in a Scheme list and 
+outputs the index of <code>waldo</code> if the symbol <code>waldo</code> exists in the list. 
+Otherwise, it outputs the symbol <code>nowhere</code>.</p>
+
+<pre><code>(define (wheres&#x2d;waldo lst)
+  (cond ((null? lst) &#x27;nowhere)
+        (&#x27;TEST&#x2d;AND&#x2d;RESULT)
+        (else
+	 (let ((found&#x2d;him &#x27;RESULT))
+	   (if (equal? &#x27;nowhere found&#x2d;him)
+	       &#x27;RESULT
+	       &#x27;RESULT
+)))))
+
+(define (test&#x2d;waldo)
+  (assert&#x2d;equal 1 &quot;wheres&#x2d;waldo&quot; (wheres&#x2d;waldo &#x27;(moe larry waldo curly)) 2)
+  (assert&#x2d;equal 2 &quot;wheres&#x2d;waldo&quot; (wheres&#x2d;waldo &#x27;(1 2)) &#x27;nowhere))
+
+(test&#x2d;waldo)</code></pre>
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Here's an implementation of a Binary Search Tree:</p>
+
+<p>We want to add a <code>paths</code> method to the <code>BST</code> class. It will return a generator 
+yields all of the paths from the root of the tree to a leaf. Each path is 
+represented as a list containing the individual <code>datum</code>s.</p>
+
+<pre><code>    def paths(self):
+        &quot;&quot;&quot;Return a generator for all of the paths from the root to a leaf.
+
+        &gt;&gt;&gt; tree = BST(5, BST(3, BST(2), BST(4)), BST(10, None, BST(13, BST(12))))
+        &gt;&gt;&gt; gen = tree.paths()
+        &gt;&gt;&gt; next(gen)
+        [5, 3, 2]
+        &gt;&gt;&gt; for path in gen:
+        ...     print(path)
+        ...
+        [5, 3, 4]
+        [5, 10, 13, 12]
+        &quot;&quot;&quot;
+        if not self.right and not self.left:
+            &#x27;RESULT&#x27;
+        if &#x27;CONDITION&#x27;:
+            for VARIABLE in &#x27;ITERABLE&#x27;:
+                &#x27;RESULT&#x27;
+        if &#x27;CONDITION&#x27;:
+            for VARIABLE in &#x27;ITERABLE&#x27;:
+                &#x27;RESULT&#x27;</code></pre>
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>We want to play a card game and we must evenly deal out all of the cards to each 
+player. We have a linked list (<code>Link</code>) of cards. In this case, cards are 
+represented as numbers.
+We want to write a function <code>deal_deck</code> that returns a Python list of linked 
+lists of cards for each player (reverse order of how the cards were dealt - 
+older cards on the bottom) and a linked list of the extra cards (in the original 
+order).
+<strong>Do not call the Link constructor.</strong></p>
+
+<pre><code>def deal_deck(linked_list, num_of_players):
+    &quot;&quot;&quot;Deals out a deck of cards.
+
+    &gt;&gt;&gt; deck = Link(1, Link(2, Link(3, Link(4, Link(5, Link(6, \
+      Link(7, Link(8, Link(9, Link(10))))))))))
+    &gt;&gt;&gt; list_of_cards, remainder = deal_deck(deck, 4)
+    &gt;&gt;&gt; list_of_cards
+    [Link(5, Link(1)), Link(6, Link(2)), Link(7, Link(3)), Link(8, Link(4))]
+    &gt;&gt;&gt; remainder
+    Link(9, Link(10))
+    &quot;&quot;&quot;
+    # Create a list containing each player&#x27;s hand.
+    hands = [Link.empty for i in range(num_of_players)]
+    # Give each player the right number of cards.
+    for i in range(len(linked_list)//num_of_players):
+        # For each player
+        for VARIABLE in &#x27;ITERABLE&#x27;:
+            linked_list, card = linked_list.rest, linked_list
+            # Put the card in the player&#x27;s hand
+            &#x27;RESULT&#x27;
+    return &#x27;RESULT&#x27;</code></pre>
+
+
+<h2 id="streams">Streams</h2>
+
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p>Define a function <code>partial_sums</code>, which takes in a stream with elements</p>
+
+<pre><code>a1, a2, a3, ...</code></pre>
+
+<p>and outputs the stream</p>
+
+<pre><code>a1, a1 + a2, a1 + a2 + a3, ...</code></pre>
+
+<p>If the input is a finite stream of length <em>n</em>, the output should be a
+finite stream of length <em>n</em>. If the input is an infinite stream, the
+output should also be an infinite stream.</p>
+
+<pre><code>(define (partial&#x2d;sums stream)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE)
+
+;; Doctests for partial&#x2d;sums
+(define finite
+  (cons&#x2d;stream 2
+    (cons&#x2d;stream 0
+      (cons&#x2d;stream 1
+        (cons&#x2d;stream 4 ())))))
+
+(define ones (cons&#x2d;stream 1 ones))
+(define twos (cons&#x2d;stream 2 twos))
+(define nats (cons&#x2d;stream 1 (stream&#x2d;map 1+ nats)))
+
+(define (test&#x2d;partial&#x2d;sums)
+  (assert&#x2d;equal 1 &quot;partial&#x2d;sums&quot;
+		(ss (partial&#x2d;sums twos))
+		&#x27;(2 4 6 8 10 12 14 16 18 20 ...))
+  (assert&#x2d;equal 2 &quot;partial&#x2d;sums&quot; 
+		(ss (partial&#x2d;sums (interleave ones twos)))
+		&#x27;(1 3 4 6 7 9 10 12 13 15 ...))
+  (assert&#x2d;equal 3 &quot;partial&#x2d;sums&quot;
+		(ss (partial&#x2d;sums finite))
+		&#x27;(2 2 3 7))
+  (assert&#x2d;equal 4 &quot;partial&#x2d;sums&quot;
+		(ss (partial&#x2d;sums nats))
+		&#x27;(1 3 6 10 15 21 28 36 45 55 ...)))
+
+(test&#x2d;partial&#x2d;sums)</code></pre>
+
+<h3 class="question" id="q6">Question 6</h3>
+An infinite set is said to be countably infinite if we can create an
+infinite stream such that any element in the set can be reached within
+a finite number of steps through the stream.  For example, since we
+can create a stream of natural numbers, we know that the natural
+numbers are countable:
+
+<p>Now, we will show that the integers are also countable.  Define a
+stream of all integers (including the negative ones).  You may use the
+<code>nats</code> stream in your solution.</p>
+
+<p>Hint:  You should consider alternating positive and negative numbers -
+for example, your stream may look like <code>(0 1 &#x2d;1 2 &#x2d;2 3 &#x2d;3 ...)</code>.</p>
+
+<pre><code>(define nats
+  (cons&#x2d;stream 1
+    (stream&#x2d;map (lambda (x) (+ x 1)) nats)))
+
+(define integers
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE)
+
+;; Note:  This will infinite loop if you call it on an infinite stream
+;; that does not have the element.
+(define (has&#x2d;element? elem stream max&#x2d;size)
+  (and (not (stream&#x2d;null? stream))
+       (&gt; max&#x2d;size 0)
+       (or (equal? elem (stream&#x2d;car stream))
+	   (has&#x2d;element? elem (stream&#x2d;cdr stream) (&#x2d; max&#x2d;size 1)))))
+
+(define (test&#x2d;integers)
+  (assert&#x2d;equal 1 &quot;integers&quot; (has&#x2d;element? 0 integers 1000) #t)
+  (assert&#x2d;equal 2 &quot;integers&quot; (has&#x2d;element? 12 integers 1000) #t)
+  (assert&#x2d;equal 3 &quot;integers&quot; (has&#x2d;element? &#x2d;23 integers 1000) #t))
+
+(test&#x2d;integers)</code></pre>
+
+<h3 class="question" id="q7">Question 7: Challenge Problem (optional)</h3>
+
+<p>Now, show that the (positive) rational numbers are countable. Recall
+that a rational number is just a pair of integers a/b, so we just need
+to make an infinite stream of all pairs of integers.</p>
+
+<pre><code>(define (pairs s t)
+  &#x27;YOUR&#x2d;CODE&#x2d;HERE)
+
+(define rationals
+  (pairs nats nats))
+
+(define (test&#x2d;rationals)
+  (assert&#x2d;equal 1 &quot;rationals&quot; (has&#x2d;element? 1 rationals 1000) #f)
+  (assert&#x2d;equal 2 &quot;rationals&quot; (has&#x2d;element? &#x27;(1 1) rationals 1000) #t)
+  (assert&#x2d;equal 3 &quot;rationals&quot; (has&#x2d;element? &#x27;(1 2) rationals 1000) #t)
+  (assert&#x2d;equal 4 &quot;rationals&quot; (has&#x2d;element? &#x27;(3 4) rationals 1000) #t)
+  (assert&#x2d;equal 5 &quot;rationals&quot; (has&#x2d;element? &#x27;(4 3) rationals 1000) #t)
+  (assert&#x2d;equal 6 &quot;rationals&quot; (has&#x2d;element? &#x27;(5 2) rationals 1000) #t))
+
+;; Uncomment the following line to test rationals:
+; (test&#x2d;rationals)</code></pre>
+
+  </body>
+
+  
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/hw.css" />
+
+    <title>61A Homework 8 | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">61A Homework 8</h1>
+
+    <p><em>Due by 11:59pm on Wednesday, 7/23</em></p>
+
+<p><strong>Readings:</strong> You might find the following references
+useful:</p>
+
+<ul>
+  <li><a href="http://composingprograms.appspot.com/pages/24-mutable-data.html#local-state">Section 2.4.4 - 2.4.8</a></li>
+  <li><a href="http://composingprograms.appspot.com/pages/25-object-oriented-programming.html">Section 2.5</a></li>
+</ul>
+
+
+<p><strong>Submission:</strong> See the online <a
+  href="../../submit_tutorial_solo.html">submission
+  instructions</a>.  We have provided a <a
+  href="hw8.py">hw8.py</a> starter file for the questions
+below.</p>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hw8.html#nonlocal">Nonlocal</a></li>
+  <ul>
+  <li><a href="hw8.html#q1">Question 1</a></li>
+  <li><a href="hw8.html#q2">Question 2</a></li>
+</ul>
+
+  <li><a href="hw8.html#object-oriented-programming">Object Oriented Programming</a></li>
+  <ul>
+  <li><a href="hw8.html#q3">Question 3</a></li>
+  <li><a href="hw8.html#q4">Question 4</a></li>
+  <li><a href="hw8.html#q5">Question 5</a></li>
+</ul>
+
+  <li><a href="hw8.html#optional-problems">Optional Problems</a></li>
+  <ul>
+  <li><a href="hw8.html#q6">Question 6</a></li>
+  <li><a href="hw8.html#q7">Question 7: Challenge Problem (optional)</a></li>
+</ul>
+
+</ul>
+
+
+    
+
+<h2 id="nonlocal">Nonlocal</h2>
+
+<h3 class="question" id="q1">Question 1</h3>
+
+<p>Define a function <code>make_accumulator</code> that returns an <code>accumulator</code>
+function, which takes one numerical argument and returns the sum of all
+arguments ever passed to <code>accumulator</code>.  You should use a <code>list</code> to
+store all of the arguments passed to <code>accumulator</code>.  Do not use a
+<code>nonlocal</code> statement.</p>
+
+<pre><code>def make_accumulator():
+    &quot;&quot;&quot;Return an accumulator function that takes a single numeric argument and
+    accumulates that argument into total, then returns total.
+
+    &gt;&gt;&gt; acc = make_accumulator()
+    &gt;&gt;&gt; acc(15)
+    15
+    &gt;&gt;&gt; acc(10)
+    25
+    &gt;&gt;&gt; acc2 = make_accumulator()
+    &gt;&gt;&gt; acc2(7)
+    7
+    &gt;&gt;&gt; acc3 = acc2
+    &gt;&gt;&gt; acc3(6)
+    13
+    &gt;&gt;&gt; acc2(5)
+    18
+    &gt;&gt;&gt; acc(4)
+    29
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q2">Question 2</h3>
+
+<p>Define a function <code>make_accumulator_nonlocal</code> that returns an
+<code>accumulator</code> function, which takes one numerical argument and returns
+the sum of all arguments ever passed to <code>accumulator</code>. Use a <code>nonlocal</code>
+statement, but no <code>list</code> or <code>dict</code>.</p>
+
+<pre><code>def make_accumulator_nonlocal():
+    &quot;&quot;&quot;Return an accumulator function that takes a single numeric argument and
+    accumulates that argument into total, then returns total.
+
+    &gt;&gt;&gt; acc = make_accumulator_nonlocal()
+    &gt;&gt;&gt; acc(15)
+    15
+    &gt;&gt;&gt; acc(10)
+    25
+    &gt;&gt;&gt; acc2 = make_accumulator_nonlocal()
+    &gt;&gt;&gt; acc2(7)
+    7
+    &gt;&gt;&gt; acc3 = acc2
+    &gt;&gt;&gt; acc3(6)
+    13
+    &gt;&gt;&gt; acc2(5)
+    18
+    &gt;&gt;&gt; acc(4)
+    29
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+
+<h2 id="object-oriented-programming">Object Oriented Programming</h2>
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Write a class <code>Amount</code> that represents a collection of nickels and
+pennies.  Include a property called <code>value</code> that computes the total
+monetary value of the amount from the nickels and pennies.  Do not add
+an instance attribute called <code>value</code> to each <code>Amount</code> instance.
+Instead, an <code>Amount</code> should have only two instance attributes:
+<code>nickels</code> and <code>pennies</code>. <code>value</code> should be a property method, which is
+a method that can be accessed as though it were an instance attribute.
+See the relevant <a href="http://docs.python.org/py3k/library/functions.html#property">Python Property
+docs</a>. In
+particular, look at the <code>@property</code> decorator.  You do not need to
+support direct assignment to <code>value</code>, although you are welcome to add
+that feature as well.</p>
+
+<p>Finally, write a subclass <code>MinimalAmount</code> with base class <code>Amount</code> that
+overrides the constructor so that all amounts are <em>minimal</em> upon
+construction.  An <code>Amount</code> instance is minimal if it has no more than
+four pennies, but the same value as the nickel and penny quantities
+passed as arguments.  Note that if the <code>pennies</code> instance attribute is
+changed <em>after</em> the object is constructed, it is fine if the amount is
+no longer minimal.</p>
+
+<pre><code>class Amount(object):
+    &quot;&quot;&quot;An amount of nickels and pennies.
+
+    &gt;&gt;&gt; a = Amount(3, 7)
+    &gt;&gt;&gt; a.nickels
+    3
+    &gt;&gt;&gt; a.pennies
+    7
+    &gt;&gt;&gt; a.value
+    22
+    &gt;&gt;&gt; a.nickels = 5
+    &gt;&gt;&gt; a.value
+    32
+
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"
+
+class MinimalAmount(Amount):
+    &quot;&quot;&quot;An amount of nickels and pennies that is initialized with no more than
+    four pennies, by converting excess pennies to nickels.
+
+    &gt;&gt;&gt; a = MinimalAmount(3, 7)
+    &gt;&gt;&gt; a.nickels, a.pennies, a.value  # Creates a tuple
+    (4, 2, 22)
+    &gt;&gt;&gt; a = MinimalAmount(7, 3)
+    &gt;&gt;&gt; a.nickels, a.pennies, a.value
+    (7, 3, 38)
+    &gt;&gt;&gt; a = MinimalAmount(0, 50)
+    &gt;&gt;&gt; a.nickels, a.pennies, a.value
+    (10, 0, 50)
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Create a class called <code>VendingMachine</code> that represents a vending
+machine for some product. A <code>VendingMachine</code> object returns strings
+describing its interactions.  See the doctest for examples.</p>
+
+<p>You may find the <code>format</code> method of strings helpful:</p>
+
+<pre><code>&gt;&gt;&gt; &#x27;I {0}, you {0}, we all {0} for {1}!&#x27;.format(&#x27;scream&#x27;, &#x27;ice cream&#x27;)
+&#x27;I scream, you scream, we all scream for ice cream!&#x27;</code></pre>
+
+<p>The <code>format</code> method can take a variable number of arguments.</p>
+
+<pre><code>class VendingMachine:
+    &quot;&quot;&quot;A vending machine that vends some product for some price.
+
+    &gt;&gt;&gt; v = VendingMachine(&#x27;candy&#x27;, 10)
+    &gt;&gt;&gt; v.vend()
+    &#x27;Machine is out of stock.&#x27;
+    &gt;&gt;&gt; v.restock(1)
+    &#x27;Current candy stock: 1&#x27;
+    &gt;&gt;&gt; v.vend()
+    &#x27;You must deposit $10 more.&#x27;
+    &gt;&gt;&gt; v.deposit(7)
+    &#x27;Current balance: $7&#x27;
+    &gt;&gt;&gt; v.vend()
+    &#x27;You must deposit $3 more.&#x27;
+    &gt;&gt;&gt; v.restock(1)
+    &#x27;Current candy stock: 2&#x27;
+    &gt;&gt;&gt; v.deposit(5)
+    &#x27;Current balance: $12&#x27;
+    &gt;&gt;&gt; v.vend()
+    &#x27;Here is your candy and $2 change.&#x27;
+    &gt;&gt;&gt; v.deposit(10)
+    &#x27;Current balance: $10&#x27;
+    &gt;&gt;&gt; v.vend()
+    &#x27;Here is your candy.&#x27;
+    &gt;&gt;&gt; v.deposit(15)
+    &#x27;Machine is out of stock. Here is your $15.&#x27;
+    &gt;&gt;&gt; v.vend()
+    &#x27;Machine is out of stock.&#x27;
+    &gt;&gt;&gt; p = VendingMachine(&#x27;pepsi&#x27;, 21)
+    &gt;&gt;&gt; p.restock(100)
+    &#x27;Current pepsi stock: 100&#x27;
+    &gt;&gt;&gt; p.deposit(100)
+    &#x27;Current balance: $100&#x27;
+    &gt;&gt;&gt; p.vend()
+    &#x27;Here is your pepsi and $79 change.&#x27;
+    &gt;&gt;&gt; p.deposit(21)
+    &#x27;Current balance: $21&#x27;
+    &gt;&gt;&gt; p.vend()
+    &#x27;Here is your pepsi.&#x27;
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p>Create a class called <code>MissManners</code> that promotes politeness among our
+objects. A <code>MissManners</code> object takes another object on construction.
+It has one method, called <code>ask</code>.  It responds by calling methods on the
+object it contains, but only if the caller said please first.</p>
+
+<p>You will need to use <code>getattr</code> and <code>hasattr</code>.  Try the following in
+the interpreter to see how they work:</p>
+
+<pre><code>class Foo:
+    bar = 3
+    def __init__(self, baz):
+        self.baz = baz
+    def change_baz(self, new_baz):
+        self.baz = new_baz
+
+f = Foo(10)
+f.bar
+f.baz
+hasattr(f, &#x27;baz&#x27;)
+hasattr(f, &#x27;garply&#x27;)
+hasattr(f, &#x27;bazbar&#x27;[:3])
+hasattr(f, &#x27;bazbar&#x27;[3:])
+getattr(f, &#x27;baz&#x27;)
+getattr(f, &#x27;bar&#x27;)
+getattr(f, &#x27;garply&#x27;)
+setattr(f, &#x27;garply&#x27;, 20)
+f.garply
+hasattr(f, &#x27;__init__&#x27;)
+hasattr(f, &#x27;change_baz&#x27;)
+getattr(f, &#x27;change_baz&#x27;)
+getattr(f, &#x27;change_baz&#x27;)(42)
+f.baz</code></pre>
+
+<p>Hint: Your implementation will need to use the <code>*args</code> notation that
+allows functions to take a variable number of arguments.</p>
+
+<pre><code>class MissManners:
+    &quot;&quot;&quot;A container class that only forward messages that say please.
+
+    &gt;&gt;&gt; v = VendingMachine(&#x27;teaspoon&#x27;, 10)
+    &gt;&gt;&gt; v.restock(2)
+    &#x27;Current teaspoon stock: 2&#x27;
+    &gt;&gt;&gt; m = MissManners(v)
+    &gt;&gt;&gt; m.ask(&#x27;vend&#x27;)
+    &#x27;You must learn to say please first.&#x27;
+    &gt;&gt;&gt; m.ask(&#x27;please vend&#x27;)
+    &#x27;You must deposit $10 more.&#x27;
+    &gt;&gt;&gt; m.ask(&#x27;please deposit&#x27;, 20)
+    &#x27;Current balance: $20&#x27;
+    &gt;&gt;&gt; m.ask(&#x27;now will you vend?&#x27;)
+    &#x27;You must learn to say please first.&#x27;
+    &gt;&gt;&gt; m.ask(&#x27;please hand over a teaspoon&#x27;)
+    &#x27;Thanks for asking, but I know not how to hand over a teaspoon&#x27;
+    &gt;&gt;&gt; m.ask(&#x27;please vend&#x27;)
+    &#x27;Here is your teaspoon and $10 change.&#x27;
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+
+<h2 id="optional-problems">Optional Problems</h2>
+
+<h3 class="question" id="q6">Question 6</h3>
+
+<p>The textbook shows how to use functions to create mutable
+objects. Here, for example, is the function <code>make_withdraw</code> which
+produces a function that can withdraw money from an account:</p>
+
+<pre><code>def make_withdraw(balance):
+    &quot;&quot;&quot;Return a withdraw function with BALANCE as its starting balance.
+    &gt;&gt;&gt; withdraw = make_withdraw(1000)
+    &gt;&gt;&gt; withdraw(100)
+    900
+    &gt;&gt;&gt; withdraw(100)
+    800
+    &gt;&gt;&gt; withdraw(900)
+    &#x27;Insufficient funds&#x27;
+    &quot;&quot;&quot;
+
+    def withdraw(amount):
+        nonlocal balance
+        if amount &gt; balance:
+           return &#x27;Insufficient funds&#x27;
+        balance = balance &#x2d; amount
+        return balance
+    return withdraw</code></pre>
+
+<p>Write a version of the <code>make_withdraw</code> function that returns
+password-protected withdraw functions.  That is, <code>make_withdraw</code> should
+take a password argument (a string) in addition to an initial balance.
+The returned function should take two arguments: an amount to withdraw
+and a password.</p>
+
+<p>A password-protected <code>withdraw</code> function should only process
+withdrawals that include a password that matches the original. If a
+withdraw function has been called three times with incorrect passwords
+then it is locked.  All subsequent calls to the function should
+specify that the account is locked, and list the incorrect password
+attempts.  The incorrect passwords may be the same or different.</p>
+
+<pre><code>def make_withdraw(balance, password):
+    &quot;&quot;&quot;Return a password&#x2d;protected withdraw function.
+
+    &gt;&gt;&gt; w = make_withdraw(100, &#x27;hax0r&#x27;)
+    &gt;&gt;&gt; w(25, &#x27;hax0r&#x27;)
+    75
+    &gt;&gt;&gt; w(90, &#x27;hax0r&#x27;)
+    &#x27;Insufficient funds&#x27;
+    &gt;&gt;&gt; w(25, &#x27;hwat&#x27;)
+    &#x27;Incorrect password&#x27;
+    &gt;&gt;&gt; w(25, &#x27;hax0r&#x27;)
+    50
+    &gt;&gt;&gt; w(75, &#x27;a&#x27;)
+    &#x27;Incorrect password&#x27;
+    &gt;&gt;&gt; w(10, &#x27;hax0r&#x27;)
+    40
+    &gt;&gt;&gt; w(20, &#x27;n00b&#x27;)
+    &#x27;Incorrect password&#x27;
+    &gt;&gt;&gt; w(10, &#x27;hax0r&#x27;)
+    &quot;Your account is locked. Attempts: [&#x27;hwat&#x27;, &#x27;a&#x27;, &#x27;n00b&#x27;]&quot;
+    &gt;&gt;&gt; w(10, &#x27;l33t&#x27;)
+    &quot;Your account is locked. Attempts: [&#x27;hwat&#x27;, &#x27;a&#x27;, &#x27;n00b&#x27;]&quot;
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+<h3 class="question" id="q7">Question 7: Challenge Problem (optional)</h3>
+
+<p>Recall the <code>count_change</code> function from earlier in the semester.
+(We have converted it to use a Python list rather than a linked list
+to represent a coin sequence, but it is otherwise the same.) It was
+quite slow on larger inputs, since it repeated the same computation
+many times. Write a function <code>make_count_change</code> that produces a more
+efficient version of <code>count_change</code>. This more efficient version
+should only perform any computation if it is called with a new pair of
+arguments. If it is called with a pair of arguments previously seen,
+then it should just return the previously computed value.  This
+technique is known as <strong>memoization</strong>.</p>
+
+<p>Once you are done, compare the two versions on a large number such as
+500 to make sure that your code is faster than the original version.</p>
+
+<pre><code># Old version
+def count_change(a, coins=(50, 25, 10, 5, 1)):
+    if a == 0:
+        return 1
+    elif a &lt; 0 or len(coins) == 0:
+        return 0
+    return count_change(a, coins[1:]) + count_change(a &#x2d; coins[0], coins)
+
+# Version 2.0
+def make_count_change():
+    &quot;&quot;&quot;Return a function to efficiently count the number of ways to make
+    change.
+
+    &gt;&gt;&gt; cc = make_count_change()
+    &gt;&gt;&gt; cc(500, (50, 25, 10, 5, 1))
+    59576
+    &quot;&quot;&quot;
+    "*** YOUR CODE HERE ***"</code></pre>
+
+  </body>
+
+  
+</html>

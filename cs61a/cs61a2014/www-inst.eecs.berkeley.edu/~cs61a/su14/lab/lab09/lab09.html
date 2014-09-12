@@ -1,0 +1,476 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../../css/resource.css" />
+<link rel="stylesheet" type="text/css" href="../../css/lab.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.css" />
+
+    <title>Lab 9: Iterators and Generators | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Lab 9: Iterators and Generators</h1>
+
+    
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="lab09.html#iterators">Iterators</a></li>
+  <ul>
+  <li><a href="lab09.html#q1">Question 1</a></li>
+  <li><a href="lab09.html#q2">Question 2</a></li>
+</ul>
+
+  <li><a href="lab09.html#generators">Generators</a></li>
+  <ul>
+  <li><a href="lab09.html#q3">Question 3</a></li>
+  <li><a href="lab09.html#q4">Question 4</a></li>
+  <li><a href="lab09.html#q5">Question 5</a></li>
+</ul>
+
+  <li><a href="lab09.html#optional-problems">Optional Problems</a></li>
+  <ul>
+  <li><a href="lab09.html#q6">Question 6</a></li>
+</ul>
+
+</ul>
+
+
+    
+<h2 id="submission">Deadline</h2>
+
+<p>By the end of this lab, you should have submitted the
+<code>lab09</code>
+assignment using the command <code>submit lab09</code>.</p>
+
+<p><strong>This lab is due by 11:59pm on 7/24/2014.</strong></p>
+
+<p>Here is a <a href="lab09.py">lab09.py</a> starter file for this lab.</p>
+
+<h2 id="iterators">Iterators</h2>
+
+
+<h3 class="question" id="q1">Question 1</h3>
+Try running each of the given iterators in a <code>for</code> loop. Why does each
+work or not work?
+
+<pre><code>class IteratorA(object):
+    def __init__(self):
+        self.start = 5
+
+    def __next__(self):
+        if self.start == 100:
+            raise StopIteration
+        self.start += 5
+        return self.start
+
+    def __iter__(self):
+        return self</code></pre>
+
+
+    <button id='0' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 0">
+No problem, this is a beautiful iterator.
+</div>
+    
+
+<pre><code>class IteratorB(object):
+    def __init__(self):
+        self.start = 5
+
+    def __iter__(self):
+        return self</code></pre>
+
+
+    <button id='1' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 1">
+Oh no!  Where is <code>__next__</code>?  This fails to implement the iterator
+interface because calling <code>__iter__</code> doesn't return something that has
+a <code>__next__</code> method.
+</div>
+    
+
+<pre><code>class IteratorC(object):
+    def __init__(self):
+        self.start = 5
+
+    def __next__(self):
+        if self.start == 10:
+            raise StopIteration
+        self.start += 1
+        return self.start</code></pre>
+
+
+    <button id='2' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 2">
+This also fails to implement the iterator interface.  Without the
+<code>__iter__</code> method, the <code>for</code> loop will error.  The <code>for</code> loop needs to
+call <code>__iter__</code> first because some objects might not implement the
+<code>__next__</code> method themselves, but calling <code>__iter__</code> will return an
+object that does.
+</div>
+    
+
+<p>Watch out on this one.  Remember that Ctrl-C is how you stop an
+infinite loop.</p>
+
+<pre><code>class IteratorD(object):
+    def __init__(self):
+        self.start = 1
+
+    def __next__(self):
+        self.start += 1
+        return self.start
+
+    def __iter__(self):
+        return self</code></pre>
+
+
+    <button id='3' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 3">
+This is an infinite sequence!  Sequences like these are the reason
+iterators are useful.  Because iterators delay computation, we can use
+a finite amount of memory to represent an infinitely long sequence.
+</div>
+    
+
+<h3 class="question" id="q2">Question 2</h3>
+For one of the above iterators that works, try this:
+
+<pre><code>&gt;&gt;&gt; i = Iterator() # Replace with an iterator that works
+&gt;&gt;&gt; for item in i:
+...     print(item)</code></pre>
+
+<p>Then again:</p>
+
+<pre><code>&gt;&gt;&gt; for item in i:
+...     print(item)</code></pre>
+
+<p>Make sure you understand why you get the output that you get.  With
+that in mind, try writing an iterator that "restarts" every time it is
+run through a <code>for</code> loop.</p>
+
+<pre><code>class IteratorRestart(object):
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; i = IteratorRestart(2, 6)
+    &gt;&gt;&gt; for item in i:
+    ...     print(item)
+    2
+    3
+    4
+    5
+    &gt;&gt;&gt; for item in i:
+    ...     print(item)
+    2
+    3
+    4
+    5
+    &quot;&quot;&quot;
+    def __init__(self, start, end):
+        &quot;*** YOUR CODE HERE ***&quot;
+
+    def __next__(self):
+        &quot;*** YOUR CODE HERE ***&quot;
+
+    def __iter__(self):
+        &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='4' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 4">
+
+<pre><code>&#x63;&#x6c;&#x61;&#x73;&#x73;&#x20;&#x49;&#x74;&#x65;&#x72;&#x61;&#x74;&#x6f;&#x72;&#x52;&#x65;&#x73;&#x74;&#x61;&#x72;&#x74;&#x28;&#x6f;&#x62;&#x6a;&#x65;&#x63;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x5f;&#x5f;&#x69;&#x6e;&#x69;&#x74;&#x5f;&#x5f;&#x28;&#x73;&#x65;&#x6c;&#x66;&#x2c;&#x20;&#x73;&#x74;&#x61;&#x72;&#x74;&#x2c;&#x20;&#x65;&#x6e;&#x64;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x73;&#x74;&#x61;&#x72;&#x74;&#x20;&#x3d;&#x20;&#x73;&#x74;&#x61;&#x72;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x65;&#x6e;&#x64;&#x20;&#x3d;&#x20;&#x65;&#x6e;&#x64;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x20;&#x3d;&#x20;&#x73;&#x74;&#x61;&#x72;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x5f;&#x5f;&#x6e;&#x65;&#x78;&#x74;&#x5f;&#x5f;&#x28;&#x73;&#x65;&#x6c;&#x66;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x20;&#x3e;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x65;&#x6e;&#x64;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x61;&#x69;&#x73;&#x65;&#x20;&#x53;&#x74;&#x6f;&#x70;&#x49;&#x74;&#x65;&#x72;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x20;&#x2b;&#x3d;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x20;&#x2d;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x5f;&#x5f;&#x69;&#x74;&#x65;&#x72;&#x5f;&#x5f;&#x28;&#x73;&#x65;&#x6c;&#x66;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x63;&#x75;&#x72;&#x72;&#x65;&#x6e;&#x74;&#x20;&#x3d;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x73;&#x74;&#x61;&#x72;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x73;&#x65;&#x6c;&#x66;</code></pre>
+
+</div>
+    
+
+
+<h2 id="generators">Generators</h2>
+
+
+<p>A generator is a special type of iterator that can be written using a <code>yield</code> statement:</p>
+
+<pre><code>def &lt;generator_function&gt;():
+    &lt;somevariable&gt; = &lt;something&gt;
+    while &lt;predicate&gt;:
+        yield &lt;something&gt;
+        &lt;increment variable&gt;</code></pre>
+
+<p>A generator function can also be run through a <code>for</code> loop:</p>
+
+<pre><code>def generator():
+    i = 0
+    while i &lt; 6:
+        yield i
+        i += 1
+
+for i in generator():
+    print(i)</code></pre>
+
+<p>To better figure out what is happening, try this:</p>
+
+<pre><code>def generator():
+    print(&quot;Starting here&quot;)
+    i = 0
+    while i &lt; 6:
+        print(&quot;Before yield&quot;)
+        yield i
+        print(&quot;After yield&quot;)
+        i += 1
+
+&gt;&gt;&gt; g = generator()
+&gt;&gt;&gt; g
+___ # what is this thing?
+&gt;&gt;&gt; g.__iter__()
+___
+&gt;&gt;&gt; g.__next__()
+___
+&gt;&gt;&gt; g.__next__()
+____</code></pre>
+
+<p>Trace through the code and make sure you know where and why each
+statement is printed.</p>
+
+<p>You might have noticed from the Iterators section that the Iterator
+defined without a <code>__next__</code> method failed to run in the <code>for</code> loop.
+However, this is not always the case.</p>
+
+<pre><code>class IterGen(object):
+    def __init__(self):
+        self.start = 5
+
+    def __iter__(self):
+        while self.start &lt; 10:
+            self.start += 1
+            yield self.start
+
+for i in IterGen():
+    print(i)</code></pre>
+
+<p>Think for a moment about why that works.</p>
+
+<p>Think more.</p>
+
+<p>Longer.</p>
+
+<p>Okay, I'll tell you.</p>
+
+<p>The <code>for</code> loop only expects the object returned by <code>__iter__</code> to have a
+<code>__next__</code> method, and the <code>__iter__</code> method is a generator function in
+this case.  Therefore, when <code>__iter__</code> is called, it returns a
+generator object, which you can call <code>__next__</code> on.</p>
+
+<h3 class="question" id="q3">Question 3</h3>
+
+<p>Write a generator that counts down to 0.</p>
+
+<p>Write it in both ways: using a generator function on its own, and
+within the <code>__iter__</code> method of a class.</p>
+
+<pre><code>def countdown(n):
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; for number in countdown(3):
+    ...     print(number)
+    ...
+    3
+    2
+    1
+    0
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='5' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 5">
+
+<pre><code>&#x20;&#x20;&#x20;&#x20;&#x77;&#x68;&#x69;&#x6c;&#x65;&#x20;&#x6e;&#x20;&#x3e;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x79;&#x69;&#x65;&#x6c;&#x64;&#x20;&#x6e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x6e;&#x20;&#x3d;&#x20;&#x6e;&#x20;&#x2d;&#x20;&#x31;</code></pre>
+
+</div>
+    
+
+<pre><code>class Countdown(object):
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; counter = Countdown(3)
+    &gt;&gt;&gt; hasattr(counter, &#x27;__next__&#x27;)
+    False
+    &gt;&gt;&gt; for number in counter:
+    ...     print(number)
+    ...
+    3
+    2
+    1
+    0
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='6' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 6">
+
+<pre><code>&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x5f;&#x5f;&#x69;&#x6e;&#x69;&#x74;&#x5f;&#x5f;&#x28;&#x73;&#x65;&#x6c;&#x66;&#x2c;&#x20;&#x63;&#x75;&#x72;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x63;&#x75;&#x72;&#x20;&#x3d;&#x20;&#x63;&#x75;&#x72;&#xa;&#xa;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x5f;&#x5f;&#x69;&#x74;&#x65;&#x72;&#x5f;&#x5f;&#x28;&#x73;&#x65;&#x6c;&#x66;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x77;&#x68;&#x69;&#x6c;&#x65;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x63;&#x75;&#x72;&#x20;&#x3e;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x79;&#x69;&#x65;&#x6c;&#x64;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x63;&#x75;&#x72;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x63;&#x75;&#x72;&#x20;&#x2d;&#x3d;&#x20;&#x31;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q4">Question 4</h3>
+
+<p>Write a generator function that outputs the hailstone sequence from homework 1.</p>
+
+<pre><code>def hailstone(n):
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; type(hailstone(10))
+    &lt;class &#x27;generator&#x27;&gt;
+    &gt;&gt;&gt; for num in hailstone(10):
+    ...     print(num)
+    ...
+    10
+    5
+    16
+    8
+    4
+    2
+    1
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='7' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 7">
+
+<pre><code>&#x20;&#x20;&#x20;&#x20;&#x69;&#x20;&#x3d;&#x20;&#x6e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x77;&#x68;&#x69;&#x6c;&#x65;&#x20;&#x69;&#x20;&#x3e;&#x20;&#x31;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x79;&#x69;&#x65;&#x6c;&#x64;&#x20;&#x69;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x69;&#x20;&#x25;&#x20;&#x32;&#x20;&#x3d;&#x3d;&#x20;&#x30;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x20;&#x2f;&#x2f;&#x3d;&#x20;&#x32;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x20;&#x3d;&#x20;&#x69;&#x20;&#x2a;&#x20;&#x33;&#x20;&#x2b;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x79;&#x69;&#x65;&#x6c;&#x64;&#x20;&#x69;</code></pre>
+
+</div>
+    
+
+<h3 class="question" id="q5">Question 5</h3>
+
+<p>Write a generator function <code>pairs</code> that takes a list and yields all
+the possible pairs of elements from that list.</p>
+
+<p>Note that this means that you should be yielding a <em>tuple</em>.</p>
+
+<pre><code>def pairs(lst):
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; type(pairs([3, 4, 5]))
+    &lt;class &#x27;generator&#x27;&gt;
+    &gt;&gt;&gt; for x, y in pairs([3, 4, 5]):
+    ...     print(x, y)
+    ...
+    3 3
+    3 4
+    3 5
+    4 3
+    4 4
+    4 5
+    5 3
+    5 4
+    5 5
+    &quot;&quot;&quot;
+    &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='8' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 8">
+
+<pre><code>&#x20;&#x20;&#x20;&#x20;&#x66;&#x6f;&#x72;&#x20;&#x69;&#x20;&#x69;&#x6e;&#x20;&#x6c;&#x73;&#x74;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x66;&#x6f;&#x72;&#x20;&#x6a;&#x20;&#x69;&#x6e;&#x20;&#x6c;&#x73;&#x74;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x79;&#x69;&#x65;&#x6c;&#x64;&#x20;&#x69;&#x2c;&#x20;&#x6a;</code></pre>
+
+</div>
+    
+
+
+<h2 id="optional-problems">Optional Problems</h2>
+
+
+<h3 class="question" id="q6">Question 6</h3>
+
+<p>Now write an iterator that does the same thing.  You are only allowed
+to use a linear amount of space - so computing a list of all of the
+possible pairs is not a valid answer.  Notice how much harder it is -
+this is why generators are useful.</p>
+
+<pre><code>class PairsIterator:
+    &quot;&quot;&quot;
+    &gt;&gt;&gt; for x, y in PairsIterator([3, 4, 5]):
+    ...     print(x, y)
+    ...
+    3 3
+    3 4
+    3 5
+    4 3
+    4 4
+    4 5
+    5 3
+    5 4
+    5 5
+    &quot;&quot;&quot;
+    def __init__(self, lst):
+        &quot;*** YOUR CODE HERE ***&quot;
+
+    def __next__(self):
+        &quot;*** YOUR CODE HERE ***&quot;
+
+    def __iter__(self):
+        &quot;*** YOUR CODE HERE ***&quot;</code></pre>
+
+
+    <button id='9' class='toggleButton'>
+    Toggle Solution<noscript> (enable JavaScript)</noscript>
+    </button>
+
+    <div class="solution 9">
+
+<pre><code>&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x5f;&#x5f;&#x69;&#x6e;&#x69;&#x74;&#x5f;&#x5f;&#x28;&#x73;&#x65;&#x6c;&#x66;&#x2c;&#x20;&#x6c;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x6c;&#x73;&#x74;&#x20;&#x3d;&#x20;&#x6c;&#x73;&#x74;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x69;&#x20;&#x3d;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x6a;&#x20;&#x3d;&#x20;&#x30;&#xa;&#xa;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x5f;&#x5f;&#x6e;&#x65;&#x78;&#x74;&#x5f;&#x5f;&#x28;&#x73;&#x65;&#x6c;&#x66;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x69;&#x20;&#x3d;&#x3d;&#x20;&#x6c;&#x65;&#x6e;&#x28;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x6c;&#x73;&#x74;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x61;&#x69;&#x73;&#x65;&#x20;&#x53;&#x74;&#x6f;&#x70;&#x49;&#x74;&#x65;&#x72;&#x61;&#x74;&#x69;&#x6f;&#x6e;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x73;&#x75;&#x6c;&#x74;&#x20;&#x3d;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x6c;&#x73;&#x74;&#x5b;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x69;&#x5d;&#x2c;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x6c;&#x73;&#x74;&#x5b;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x6a;&#x5d;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x69;&#x66;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x6a;&#x20;&#x3d;&#x3d;&#x20;&#x6c;&#x65;&#x6e;&#x28;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x6c;&#x73;&#x74;&#x29;&#x20;&#x2d;&#x20;&#x31;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x69;&#x20;&#x2b;&#x3d;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x6a;&#x20;&#x3d;&#x20;&#x30;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x65;&#x6c;&#x73;&#x65;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x73;&#x65;&#x6c;&#x66;&#x2e;&#x6a;&#x20;&#x2b;&#x3d;&#x20;&#x31;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x72;&#x65;&#x73;&#x75;&#x6c;&#x74;&#xa;&#xa;&#x20;&#x20;&#x20;&#x20;&#x64;&#x65;&#x66;&#x20;&#x5f;&#x5f;&#x69;&#x74;&#x65;&#x72;&#x5f;&#x5f;&#x28;&#x73;&#x65;&#x6c;&#x66;&#x29;&#x3a;&#xa;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x20;&#x72;&#x65;&#x74;&#x75;&#x72;&#x6e;&#x20;&#x73;&#x65;&#x6c;&#x66;</code></pre>
+
+</div>
+    
+  </body>
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<!-- Interactive interpreter -->
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/lib/codemirror.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/codemirror/mode/scheme/scheme.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/jquery.min.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/deps/lib-xj.js"></script>
+<script src="http://www-inst.eecs.berkeley.edu/~cs61a/su14/interpreter/coding.js"> </script>
+<script>
+  $(function() {
+    set_interpreter_path("../../interpreter/");
+    set_language("");
+    
+  });
+</script>
+</html>

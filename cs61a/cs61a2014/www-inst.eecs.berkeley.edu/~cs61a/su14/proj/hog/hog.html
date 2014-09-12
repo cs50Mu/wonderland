@@ -1,0 +1,598 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="description" content ="CS61A: Structure and Interpretation of Computer Programs" />
+    <meta name="keywords" content ="CS61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS" />
+    <meta name="author" content ="Andrew Huang, Rohin Shah, Jonathan Allen, Matthew Chow, Ajeya Cotra, Davis Foote, Jessica Gu, Angela Lin, Jeffrey Lu, Beth Marrone, Youri Park, Alana Tran, Dickson Tsai" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="../../css/resource.css" rel="stylesheet" type="text/css">
+<link href="../../css/project.css" rel="stylesheet" type="text/css">
+
+    <title>Project 1: The Game of Hog | CS 61A Summer 2014</title>
+
+  </head>
+  <body style="font-family: Georgia,serif;">
+    <h1 id="title-main">Project 1: The Game of Hog</h1>
+
+    <div id='haiku'>
+  
+<blockquote><p><img src="images/die5.gif" alt="5-sided die"></p>
+
+<cite>
+  I know! I'll use my<br/>
+  Higher-order functions to<br/>
+  Order higher rolls.
+</cite></blockquote>
+
+</div>
+
+    <h2 id='table-of-contents'>Table of Contents</h2>
+    <ul>
+  <li><a href="hog.html#introduction">Introduction</a></li>
+  <li><a href="hog.html#logistics">Logistics</a></li>
+  <li><a href="hog.html#graphical-user-interface">Graphical User Interface</a></li>
+  <li><a href="hog.html#testing">Testing</a></li>
+  <li><a href="hog.html#phase-1-simulator">Phase 1: Simulator</a></li>
+  <ul>
+  <li><a href="hog.html#problem-0-0-pts">Problem 0 (0 pts)</a></li>
+  <li><a href="hog.html#problem-1-2-pts">Problem 1 (2 pts)</a></li>
+  <li><a href="hog.html#problem-2-1-pt">Problem 2 (1 pt)</a></li>
+  <li><a href="hog.html#problem-3-1-pt">Problem 3 (1 pt)</a></li>
+  <li><a href="hog.html#problem-4-3-pt">Problem 4 (3 pt)</a></li>
+</ul>
+
+  <li><a href="hog.html#phase-2-strategies">Phase 2: Strategies</a></li>
+  <ul>
+  <li><a href="hog.html#problem-5-2-pts">Problem 5 (2 pts)</a></li>
+  <li><a href="hog.html#problem-6-2-pts">Problem 6 (2 pts)</a></li>
+  <li><a href="hog.html#problem-7-1-pt">Problem 7 (1 pt)</a></li>
+  <li><a href="hog.html#problem-8-2-pt">Problem 8 (2 pt)</a></li>
+  <li><a href="hog.html#problem-9-3-pts">Problem 9 (3 pts)</a></li>
+</ul>
+
+</ul>
+
+
+    
+
+<h2 id="introduction">Introduction</h2>
+
+<p>In this project, you will develop a simulator and multiple strategies
+for the dice game Hog. You will need to use control and higher-order
+functions together, from Sections 1.1 through 1.6 of the <a href="http://composingprograms.com/pages/11-getting-started.html">Composing
+Programs</a> online text.</p>
+
+<p>In Hog, two players alternate turns trying to reach 100 points first.
+On each turn, the current player chooses some number of dice to roll,
+up to 10. That player's score for the turn is the sum of the dice
+outcomes, unless any of the dice come up a 1, in which case the score
+for the turn is only 1 point (the <strong>Pig out</strong> rule).</p>
+
+<p>To spice up the game, we will play with some special rules:</p>
+
+<ul>
+  <li><strong>Free bacon</strong>.  A player who chooses to roll zero dice scores one
+  more than the largest digit in the opponent's score. For example, if
+  Player 1 has 42 points, Player 0 gains 1 + max(4, 2) = 5 points by
+  rolling zero dice.  If Player 1 has 48 points, Player 0 gains 1 +
+  max(4, 8) = 9 points.</li>
+  <li><strong>Hog wild</strong>. If the sum of both players' total scores is a multiple
+  of seven (e.g., 14, 21, 35), then the current player rolls four-sided
+  dice instead of the usual six-sided dice.</li>
+  <li><p><strong>Swine swap</strong>. If at the end of a turn one of the player's total
+  score is exactly double the other's, then the players swap total
+  scores.</p>
+
+  <p><em>Example 1:</em> Player 0 has 20 points and Player 1 has 5; it is Player
+  1's turn. Player 1 scores 5 more, bringing the total to 10. The
+  players swap scores: Player 0 now has 10 points and Player 1 has 20.
+  It is now Player 0's turn.</p>
+
+  <p><em>Example 2</em>: Player 0 has 90 points and Player 1 has 50; it is Player
+  0's turn.  Player 0 scores 10 more, for a total of 100.  The players
+  swap scores, and Player 1 wins the game 100 to 50.</p></li>
+</ul>
+
+<p>This project includes seven files, but all of your changes will be made
+to the first one, and it is the only one you should need to read and
+understand. To get started, <strong>download</strong> all of the project code as a
+<a href="hog.zip">zip archive</a></p>
+
+<table cellpadding="10" cellspacing="2">
+  <tr>
+    <td><code>hog.py</code></td>
+    <td>A starter implementation of Hog.</td>
+  </tr>
+  <tr>
+    <td><code>dice.py</code></td>
+    <td>Functions for rolling dice.</td>
+  </tr>
+  <tr>
+    <td><code>ucb.py</code></td>
+    <td>Utility functions for CS 61A.</td>
+  </tr>
+  <tr>
+    <td><code>hog_gui.py</code></td>
+    <td>A graphical user interface for Hog.</td>
+  </tr>
+  <tr>
+    <td><code>autograder.py</code></td>
+    <td>Utility functions for grading.</td>
+  </tr>
+</table>
+
+<p>The autograder also uses a file called <a href="tests.pkl">tests.pkl</a>. This file is
+included in the zip archive.</p>
+
+
+<h2 id="logistics">Logistics</h2>
+
+<p>This is a one-week solo project.  You should not share your code with
+other students.</p>
+
+<p>Start early! The amount of time it takes to complete a project (or any
+program) is unpredictable.</p>
+
+<p>You are not alone! Ask for help early and often &mdash; the TAs, lab
+assistants, and your fellow students are here to help. Try attending
+office hours or posting on Piazza.</p>
+
+<p>In the end, you will submit one project. The project is worth 20
+points. 17 points are assigned for correctness, and 3 points for the
+overall <a href="../../composition.html">composition</a> of your program.</p>
+
+<p>The only file that you are required to submit is <code>hog.py</code>. You do not
+need to modify or turn in any other files to complete the project. To
+submit the project, change to the directory where <code>hog.py</code> is located
+and run <code>submit proj1</code>.  We will start running the autograder at least
+two days before the due date.</p>
+
+<p>For the functions that we ask you to complete, there may be some
+initial code that we provide. If you would rather not use that code,
+feel free to delete it and start from scratch. You may also add new
+function definitions as you see fit.</p>
+
+<p>However, please do <strong>not</strong> modify any other functions.  Doing so may
+result in your code failing our autograder tests. Also, do not change
+any function signatures (names, argument order, or number of
+arguments).</p>
+
+
+<h2 id="graphical-user-interface">Graphical User Interface</h2>
+
+<p>A <strong>graphical user interface</strong> (GUI, for short) is provided for you. At
+the moment, it doesn't work, because you haven't implemented the game
+logic.  Once you finish Problem 4 (the <code>play</code> function), you will be
+able to play a fully interactive version of Hog!</p>
+
+<p>In order to render the graphics, make sure you have Tkinter, Python's
+main graphics library, installed on your computer. Once you've done
+that, you can run the GUI from your terminal:</p>
+
+<pre><code>python3 hog_gui.py</code></pre>
+
+<p>Once you're done with Problem 9, you can play against the final
+strategy that you've created!</p>
+
+<pre><code>python3 hog_gui.py &#x2d;f</code></pre>
+
+
+<h2 id="testing">Testing</h2>
+
+<p>Throughout this project, you should be testing the correctness of your
+code.  It is good practice to test often, so that it is easy to isolate
+any problems.</p>
+
+<p>We have provided an <strong>autograder</strong> to help you with testing your code,
+but there is a catch. At first, most of the test cases are <em>locked</em>. To
+unlock tests for a particular question, run the following command from
+your terminal:</p>
+
+<pre><code>python3 autograder.py &#x2d;u q1</code></pre>
+
+<p>This command will start an interactive prompt that looks like
+this:</p>
+
+<pre><code>Unlocking tests for q1
+======================
+At each &quot;?&quot;, type in what you would expect the output to be if you had
+implemented q1
+
+&gt;&gt;&gt; counted_dice = make_test_dice(4, 1, 2)
+&gt;&gt;&gt; roll_dice(2, make_test_dice(4, 6, 1))
+? </code></pre>
+
+<p>At the <code>?</code>, you can type what you expect the output to be. If you get
+it right, the test case you answered will be available the next time
+you run the autograder.</p>
+
+<p>The idea is to understand <em>conceptually</em> what your program should do
+first, before you start writing any code. In general, it is good
+practice to think through your program first instead of blindly writing
+code.</p>
+
+<p>Once you have unlocked some tests and written some code, you check the
+correctness of your program using the tests that you unlocked:</p>
+
+<pre><code>python3 autograder.py &#x2d;q q1</code></pre>
+
+<p>This will run the autograder on all unlocked tests for question 1. For
+example, the following output shows an error in question 1:</p>
+
+<pre><code>Test Q1
+=======
+Test case failed:
+&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;
+&gt;&gt;&gt; counted_dice = make_test_dice(4, 1, 2)
+&gt;&gt;&gt; roll_dice(2, make_test_dice(4, 6, 1))
+None
+# Error: expected ... got None</code></pre>
+
+<p>To help with debugging, <code>autograder.py</code> also provides an interactive
+session with the following command:</p>
+
+<pre><code>python3 autograder.py &#x2d;q q1 &#x2d;i</code></pre>
+
+<p>If an error occurs, the autograder will open an interactive Python
+shell for you to use:</p>
+
+<pre><code>Test Q1
+=======
+&gt;&gt;&gt; counted_dice = make_test_dice(4, 1, 2)
+&gt;&gt;&gt; roll_dice(2, make_test_dice(4, 6, 1))
+None
+# Error: expected ... got None
+# Interactive console
+# Type exit() to quit
+&gt;&gt;&gt;</code></pre>
+
+<p>One last note: you might have noticed a file called <code>tests.pkl</code> that
+came with the project.  This file is used to store autograder tests, so
+make sure <strong>not to modify it</strong>. If you need to get a fresh copy, you
+can download it <a href="tests.pkl">here</a>.</p>
+
+
+<h2 id="phase-1-simulator">Phase 1: Simulator</h2>
+
+<p>In the first phase, you will develop a simulator for the game of Hog.</p>
+
+
+<h3 id="problem-0-0-pts">Problem 0 (0 pts)</h3>
+
+<p>Before we start writing any code, let's take a look at the autograder.
+As mentioned in the <a href="hog.html#testing">Testing section</a>, the autograder's test
+cases are initially locked.  You will need to unlock test cases before
+you can use the autograder to test your code!</p>
+
+<p>To unlock test cases for Problem 1 (see below), use the following
+command:</p>
+
+<pre><code>python3 autograder.py &#x2d;u q1</code></pre>
+
+<p>This should display a prompt that looks like this:</p>
+
+<pre><code>Unlocking tests for Q1
+======================
+At each &quot;?&quot;, type in what you would expect the output to be if you had
+implemented Q1
+Type exit() to quit
+
+&gt;&gt;&gt; roll_dice(2, make_test_dice(4, 6, 1))
+?</code></pre>
+
+<p>As noted in the prompt, you should type in what you expect the output
+to be. To do so, you need to first figure out what <code>roll_dice</code> does.
+<strong>Note</strong>: <code>roll_dice</code> does not actually work yet, because you haven't
+written code for it (that's for Problem 1); you are just filling in
+what you would <em>expect</em> it to return.</p>
+
+<ul>
+  <li>The <code>roll_dice</code> function takes two arguments: the number of dice to
+  roll; and a <code>dice</code> function. The <code>dice</code> function should be called
+  <em>exactly</em> the number of times specified by the first argument, even
+  if a 1 is rolled.  <code>roll_dice</code> should return the sum of all dice
+  rolls if no 1's are rolled, or it should return 1 if at least one 1
+  was rolled.</li>
+  <li>The <code>make_test_dice</code> function creates a special <code>dice</code> function that
+  is <em>deterministic</em> (i.e.  non-random). The outcomes of this <code>dice</code>
+  will cycle through the inputs of <code>make_test_dice</code>. In the example
+  above, the first roll would be 4, the second roll would be 6, the
+  third roll would be 1, and the fourth roll would cycle back to
+  4.</lli></li>
+</ul>
+
+<p><strong>Note:</strong> you can exit the unlocker by typing "exit()" (without
+quotes). <strong>Typing Ctrl-C to exit out of the unlocker has been known to
+cause problems, so avoid using that to quit.</strong></p>
+
+<p>Unlock the tests for Problem 1. When you are done, you will be able to
+use the autograder to test your code:</p>
+
+<pre><code>python3 autograder.py &#x2d;q q1</code></pre>
+
+<p>This will display the following output:</p>
+
+<pre><code>Test Q1
+=======
+Test case failed:
+&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;&#x2d;
+&gt;&gt;&gt; roll_dice(2, make_test_dice(4, 6, 1))
+None
+# Error: expected ... got None</code></pre>
+
+<p>Proceed to Problem 1 to start writing code!</p>
+
+
+<h3 id="problem-1-2-pts">Problem 1 (2 pts)</h3>
+
+<p>The <code>roll_dice</code> function in <code>hog.py</code> returns the number of points
+scored by rolling a fixed positive number of dice: either the sum of
+the dice or 1. To obtain a single outcome of a dice roll, call
+<code>dice()</code>. You should call this function <em>exactly</em> <code>num_rolls</code> times in
+your implementation. The only rule you need to consider for this
+problem is <em>Pig out</em>.</p>
+
+<p>You should have unlocked the autograder test cases in <a href="hog.html#problem-0-2-pts">Problem
+0</a>. To test the correctness of your implementation
+with your unlocked tests, use this command:</p>
+
+<pre><code>python3 autograder.py &#x2d;q q1</code></pre>
+
+<p>You can also open an interactive Python shell if an error occurs by
+adding a <code>&#x2d;i</code> option to the end:</p>
+
+<pre><code>python3 autograder.py &#x2d;q q1 &#x2d;i</code></pre>
+
+
+<h3 id="problem-2-1-pt">Problem 2 (1 pt)</h3>
+
+<p>The <code>take_turn</code> function, which returns the number of points scored for
+the turn.  You will need to implement the <em>Free bacon</em> rule here.  You
+can assume that <code>opponent_score</code> is less than 100. Your implementation
+should call <code>roll_dice</code>.</p>
+
+<p>Unlock, implement and test your implementation before moving on:</p>
+
+<pre><code>python3 autograder.py &#x2d;u q2
+python3 autograder.py &#x2d;q q2</code></pre>
+
+<p>As before, you can also open an interactive Python shell if an error
+occurs by adding a <code>&#x2d;i</code> option to the end:</p>
+
+<pre><code>python3 autograder.py &#x2d;q q2 &#x2d;i</code></pre>
+
+
+<h3 id="problem-3-1-pt">Problem 3 (1 pt)</h3>
+
+<p><code>select_dice</code> is a helper function that will simplify the
+implementation of <code>play</code> (next problem). The function <code>select_dice</code>
+helps enforce the <em>Hog wild</em> special rule. This function takes two
+arguments: the scores for the current and opposing players.</p>
+
+<p>Unlock, implement and test your implementation before moving on:</p>
+
+<pre><code>python3 autograder.py &#x2d;u q3
+python3 autograder.py &#x2d;q q3</code></pre>
+
+<p>As before, you can also open an interactive Python shell if an error
+occurs by adding a <code>&#x2d;i</code>option to the end:</p>
+
+<pre><code>python3 autograder.py &#x2d;q q3 &#x2d;i</code></pre>
+
+
+<h3 id="problem-4-3-pt">Problem 4 (3 pt)</h3>
+
+<p>Finally, implement the <code>play</code> function, which simulates a full game of
+Hog. Players alternate turns, each using the strategy originally
+supplied, until one of the players reaches the <code>goal</code> score. When the
+game ends, <code>play</code> returns the final total scores of both players, with
+Player 0's score first, and Player 1's score second.</p>
+
+<p>Here are some hints:</p>
+
+<ul>
+  <li>Remember to enforce all the special rules! You should enforce the
+  <em>Hog wild</em> special rule here (by using <code>select_dice</code>), as well as the
+  <em>Swine swap</em> special rule here.</li>
+  <li>You should use the <code>take_turn</code> function that you've already written.</li>
+  <li>You can get the value of the other player (either 0 or 1) by calling
+  the provided function <code>other</code>. For example, <code>other(0)</code> evaluates to
+  1.</li>
+  <li>A <em>strategy</em> is a function that determines how many dice a player
+  wants to roll, depending on the scores of both players. A strategy
+  function (such as <code>strategy0</code> and <code>strategy1</code>) takes two arguments:
+  scores for the current player and opposing player. A strategy
+  function returns the number of dice that the current player wants to
+  roll in the turn. Don't worry about details of implementing
+  strategies yet. You will develop them in Phase 2.</li>
+</ul>
+
+<p>Unlock, implement and test your implementation before moving on:</p>
+
+<pre><code>python3 autograder.py &#x2d;u q4
+python3 autograder.py &#x2d;q q4</code></pre>
+
+<p>Once you are finished, you will be able to play a graphical version of
+the game. We have provided a file called <code>hog_gui.py</code> that
+you can run from the terminal:</p>
+
+<pre><code>python3 hog_gui.py</code></pre>
+
+<p>If you don't already have Tkinter (Python's graphics library)
+installed, you'll need to install it first before you can run the GUI.</p>
+
+<p>The GUI relies on your implementation, so if you have any bugs in your
+code, they will be reflected in the GUI. This means you can also use
+the GUI as a debugging tool; however, it's better to run the tests
+first.</p>
+
+<p>Congratulations! You have finished Phase 1 of this project!</p>
+
+
+<h2 id="phase-2-strategies">Phase 2: Strategies</h2>
+
+<p>In the second phase, you will experiment with ways to improve upon the
+basic strategy of always rolling a fixed number of dice. First, you need to
+develop some tools to evaluate strategies.</p>
+
+
+<h3 id="problem-5-2-pts">Problem 5 (2 pts)</h3>
+
+<p>Implement the <code>make_averaged</code> function. This higher-order function
+takes a function <code>fn</code> as an argument. It returns another function that
+takes the same number of arguments as the original. This returned
+function differs from the input function in that it returns the average
+value of repeatedly calling <code>fn</code> on the same arguments. This function
+should call <code>fn</code> a total of <code>num_samples</code> times and return the average
+of the results.</p>
+
+<p><em>Note:</em> If the input function <code>fn</code> is a non-pure function (for
+instance, the <code>random</code> function), then <code>make_averaged</code> will also be a
+non-pure function.</p>
+
+<p>To implement this function, you need a new piece of Python syntax! You
+must write a function that accepts an arbitrary number of arguments,
+then calls another function using exactly those arguments. Here's how
+it works.</p>
+
+<p>Instead of listing formal parameters for a function, we write <code>*args</code>.
+To call another function using exactly those arguments, we call it
+again with <code>*args</code>. For example,</p>
+
+<pre><code>&gt;&gt;&gt; def printed(fn):
+...     def print_and_return(*args):
+...         result = fn(*args)
+...         print(&#x27;Result:&#x27;, result)
+...         return result
+...     return print_and_return
+&gt;&gt;&gt; printed_pow = printed(pow)
+&gt;&gt;&gt; printed_pow(2, 8)
+Result: 256
+256</code></pre>
+
+<p>Read the docstring for <code>make_averaged</code> carefully to understand how it
+is meant to work.</p>
+
+<p>Unlock, implement and test your implementation before moving on:</p>
+
+<pre><code>python3 autograder.py &#x2d;u q5
+python3 autograder.py &#x2d;q q5</code></pre>
+
+
+<h3 id="problem-6-2-pts">Problem 6 (2 pts)</h3>
+
+<p>Implement the <code>max_scoring_num_rolls</code> function, which runs an
+experiment to determine the number of rolls (from 1 to 10) that gives
+the maximum average score for a turn.  Your implementation should use
+<code>make_averaged</code> and <code>roll_dice</code>.  It should print out the average for
+each possible number of rolls, as in the doctest for
+<code>max_scoring_num_rolls</code>.</p>
+
+<p><strong>Note:</strong> if two numbers of rolls are tied for the maximum average
+score, return the lower number. For example, if both 3 and 6 achieve a
+maximum average score, return 3.</p>
+
+<p>Autograder tests for this question have already been unlocked for you!
+Test your implementation before moving on:</p>
+
+<p>Unlock, implement and test your implementation before moving on:</p>
+
+<pre><code>python3 autograder.py &#x2d;u q6
+python3 autograder.py &#x2d;q q5</code></pre>
+
+<p>To run this experiment on randomized dice, call <code>run_experiments</code> using
+the <code>&#x2d;r</code> option:</p>
+
+<pre><code>python3 hog.py &#x2d;r</code></pre>
+
+<p><strong>Running experiments</strong> For the remainder of this project,
+you can change the implementation of <code>run_experiments</code> as you wish.
+By calling <code>average_win_rate</code>, you can evaluate various Hog
+strategies. For example, change the first <code>if False:</code> to <code>if
+True:</code> in order to evaluate <code>always_roll(8)</code> against the
+baseline strategy of <code>always_roll(5)</code>.  You should find that it loses
+more often than it wins, giving a win rate below 0.5.</p>
+
+<p>Some of the experiments may take up to a minute to run. You can always reduce
+the number of samples in <code>make_averaged</code> to speed up experiments.</p>
+
+
+<h3 id="problem-7-1-pt">Problem 7 (1 pt)</h3>
+
+<p>A strategy can take advantage of the <em>Free bacon</em> rule by rolling 0
+when it is most beneficial to do so.  Implement <code>bacon_strategy</code>, which
+returns 0 whenever rolling 0 would give <strong>at least</strong> <code>margin</code> points
+and returns <code>num_rolls</code> otherwise.</p>
+
+<p>Unlock, implement and test your implementation before moving on:</p>
+
+<pre><code>python3 autograder.py &#x2d;u q7
+python3 autograder.py &#x2d;q q7</code></pre>
+
+<p>Once you have implemented this strategy, change <code>run_experiments</code>
+to evaluate your new strategy against the baseline. You should find that it
+wins more than half of the time.</p>
+
+
+<h3 id="problem-8-2-pt">Problem 8 (2 pt)</h3>
+
+<p>A strategy can also take advantage of the <em>Swine swap</em> rule. The
+<code>swap_strategy</code></p>
+
+<ol>
+  <li>Rolls 0 if it would cause a beneficial swap that gains points.</li>
+  <li>Rolls <code>num_rolls</code> if rolling 0 would cause a harmful swap that loses
+  points.</li>
+  <li>If rolling 0 would not cause a swap, then do so if it would give
+  <strong>at least</strong> <code>margin</code> points and roll <code>num_rolls</code> otherwise.</li>
+</ol>
+
+<p>Unlock, implement and test your implementation before moving on:</p>
+
+<pre><code>python3 autograder.py &#x2d;u q8
+python3 autograder.py &#x2d;q q8</code></pre>
+
+<p>Once you have implemented this strategy, update <code>run_experiments</code> to
+evaluate your new strategy against the baseline.  You should find that
+it performs even better than <code>bacon_strategy</code>, on average.</p>
+
+<p>At this point, run the entire autograder to see if there are any tests
+that don't pass.</p>
+
+<pre><code>python3 autograder.py &#x2d;a</code></pre>
+
+
+<h3 id="problem-9-3-pts">Problem 9 (3 pts)</h3>
+
+<p>Implement <code>final_strategy</code>, which combines these ideas and any other
+ideas you have to achieve a win rate of at least 0.59 (for full credit)
+against the baseline <code>always_roll(5)</code> strategy.  (At the very least,
+try to achieve a win rate above 0.54 for partial credit.) Some ideas:</p>
+
+<ul>
+  <li>Find a way to leave your opponent with four-sided dice more often.</li>
+  <li>If you are in the lead, you might take fewer risks. If you are
+  losing, you might take bigger risks to catch up.</li>
+  <li>Vary your rolls based on whether you will be rolling four-sided or
+  six- sided dice.</li>
+</ul>
+
+<p><em>Note</em>: You may want to increase the number of samples to improve the
+approximation of your win rate. The course autograder will compute your
+exact average win rate (without sampling error) for you once you submit
+your project, and it will <strong>send it to you in an email</strong>.</p>
+
+<p>You can also play against your final strategy with the graphical user
+interface:</p>
+
+<pre><code>python3 hog_gui.py &#x2d;f</code></pre>
+
+<p>The GUI will alternate which player is controlled by you.</p>
+
+<p>Congratulations, you have reached the end of your first CS 61A project!</p>
+
+  </body>
+
+  
+</html>

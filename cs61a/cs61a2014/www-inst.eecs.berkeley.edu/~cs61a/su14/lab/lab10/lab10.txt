@@ -1,0 +1,414 @@
+ CS 61A Staff proudly presents...
+    __     _____ __        __   __
+    \ \   \  __ \\ \___    \ \ / /
+     \ \   \ \_\ \\  __\    \ v /
+      \ \___\  __ \\ \_\\   / _ \ 
+       \____\\_\ \_\\____\ /_/ \_\
+                  [lab 10 - adventure.py]
+
+
+        ++ Table of Contents ++
+===================================================
+
+Part                                      Title
++ 00 -------------------------------- Introduction
++ 01 -------------------------------- Interpreters
++ 10 -------------------------------- adventure.py
++ 11 ---------------------------------- Conclusion
+
+
+        ++ 00 - Introduction (5 minutes) ++
+===================================================
+
+Grab the files here:
+http://inst.eecs.berkeley.edu/~cs61a/su14/lab/lab10/adventure.py
+http://inst.eecs.berkeley.edu/~cs61a/su14/lab/lab10/cs61a_world.py
+
+REQUIREMENTS: an basic understanding of list slicing, Python OOP
+and Exception handling; a desire for Adventure!
+
+WIN CONDITION: If you look, you'll notice that there are very few doctests
+here. You'll have to test your code by hand, which is a necessary skill to
+develop If your game works, that's a good sign. READ ALL OF THIS TXT FILE.
+
+Today, we will build a text-based adventure game*. This
+involves writing a program that accepts text commands,
+interprets those commands, acts upon them, and reports the
+results back to the player. For example:
+
+  > python3 adventure.py
+
+  Welcome to the micro-world of CS 61A! You have a
+  midterm tomorrow, and in hopes of doing well, you
+  quest to seek the TA, Werdna, a mythical creature who
+  is rumoured to hold the key to besting the test.
+  You arrive in 271 Soda. The room is bright
+  and miserable as always. A few 61A students are
+  scattered among the lab computers, working
+  on the latest project.
+  
+  Exits:
+     out - Hearst Ave.
+
+  adventure> help
+  There are 7 possible operators
+    * look
+    * go
+    * take
+    * give
+    * examine
+    * ask
+    * help
+
+
+  You arrive in 271 Soda. The room is bright
+  and miserable as always. A few 61A students are
+  scattered among the lab computers, working
+  on the latest project.
+
+  Exits:
+     out - Hearst Ave.
+
+  adventure> look
+  You take a look around and see:
+  rubber ducky - Hm. It's yellow and it's rubber and it squeaks. Fascinating.
+
+
+  You arrive in 271 Soda. The room is bright
+  and miserable as always. A few 61A students are
+  scattered among the lab computers, working
+  on the latest project.
+
+  Exits:
+     out - Hearst Ave.
+
+  adventure> take rubber ducky
+  Player 1 takes the rubber ducky
+
+ 
+  You arrive in 271 Soda. The room is bright
+  and miserable as always. A few 61A students are
+  scattered among the lab computers, working
+  on the latest project.
+
+  Exits:
+     out - Hearst Ave.
+     
+  adventure> examine rubber ducky
+  Hm. It's yellow and it's rubber and it squeaks. Fascinating.
+
+  
+  You arrive in 271 Soda. The room is bright
+  and miserable as always. A few 61A students are
+  scattered among the lab computers, working
+  on the latest project.
+
+  Exits:
+     out - Hearst Ave.
+     
+  adventure> go out
+  You leave 2nd floor Soda through the exit all the cool kids use.
+  
+  
+  You find yourself on the sidewalk of Hearst Ave.
+  
+  Exits:
+     south - UC Berkeley Campus
+     north - 271 Soda
+     west - Euclid Ave.
+
+At a high level, this is exactly what an interpeter does.
+
+Why are we doing this? Because traditionally, all the interpreter based
+exercises in 61A have either been "write a calculator" OR "write an
+programming language interpreter". Hopefully this livens things up.
+
+* For more information about text based adventure games, see:
+http://en.wikipedia.org/wiki/Colossal_Cave_Adventure
+Kn0w y0ur r00ts, y0.
+
+
+        ++ 01 - Intepreters (5 minutes) ++
+===================================================
+
+An interpreter is a program that allows you to interact
+with the computer in a certain language. It understands the
+expressions that you type in through that language, and perform
+the corresponding actions in some way, usually using an underlying
+language.
+
+For example, calc.py lets you interact with the computer
+in a simple calculator language. It is written in Python.
+In Project 4, you will write a Scheme interpreter in Python
+as well. Python itself is written in the C programming language.
+The computer itself uses hardware to interpret machine code,
+a series of ones and zeros that represent basic operations like
+adding numbers, loading information from memory, etc.
+
+When you talk about an interpreter, there are two languages that
+are at work:
+  1. The language being interpreted. We also call this the language
+    being implemented. In the first three examples above, the calc
+    language, Scheme, and Python, respectively.
+  2. The underlying implementation language. From above, Python,
+    Python, and C respectively.
+
+Note that the underlying language need not be different from the implementing
+language. In the previous incarnation of 61A, students were introduced to a
+Scheme interpreter written in Scheme*.  CS61A in Summer 2012 covered a Python
+interpreter** written in Python!  This idea is called Metacircular Evaluation.
+
+* For those interested, see:
+http://mitpress.mit.edu/sicp/full-text/sicp/book/node77.html
+
+
+Each interpreter has four parts:
+ - Parser - takes in user input (string) and turns it into
+     a sequence that the underlying language understands.
+ - Evaluator - takes in the aforementioned sequence and interprets it
+     accordingly to the rules of the language. The evaluator may call
+     apply to apply an evaluated operator to its evaluated operands.
+ - Apply - applies the operator to the argument values. Apply may
+     call the evaluator to do more work... this is possibly the most
+     important example of Mutual Recursion. Ever.
+ - Read-Eval-Print-Loop (REPL for short) - the loop that waits for user
+     input, passes it to the parser and then the evaluator, and then
+     prints out the result.
+
+Here's how all the pieces fit together:
+              ____________________________________________
+              |                                           |
+              |____     _________     __________    ______|
+User Input -->|Read|--> | Parser |--> |Evaluator|-->|Print|--> Output
+              |____|    |________|    |_________|   |_____|
+              |                       __^_v____           |
+              ^                      |Apply    |          v
+              ^ REPL                 |_________|          v
+              |___________________________________________|
+
+Now let's explore how these parts work together in an
+adventure game!
+
+
+        ++ 10 - adventure.py ++
+===================================================
+
+We can implement our adventure language in Python3 by completing
+the interpreter(/game engine) in adventure.py.
+
+First, here's an explanation of the the two files we were given:
+
+- adventure.py
+This file includes the skeleton code of the game engine that you will
+complete. There are also classes (Person, Place, Thing) that model
+objects in the game. Your engine and the game data uses these.
+
+- cs61a_world.py
+All the game data that makes things interesting is in this file.
+It creates Persons, Places, and Things that make up the adventure world.
+
+Now, let's look at the base code in adventure.py.
+There's a lot of code to take in at once, but don't freeze up!
+We'll walk through and implement everything, function by function.
+
+adventure - our REPL. This function reads player input, calls
+  adv_parse to get an expression out (represented as a tuple),
+  and then calls adv_eval to perform the actions. It prints
+  the results accordingly. Then it makes a recursive call to
+  itself in order to take in the next command.
+
+The player is represented as a Person object. The interpreter will
+allow the player to move the Person through the game and interact with
+the various aspects of the world.
+
+You can try to run it by doing
+  >>> python3 adventure.py
+However it's missing functionality, so nothing will really work.
+
+Let's fix that, shall we?
+
+
++++ EXERCISE 1 (~15 minutes) +++
+----------------------------------
+NOTE: WHEN YOU WANT TO TEST MANUALLY. MAKE SURE YOU'RE IN PYTHON.
+Here's how:
+
+  > python3 -i adventure.py
+  adventure> {Control-d}
+  >>> adv_parse('look') # Now you can call adv_parse
+
+Remember that when you run adventure.py, you are talking to
+the adventure program, which will evaluate your input in terms
+of the adventure code. In order to talk to Python again, you
+kill the adventure program by doing Ctrl-d.
+
+ALTERNATIVELY, if the above didn't work (Ctrl-d takes you out of
+the entire interpreter)
+  > python3
+  >>> from adventure import *
+  >>> from cs61a_world import *
+  >>> adv_parse('look')
+
+Let's start things off by implementing parsing. We do this in
+adv_parse - our Parser. Since our game language is simple,
+  we're going to do the lexical (turn line into tokens)
+  and syntactic analysis (turn tokens into expression)
+  all in one function. Our expression representation is
+  tuple (No ADT here). Here is the basic syntax of a command:
+        [operator] [operand]
+  When we encounter a command that matches this syntax, return:
+        ([operator], [operand])
+  Another common syntax is:
+        [operator]
+  The corresponding expression is:
+        ([operator], '')
+
+For example,
+
+adv_parse('take cookie') returns ('take', 'cookie')
+'take' is the operator
+'cookie' is the operand
+
+adv_parse('look') returns ('look', '').
+'look' is the operator
+'' is the operand
+
+adv_parse('take rubber ducky') returns ('take', 'rubber ducky')
+'take' is the operator
+'rubber ducky' is the operand
+
+Most of our operators follow this syntax.
+There are two commands that require a different handling:
+  ask - when you encounter a line like 'ask Leonard for sushi',
+    return ('ask', 'Leonard', 'sushi')
+    The recipient will always be immediately after 'ask', with 'for' afterward.
+
+  give - when you encounter a line like 'give a cookie to Andrew',
+    return ('give', 'a cookie', 'Andrew')
+    The recipient will always be last, with 'to' beforehand.
+
+In this case, ask and give are Special Forms, commands that will
+require special case handling in adv_eval later.
+
+HINT: consider the following example:
+  >>> x = 'take rubber ducky'
+  >>> y = x.split()
+  >>> y
+  ['take', 'rubber', 'ducky']
+  >>> y.pop(0)
+  'take'
+  >>> y
+  ['rubber', 'ducky']
+  >>> ' '.join(y[0:]) # Google 'python3 string join'
+  'rubber ducky'
+
+
++++ EXERCISE 2 (10 minutes) +++
+----------------------------------
+adv_eval - our Evaluator. We want to handle all kinds of expressions.
+
+The rules are:
+  For normal expressions: evaluate the OPERATOR, and the apply the operator to the operand
+  For give expressions: deal with it using the 'give' function (line 109). What is the domain?
+  For ask expressions: deal with it using the 'ask' function (line 122). What is the domain?
+
+  For example:
+
+  >>> from adventure import *
+  >>> from cs61a_world import *
+  >>> adv_parse('look')
+  >>> Place.current = SodaHall
+  >>> adv_eval(adv_parse('take rubber ducky'))
+  'Player 1 takes the rubber ducky'
+  >>> Place.current = WerdnasHouse
+  >>> adv_eval(adv_parse('give rubber ducky to Werdna'))
+  'Werdna takes the rubber ducky'
+
+NOTE: YOU WON'T BE ABLE TO TEST THIS UNTIL YOU FINISH EXERCISE 3.
+
+adv_eval is truly where the action is. It takes the expression
+that is passed in and performs the correct action based on the rules
+of our game language.
+
+HINT: Use recursion and also the functions defined right under adv_eval
+(adv_apply, look, give, take, etc.) Also take a look at minicalc.py.
+Also bug TAs.
+
+It was mentioned before that give and ask are handled specially.
+This is because they do not follow the [operator] [operand] pattern.
+
+* http://inst.eecs.berkeley.edu/~cs61a/su14/lecture/calc_improved.py
+
+
++++ EXERCISE 3 (5 minutes) +++
+---------------------------------
+adv_apply - our apply. Handles the application of the normal commands
+  Since our commands are simple, adv_apply just needs to apply the
+  operator to the operand. There are no calls to adv_eval (there
+  aren't any subexpressions to evaluate!)
+
+The point of apply becomes more apparent with more complicated
+languages. However the princple holds--apply takes care of the
+function calls that are evaluated without any special rules.
+
+HINT: This is really straightfoward. Don't overthink it.
+
+AT THIS POINT YOU CAN PLAY THE GAME! :D
+
+
++++ EXERCISE 4 (15 minutes) +++
+-------------------------------
+One thing that would be useful is to figure out what's in our
+inventory. For example:
+
+  adventure> take rubber ducky
+  Player 1 takes the rubber ducky
+  adventure> stuff
+  You look through your stuff... you see
+  rubber ducky - Hm. It's yellow and it's rubber and it squeaks. Fascinating.
+  -- End of stuff --
+
+Add code to take care of this. What needs to be modified?
+Does adv_eval and/or adv_apply need to be modified at all?
+
+HINT: Look at how 'examine' is defined (line 133).
+
+
++++ EXERCISE 5 (10 minutes) +++
+-------------------------------
+Now that you've implemented this interpreter, you can play the game!
+
+  > python3 adventure.py
+
+Happy Questing!
+
+
+        ++ 11 - Conclusion (5 minutes) ++
+===================================================
+
+Hope this lab was fun. :)
+Since the game is simple, some parts of the lab are toy-ish.
+However, the game is still strong and robust enough to be extended;
+feel free to add more places, people and things! :P
+This also speaks to how powerful Python is as a language,
+to allow us to create a full game in relatively short time!
+(The original TA might have hacked this lab together in a night...)
+
+Lab 10 Takeaways:
++ Interpreters allow us to directly interact with the computer
+    through a language.
++ Interpreters are made of a REPL, a parser, an evaluator, and an
+    apply'er. They interact with each other in specific ways.
++ There are two languages when talking about an interpreter:
+    the underlying language vs language being implemented.
++ Special forms have their own rules for being evaluted.
+    They don't get handled in apply.
++ In adventure.py, the adventure game language is interpreted by
+    the Python program. You talk to the computer in adventure talk
+    which gets translated to actions in the underlying Python language.
+- No tree recursion between adv_eval and adv_apply: our
+    simple game language doesn't need it.
+
+In Project 4, you will implement a Scheme interpreter in Python.
+
+~ The End ~

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CS 61A Summer 2014: Structure and Interpretation of Computer Programs</title>
+    <link rel="stylesheet" type="text/css" href="reset.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <style>
+
+
+
+#left {
+  position: fixed;
+  font-size: 15pt;
+  height: 100%;
+  width: 240px;
+  margin-left: 20pt;
+  background-color: #ffffff;
+}
+
+#left a{
+  margin: 1px;
+  text-align: center;
+  text-decoration: none;
+  font-variant: small-caps;
+  display: inline-block;
+  width: 240px;
+}
+
+#left a:hover{
+  cursor:pointer;
+  background-color: #0b5394;
+  color: #ffffff;
+}
+
+div.side-nav {
+  margin-top: 30%;
+}
+
+
+section{
+  min-width: 600px;
+  max-width: 800px;
+  text-align: justify;
+  margin-left: 20px;
+  margin-top: 20pt;
+  line-height: 1.5;
+}
+
+a.left-title {
+  background-color: #0b5394;
+  color: #ffffff;
+}
+
+div.vertical-line {
+  height: 100%;
+  margin-left: 250pt;
+}
+
+
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="top">
+  <a href="index.html">home</a>
+  <a href="about.html">course info</a>
+  <a href="staff.html">staff</a>
+  <a href="index.html#calendar">schedule</a>
+  <!-- <a href="http://chat.cs61a.org" target="_blank">chat</a> -->
+  <a href="https://piazza.com/berkeley/summer2014/cs61a/home" target="_blank">piazza</a>
+  <a href="http://ocf.berkeley.edu/~shidi/cs61a/w" target="_blank">wiki</a>
+  <a href="feedback.html">feedback</a></li>
+</nav>
+
+
+<header id="top">
+  <h1>CS 61A</h1>
+  <h2>Structure and Interpretation of Computer Programs
+      <span>summer 2014</span></h2>
+</header>
+
+<div class="left-nav">
+<nav id="left">
+    <strong><a class="left-title">contents</a></strong>
+    <a href="about.html#course-description">course description</a>
+    <a href="about.html#programming-language">programming language</a>
+    <a href="about.html#prerequisites">prerequisites</a>
+    <a href="about.html#course-materials">course materials</a>
+    <a href="about.html#lab-and-discussion-sections">lab and discussion sections</a>
+    <a href="about.html#computer-accounts">computer accounts</a>
+    <a href="about.html#ask-questions">ask questions!</a>
+    <a href="about.html#computer-resources">computer resources</a>
+    <a href="about.html#projects-and-homeworks">projects and homeworks</a>
+    <a href="about.html#tests-and-grading">tests and grading</a>
+    <a href="about.html#learning-cooperatively">learning cooperatively</a>
+    <a href="about.html#academic-honesty">academic honesty</a>
+    <a href="about.html#late-policy">late policy</a>
+    <a href="about.html#a-parting-thought">a parting thought</a>
+</nav>
+</div>
+
+<div class="vertical-line" />
+<div class="a" />
+
+<section>
+<h2 class="header">61A Course Information and Policies</h2>
+
+<p>
+Course website:
+<a href="index.html">
+  http://www-inst.eecs.berkeley.edu/~cs61a/su14/
+</a>
+
+<h3 class="section" id="course-description">Course Description</h3>
+
+<p>The CS 61 series is an introduction to computer science, with particular
+emphasis on software and on machines from a programmer's point of view. This
+first course concentrates mostly on the idea of abstraction, allowing the
+programmer to think in terms appropriate to the problem rather than in low-level
+operations dictated by the computer hardware. The next course, CS 61B, will deal
+with the more advanced engineering aspects of software, such as constructing and
+analyzing large programs. Finally, CS 61C concentrates on machines and how they
+carry out the programs you write.</p>
+
+<p>In CS 61A, we are interested in teaching you about programming, not about how
+to use one particular programming language. We consider a series of techniques
+for controlling program complexity, such as functional programming, data
+abstraction, and object-oriented programming. Mastery of a particular
+programming language is a very useful side effect of studying these general
+techniques. However, our hope is that once you have learned the essence of
+programming, you will find that picking up a new programming language is but a
+few days' work.</p>
+
+<p>There is also a self-paced version of this course,
+<a href="http://inst.eecs.berkeley.edu/~cs61a/su14/61as.html">61AS</a>,
+which fulfills the same requirements.
+
+</p><h3 class="section" id ="programming-language">Programming Language</h3>
+
+<p>61A uses the Python 3 programming language. Python is a popular language in
+both industry and academia. It is also particularly well-suited to the task of
+exploring the topics taught in this course. It is an open-source language
+developed by a large volunteer community that prides itself on the diversity of
+its contributors. </p>
+
+<p>In previous semesters, this course was taught using the Scheme language, a
+dialect of Lisp, which is the oldest programming language that is still
+recruiting new users today. Lisp and Python are similar in many ways. In fact,
+Lisp popularized many of the features that make Python a great language. Our
+choice to change languages is primarily motivated by the strength of Python's
+programming community, which you will soon join as you learn the language.
+Python also has excellent library support for a vast range of application areas.
+Knowing Python will help you pursue your future programming interests, wherever
+they may lead you.</p>
+
+
+<h3 class="section" id="prerequisites">Prerequisites</h3>
+
+<p>Math 1A is a corequisite for 61A. (That is, it may be taken
+concurrently.)</p>
+
+<p>There is no formal programming-related prerequisites for admission to 61A.
+However, most 61A students have had significant prior programming experience.
+There is no need for you to be familiar with any particular programming
+language. If you have taken the CS Advanced Placement AB course in C++ or Java,
+you are certainly ready for 61A.</p>
+
+<p>If you don't feel ready for 61A, There is
+<a href="http://inst.eecs.berkeley.edu/~cs10/">CS 10 : The Beauty and Joy of Computing</a>,
+which is an introduction to computer science for non-majors (and majors needing
+more programming experience). The course will teach students how to program
+using BYOB (based on Scratch), one of the friendliest programming languages
+ever invented. It's purely graphical, which means programming involves simply
+dragging blocks around, and building bigger blocks out of smaller blocks. But
+the course is far more than just learning to program! You'll learn some of the
+"Big Ideas" of computing, such as abstraction, design, recursion, concurrency,
+simulations, and the limits of computation. You'll also see some beautiful
+applications of computing that have changed the world, as well as talk about
+the history of computing and where it will go in the future.</p>
+
+<p><strong>However, if you have no previous programming experience, We strongly
+    recomend you try CS 61A out anyways. Many 61A students who started with
+    zero programming experience have gone on to become accomplished
+    programmers/Computer Scientists after taking 61A. Summer 61A especially has
+    many avenues of support designed to help you succeed, all you need to do is
+    ask.</strong></p>
+
+<p>If you have substantial prior programming background, you may feel that you
+can skip 61A. In most cases we don't recommend that. Although 61A is the first
+course in the CS sequence, it's quite different from most introductory courses.
+You won't be bored in 61A. Perhaps your prior experience will allow you to skip
+61B or 61C, which are more comparable to courses taught elsewhere.
+
+
+</p><h3 class="section" id="course-materials">Course Materials</h3>
+
+<p>There is no required textbook for this course. Our primary text will be a
+series of lecture notes based on the classic book, <a
+    href="http://mitpress.mit.edu/sicp/full-text/book/book.html">Structure and
+    Interpretation of Computer Programs</a>, which has been the textbook for
+61A for many years. Lecture notes will be posted to the course website. </p>
+
+
+<h3 class="section" id="lab-and-discussion-sections">Lab and Discussion Sections</h3>
+
+<p>In addition to the lectures Monday, Tuesday, Wednesday, and Thursday, the
+course consists of two discussion sections and two laboratory sections each
+week.</p>
+
+<p>The discussion sections are run by an amazing group of Teaching Assistants.
+This course is currently full, so please attend your assigned section. You can
+try to switch to a different lecture or section by posting on the appropriate
+thread on <a href="https://piazza.com/berkeley/summer2014/cs61a/home">Piazza</a>.</p>
+
+<p>Make sure that you are in a definite section by next week.
+    Projects 3 and 4 will be done in pairs. We strongly encourage you
+    to find a partner in your own section early on with whom you can
+    study and do projects 3 and 4. Your TA will help you.</p>
+
+<p>You are expected to attend all class meetings, including lectures, sections,
+and labs.</p>
+
+<p><strong>Enrollment:</strong> Your TA does not have any power over enrollment
+whatsoever. Admission to the class is controlled by the EECS department.</p>
+
+
+<h3 class="section" id="computer-accounts">Computer Accounts</h3>
+
+<p><em>You must</em> have a computer account on the 61A course facility. To set up
+an account, you need an account form, which you will receive in the first lab.
+
+</p><p>You must set up your account in the first week because that is how we know
+who is really in the class. If you are pre-enrolled but do not set up your
+account this week, you may be dropped from the course! Account forms will be
+distributed in lab and office hours this week. The first time you log in, you
+will be asked to type in your name and reg card number, if you have one.
+<em>Please follow the instructions carefully.</em> You must get your account and
+log into during your first lab so that we have an accurate class count.
+
+</p><p>If you plan to use your personal computer for the course projects, you must
+get a class account, even if you intend never to use it. Class accounts are
+required for submitting assignments.
+
+</p><p>If you are not pre-enrolled and want to take 61A, you have to add the course
+using Tele-BEARS. If you are something other than a regular Berkeley
+undergraduate, then you probably need a signature on a form admitting you to the
+course: contact the instructors directly.
+
+</p><h3 class="section" id="ask-questions">Ask Questions!</h3>
+
+<p>Your first and most important resource for help in learning the material in
+this course is your fellow students. Work closely with your project partner. You
+are responsible for helping each other learn.</p>
+
+<p>A good non-person resource to consult is our <a
+    href="http://ocf.berkeley.edu/~shidi/cs61a/w" target="_blank">Wiki</a>,
+which strives to be THE reference for everything 61A.</p>
+
+<p><strong>If your question is quick, or you don't know where to look for help,
+    please check out the #general channel on our IRC server: 107.170.82.182. To
+    connect, you'll need an IRC client. We have a web based client specifically
+    for 61A <a href="http://chat.cs61a.org/"
+        target="_blank">here</a></strong>.<p>
+
+<p>If you have questions that others might have as well, regarding
+projects, homeworks, course policies, etc., post your questions to <a
+    href="https://piazza.com/berkeley/summer2014/cs61a/home">Piazza</a>, the course messaging
+service. Piazza allows you to answer questions from other students, which is
+one of the best ways to learn the material.
+
+</p><p>The class will have a staff of undergraduate Lab Assistants (LAs). Each
+LA will have scheduled hours to be in the lab. Whenever an LA is in the lab you
+may request that s/he answer questions about the homework or programs (but not
+do them for you).
+
+</p><p>The instructors and the Teaching Assistants who teach the discussion sections
+are also available to answer questions. You may drop in during office hours, make
+appointments for other times, or email us.
+
+
+</p><h3 class="section" id="computer-resources">Computer Resources</h3>
+
+<p>The computing laboratories in 271, 273, and 275 Soda are our primary lab
+rooms, although the CS 61A accounts can also be used from any EECS Instructional
+lab in Soda or Cory Hall. The lab is normally available for use at all times,
+but you need a card key for evening access to the lab.
+
+</p><p><b>Current UCB students:</b> If you are enrolled in the course, your Cal
+student ID serves as your card key and will automatically be activated for
+access to the Soda second floor labs (including entering the building). You do
+not have to do anything, unless for some reason it doesn't work, then see below.
+
+</p><p><b>Concurrent/other students</b>: You can fill out an application and obtain a
+white card key from 387 Soda Hall (the front desk). There is a small fee for
+access.
+
+</p><p>During scheduled lab sessions, only students enrolled in that particular
+section may be in the lab. At other hours, any 61A student may use the lab on a
+drop-in basis. (The labs on the second floor of Soda Hall are unlocked during
+daytime hours.)
+
+</p><p>Be respectful of the lab space. Please don't steal the chairs, or bring in
+food or drinks. Don't unplug anything; unplugged computers make our hard-working
+instructional computing team very sad. Don't monopolize a workstation for six
+hours during prime time to play games. If you see someone disrupting the space,
+ask them to stop.
+
+
+</p><p>The first lab requires you to work on the computer; part of the
+    purpose of the assignment is to ensure that you know how to
+    create, edit, and print files. Pick up your computer account this
+    week, whether or not you are pre-enrolled.
+
+
+</p><h3 class="section" id="projects-and-homeworks">Projects and Homeworks</h3>
+
+<p>Each week there will be problems assigned for you to work on, most of which will
+involve writing and debugging programs. These assignments come in three categories:
+
+</p><ul>
+  <li><b>Laboratory exercises</b> are short, relatively simple exercises
+  designed to introduce a new topic. You'll do these during the scheduled lab
+  meetings. You will turn these in at the end of your lab section.
+
+  </li>
+  <li><b>Homework assignments</b> are slightly more involved
+  versions of lab exercises, meant to illustrate and explore new
+  topics. There are usually two homeworks per week that will be due
+  on Wednesdays and Saturdays at 11:59:59pm. You are encouraged to
+  discuss the homework with other students, but your final solution
+  should be developed alone.
+
+  </li>
+  <li><b>Projects</b> are larger assignments intended to teach you how to
+  combine ideas from the course in interesting ways. There are four
+  projects during the semester. The first two projects should be
+  completed individually. You should complete projects 3 and 4 in
+  pairs; your partner should be another student in your section.
+</li></ul>
+
+<p>The purpose of the lab is for you to learn the course material with
+  the guidance of the teaching staff.  The lab represents a baseline
+  level of competence with the material that we expect everyone to
+  achieve with the help of the staff. So, the labs are graded on the
+  correctness of your solutions.
+
+</p><p>Each lab is worth one point for a correct solution and zero points
+    for a missing or incorrect solution.
+
+</p><p>The purpose of the homework is for you to learn the course material, not to
+prove that you already know it. Therefore, the weekly homeworks are not graded
+on the correctness of your solutions, but on effort. You will get full credit
+for an entirely wrong answer that shows reasonable effort! Homeworks will be
+graded automatically.
+
+</p><p>Each homework is worth two points for a reasonable effort, zero points for a
+missing homework or one that seems to show no effort, or negative ten (-10)
+points for a solution copied from someone else.
+
+</p><p>The four programming projects are graded on the correctness and
+    clarity of your solutions. For Projects 3 and 4, you and your
+    partner should work together to ensure that both group members
+    understand the complete program you create.
+
+</p><p>Projects and homeworks will be submitted online. Through a web-based code
+review system, you will receive detailed feedback on your projects.
+
+
+</p><h3 class="section" id="tests-and-grading">Tests and Grading</h3>
+
+<p>Your course grade is computed using a point system with a total of 314
+points, with the following distribution.
+
+</p><ul>
+  <li>Two midterms, each worth 50 points.
+  </li><li>One final exam, worth 80 points.
+  </li><li>Four projects, worth a total of 90 points
+  </li><li>Fourteen homeworks, worth a total of 28 points
+  </li><li>Sixteen labs, worth a total of 16 points
+</li></ul>
+
+<p>Exams are held in the evenings to give you more time to
+  complete them than lecture would allow.  You are allowed to bring one
+  double-sided 8.5 in. by 11 in. cheat sheet to the first midterm, two
+  sheets to the second midterm, and three sheets to the final.  These
+  cheat sheets may be handwritten or typed.  We recommend that you
+  reuse your cheat sheets.
+<!--</p><p>Midterms are held in the evenings from 7pm-9pm to give you more time to
+complete them than lecture would allow. You will be allowed to bring a fixed
+number of pages of notes to each exam. Details of this policy will be released
+as the exam approaches.-->
+
+</p><p><b>Midterms will be held on Thursday 7/10 and 7/31</b>!  The
+    times are not yet finalized (we have requested either 5 to 7pm or
+    7 to 9pm). If you are not available on these days, notify your TA
+    immediately.
+
+</p><p>Each letter grade for the course corresponds to a range of
+    scores:
+
+</p><pre>
+A+  304+        A  291-303     A-  284-290
+B+  265-283     B  248-264     B-  231-247
+C+  224-230     C  217-223     C-  209-216
+D+  199-208     D  188-198     D-  178-187
+</pre>
+
+<p>Notice that this scale is nonlinear; the steps are wider in the B range.
+
+</p><p>This grading formula implies that <i>there is no curve</i>; your grade
+will depend only on how well you do, and not on how well everyone else
+does.
+
+</p><p>Incomplete grades will be granted only for dire medical or personal
+emergencies that cause you to miss the final, and only if your work up to
+that point has been satisfactory.
+
+<a name="recover"></a> </p><p><b>Midterm Recovery Policy</b>
+On the final exam, you can earn back a fraction of the points you
+lost on the midterms. If X is the sum of your midterm 1 and midterm 2 scores,
+you will earn back up to 75% of max(0, 60-X). The fraction you earn back is
+based on your final score Y and is computed as min(45, Y-20)/60.
+
+</p><p>For example, if the sum of your midterm scores is 30/100 and your final score
+is 40/80, then you earn back 20/60=33.3% of 60-30=30 points, giving you an extra
+10 points. Assuming a full score on projects and homework (e.g., 120/120 non-
+exam points), you will earn a C-.
+
+
+</p><h3 class="section" id="learning-cooperatively">Learning Cooperatively</h3>
+
+<p>With the obvious exception of exams, we encourage you to discuss <i>all</i>
+of the course activities with your friends and classmates as you are working on
+them. You will definitely learn more in this class if you work with others than
+if you do not. Ask questions, answer questions, and share ideas liberally.
+
+</p><p>Since you're working collaboratively, keep your project partner and TA
+informed. If some medical or personal emergency takes you away from the course
+for an extended period, or if you decide to drop the course for any reason,
+please don't just disappear silently!  You should inform your project partner
+and your TA, so that nobody is depending on you to do something you can't
+finish.
+
+
+</p><h3 class="section" id="academic-honesty">Academic Honesty</h3>
+
+<p>Cooperation has a limit, however, and in 61A that limit is code. Homework
+problems should be completed and turned in individually. Feel free to discuss
+the problems with others beforehand; just submit your own work in the end. This
+applies also to Projects 1 and 2.</p>
+
+<p>To be clear, the following unfun and uncool activities will be considered cheating:</p>
+<ul>
+    <li>Using another student's code on a solo assignment</li>
+    <li>Using code from a student who is not your partner on a partner assignment</li>
+    <li>Using code from previous students or from an online source</li>
+    <li>Sharing your code with other students or posting your code online</li>
+    <li><strong>Failing to report any of the above</strong></li>
+</ul>
+<p>This list is <em>not</em> comprehensive: the instructors reserve the right
+to go beyond this list at any time in the face of actions that violate the
+spirit of the course.</p>
+
+<p>Projects 3 and 4 are to be completed in pairs, which means you may share
+code with one partner. You <em>should not</em> be sharing lines of code with
+others or reading code from other people's projects. Write your own programs
+and keep them to yourself.</p>
+
+<p>Keep in mind that even <em>looking</em> at another student's code
+  could be considered cheating.  It is very easy to look at another
+  student's solution to "get the idea", but then come up with almost
+  exactly the same code, which would be considered cheating.</p>
+
+<p>We expect you to hand in your own work, take your own tests, and complete your
+own projects. The assignments and evaluations are structured to help you learn,
+which is why you're in College. The course staff works hard to put together this
+course, and we ask in return that you respect the integrity of the course by not
+misrepresenting your work.
+
+</p><p>The EECS Department Policy on Academic Dishonesty says, "Copying all or part
+of another person's work, or using reference materials not specifically allowed,
+are forms of cheating and will not be tolerated." The policy statement goes on
+to explain the penalties for cheating, which range from a zero grade for the
+test up to dismissal from the University, for a second offense.
+
+<p><strong>If you are found to be cheating in this course, we will always ask
+    you to come in and discuss the situation and give you a chance to explain.
+    The first offense results in a negative score for the assignment. If you
+    are found to be cheating a second time, we will not hesitate to fail you,
+    report you to the center for student conduct, and then also call your
+    parents.</strong></p>
+
+</p><p>Rather than copying someone else's work, ask for help. You are not alone in
+this course!  The TAs, lab assistants, and instructor are all here to help you
+succeed. If you invest the time to learn the material and complete the
+projects, you won't need to copy any answers.
+
+
+</p><h3 class="section" id="late-policy">Late Policy</h3>
+
+<p>If you cannot turn in an assignment on time, contact your TA and partner as
+early as possible. Late project submission requires approval by your
+TA. Typically, projects will be accepted up to 24 hours after the deadline, but
+late projects will only receive 2/3 of the earned score. No credit will be given
+for late homework, or for projects turned in more than one day late. Exceptions
+may be made for <em>extraordinary</em> circumstances.
+
+
+</p><h3 class="section" id="a-parting-thought">A Parting Thought</h3>
+
+<p>This document shouldn't end with a list of late penalties, because penalties
+and grades aren't the purpose of the course. We actually just want you to learn.
+We're very excited to have such a large and enthusiastic group of students this
+semester. We want all of you to be successful here. Welcome to 61A. :)
+</p>
+</section>
+
+<footer>
+<p id="glider">
+<a href='http://www.catb.org/~esr/faqs/hacker-howto.html'>
+<img src='http://www.catb.org/hacker-emblem/glider.png' alt='hacker emblem'>
+</a></p>
+</footer>
+
+
+</body>
+
+</html>

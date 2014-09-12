@@ -1,0 +1,17 @@
+/* CS 61A Lab Stylesheet */
+
+blockquote.help-windows {
+  background-color: #b2dfee;
+}
+
+blockquote.help-mac {
+  background-color: #c5e3bf;
+}
+
+.toggleButton {
+  display:none;
+}
+
+.solution {
+  display:none;
+}
